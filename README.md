@@ -1,7 +1,7 @@
 Eventlog
 ========
 
-Gather and store events from various web services APIs, and retrieve them
+Gather and store events from various web service's APIs, and retrieve them
 using an HTTP/JSON api which supports full text search.
 
 Installation
@@ -22,7 +22,7 @@ correctly. This is done by settings `timezone = 'UTC'` in your
 Configuration
 -------------
 
-*General*
+### General
 
 Application configuration is expected to be present in file indicated via the
 environment variable `EVENTLOG_SETTINGS`.
@@ -38,29 +38,29 @@ The default location of this file is:
 Installation creates a `<sys.prefix>/etc/eventlog/eventlog.conf.sample` file
 which documents the available configuration parameters.
 
-*Feeds*
+### Feeds
 
 Feed configuration consists of rows in the `feeds` table with the following
 columns:
 
-full_name     - full name of feed (can contain spaces, etc)
-short_name    - short name of feed (only alphanumeric characters)
-favicon       - path within `MEDIA_DIR` where favicon for feed is stored
-color         - 6-character HEX code for colour associated with feed
-module        - module name for feed (i.e. eventlog.ext.feeds.lastfm)
-config        - any module specific config in JSON form (see below)
-is_public     - flag indicated feed is publically visible
-is_updating   - flag indicated feed should be updated
-is_searchable - flag indicated feed is searchable
+    full_name     - full name of feed (can contain spaces, etc)
+    short_name    - short name of feed (only alphanumeric characters)
+    favicon       - path within `MEDIA_DIR` where favicon for feed is stored
+    color         - 6-character HEX code for colour associated with feed
+    module        - module name for feed (i.e. eventlog.ext.feeds.lastfm)
+    config        - any module specific config in JSON form (see below)
+    is_public     - flag indicated feed is publically visible
+    is_updating   - flag indicated feed should be updated
+    is_searchable - flag indicated feed is searchable
 
-*Feed Specific*
+### Feed Specific
 
 TODO
 
 Setup
 -----
 
-*Data Updating*
+### Data Updating
 
 Data updating involves running a script which will process any new events on
 the configured list of feeds.
@@ -75,7 +75,7 @@ This will run the updater script every 10 minutes.
 NOTE: the `EVENTLOG_SETTINGS` environment variable is only necessary if using
       a non-standard configuration file location
 
-*API Service*
+### API Service
 
 The HTTP/JSON API service is a standard Python WSGI application and can be
 served up using any of the various methods for serving such an application.
