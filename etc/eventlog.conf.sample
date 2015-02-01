@@ -1,0 +1,50 @@
+# flask standard SECRET_KEY used for API tokens
+SECRET_KEY = "e50faf4ebfbe5c1bb44bf9407dcb3d0ed6ada15c"
+
+# flask standard DEBUG flag (should be set to True for production environments)
+DEBUG = False
+
+# uncomment the below fields to enable Flask-Cache using memcached
+#CACHE_TYPE = 'memcached'
+#CACHE_MEMCACHED_SERVERS = ['/tmp/memcached.sock']
+#CACHE_DEFAULT_TIMEOUT = 10 * 60
+
+# specify log root for scripts
+LOG_ROOT = 'var/logs'
+
+# specify PostgreSQL parameters for store
+STORE = {
+    'DB_USER': 'eventlog',
+    'DB_PASS': 'eventlog',
+    'DB_NAME': 'eventlog',
+
+    # Postgres connection pool parameters (don't usually need to change)
+    'DB_POOL_MIN_CONN': 10,
+    'DB_POOL_MAX_CONN': 20,
+
+    # specify path for search index files
+    'INDEX_DIR': 'index',
+
+    # specify path to store media files
+    'MEDIA_DIR': 'media',
+
+    # subdirectory names in MEDIA_DIR for different static media
+    'THUMBNAIL_SUBDIR': 'thumbs',
+    'ORIGINAL_SUBDIR': 'originals',
+    'ARCHIVE_SUBDIR': 'archives',
+
+    # sizes of thumbnails to store
+    'THUMBNAIL_WIDTH': 200,
+    'THUMBNAIL_HEIGHT': 200,
+
+    # local time zone (used by some feeds)
+    'TIME_ZONE': 'America/Toronto'
+}
+
+# HTTP/JSON API specific configuration
+PAGE_SIZE_DEFAULT = 10  # default paging page size
+PAGE_SIZE_MAX = 100  # maximum allowed page size
+
+AUTH_TOKEN_EXPIRY = 600
+
+STATIC_URL = '/static/'

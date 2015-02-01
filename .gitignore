@@ -1,0 +1,15 @@
+.DS_Store
+MANIFEST
+build
+dist
+*.egg-info
+*.pyc
+*.pyo
+*~
+static
+migrate
+.tm_properties
+tests/testindex
+tests/testarchive
+.coverage
+*.egg-info

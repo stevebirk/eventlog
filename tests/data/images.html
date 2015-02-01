@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Dribbble - Show and tell for designers</title>
+  <meta charset="utf-8" />
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"beacon-3.newrelic.com","errorBeacon":"bam.nr-data.net","licenseKey":"7840d0c136","applicationID":"2909452","transactionName":"Jg1bREUOClsARUpHABcHUF5ECQlDFhgMWgcAGg==","queueTime":1,"applicationTime":71,"agentToken":null,"agent":"js-agent.newrelic.com/nr-476.min.js"}</script>
+<script type="text/javascript">window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=u(e),f=c.length,s=i(a,o,r),p=0;f>p;p++)c[p].apply(s,n);return s}function a(t,e){f[t]=u(t).concat(e)}function u(t){return f[t]||[]}function c(){return n(e)}var f={};return{on:a,emit:e,create:c,listeners:u,_events:f}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],G9z0Bl:[function(t,e){function n(){var t=l.info=NREUM.info;if(t&&t.agent&&t.licenseKey&&t.applicationID&&c&&c.body){l.proto="https"===p.split(":")[0]||t.sslForHttp?"https://":"http://",a("mark",["onload",i()]);var e=c.createElement("script");e.src=l.proto+t.agent,c.body.appendChild(e)}}function r(){"complete"===c.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),u=window,c=u.document,f="addEventListener",s="attachEvent",p=(""+location).split("?")[0],l=e.exports={offset:i(),origin:p,features:{}};c[f]?(c[f]("DOMContentLoaded",o,!1),u[f]("load",n,!1)):(c[s]("onreadystatechange",r),u[s]("onload",n)),a("mark",["firstbyte",i()])},{handle:"D5DuLP"}]},{},["G9z0Bl"]);</script>
+  <meta name="theme-color" content="#333333">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+  <meta name="referrer" content="always">
+  <!--[if gte IE 7]><!-->
+  <link href="https://d13yacurqjgara.cloudfront.net/assets/master-abde14e0bbd435b5a7c543c43460d67f.css" media="screen, projection" rel="stylesheet" type="text/css" />
+
+  <link href="https://d13yacurqjgara.cloudfront.net/assets/adapt-3a714854927d6138b8c465e92868ecff.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <!-- <![endif]-->
+  <link href="https://d13yacurqjgara.cloudfront.net/assets/print-506b96ca6125211696cade69fd0df8bd.css" media="print" rel="stylesheet" type="text/css" />
+  <link href="https://d13yacurqjgara.cloudfront.net/assets/apple-touch-icon-precomposed-c12ef0139f66211aa9e254555a2363df.png" rel="apple-touch-icon-precomposed" />
+  <link href="https://d13yacurqjgara.cloudfront.net/assets/favicon-6cbb9182f2d142e93cecdb23278dadc7.ico" rel="icon" />
+  <link href="https://d13yacurqjgara.cloudfront.net/assets/dribbble-ball-192-6711c805c5f89e218dd63c40f9e793d3.png" sizes="192x192" rel="icon" />
+
+  <meta content="authenticity_token" name="csrf-param" />
+<meta content="t5XMNc7OXJe/7LKLYEDQu4YFwgMG0k8BkhORJ8TrjDk=" name="csrf-token" />
+
+
+</head>
+
+<body id="shots" class="logged-out not-pro not-self not-team">
+
+<img src="data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7" />
+
+<div id="header" class="group"><div id="header-inner" class="group">
+
+  <div id="logo">
+    <a href="/"><img alt="dribbble" src="https://d13yacurqjgara.cloudfront.net/assets/logo-bw-345f015dc6e83d80eba16453d4588cf4.gif" /></a>
+  </div>
+
+  <a href="#nav" id="toggle-nav">Toggle navigation</a>
+
+  <ul id="nav">
+    <li id="t-search">
+      <form id="search" action="https://dribbble.com/search">
+        <input class="search-text" type="text" name="q" placeholder="Search " value="" />
+
+      </form>
+    </li>
+    <li id="t-signin">
+      <a href="https://dribbble.com/session/new">
+        <span>Sign in</span>
+</a>    </li>
+    <li id="t-signup">
+      <a href="https://dribbble.com/signup">Sign up</a>
+    </li>
+    <li id="t-shots">
+      <a href="/shots" class="has-sub">Shots</a>
+      <ul class="tabs">
+  <li class=""><a href="/shots">Popular</a></li>
+  <li class=""><a href="/shots?sort=recent">Recent</a></li>
+  <li class=""><a href="/shots?list=teams">Teams</a></li>
+  <li class=""><a href="/shots?list=debuts">Debuts</a></li>
+  <li class=""><a href="/shots?list=playoffs">Playoffs</a></li>
+  <li class=""><a href="/shots?list=animated">Animated GIFs</a></li>
+
+</ul>
+
+    </li>
+    <li id="t-players">
+      <a href="/designers" class="has-sub">Designers</a>
+      <ul class="tabs">
+  <li class=""><a href="/designers">All</a></li>
+  <li class=""><a href="/designers?for_hire=on">For Hire</a></li>
+  <li class="separate"><a href="/designers/overview">Top Skills &amp; Locations</a></li>
+  <li class=""><a href="/skills">Skills</a></li>
+  <li class=""><a href="/cities">Cities</a></li>
+  <li class=""><a href="/countries">Countries</a></li>
+  <li class=""><a href="/designers/prospects">Prospects</a></li>
+</ul>
+
+    </li>
+    <li id="t-teams">
+      <a href="/teams" class="has-sub">Teams</a>
+      <ul class="tabs">
+        <li class=""><a href="/teams">All</a></li>
+        <li class=""><a href="/teams?hiring=on">Now Hiring</a></li>
+        <li class="separate"><a href="/teams/info">Get Your Team On Dribbble</a></li>
+      </ul>
+    </li>
+    <li id="t-meetups">
+      <a href="/meetups">Meetups</a>
+      <ul class="tabs">
+        <li class=""><a href="/meetups">Upcoming Meetups</a></li>
+        <li class=""><a href="/meetups/new">Host a Meetup</a></li>
+      </ul>
+    </li>
+    <li id="t-jobs">
+      <a href="/jobs">Jobs</a>
+      <ul class="tabs">
+        <li class=""><a href="/jobs">All</a></li>
+        <li class=""><a href="/jobs?location=Anywhere">Remote / Anywhere</a></li>
+        <li class=""><a href="/jobs?teams_only=true">@ Teams</a></li>
+        <li class="separate"><a href="https://dribbble.com/jobs/new">Post a Job</a></li>
+      </ul>
+    </li>
+    <li id="t-more">
+      <a href="/highlights">
+        <span>More</span>
+</a>      <ul class="tabs">
+        <li><li class=""><a href="/highlights">Highlights</a></li></li>
+        <li><li class=""><a href="/goods">Goods for Sale</a></li></li>
+        <li><li class=""><a href="/projects">Projects</a></li></li>
+        <li><li class=""><a href="/buckets">Buckets</a></li></li>
+        <li><li class=""><a href="/colors">Colors</a></li></li>
+        <li><li class=""><a href="/tags">Tags</a></li></li>
+        <li class="separate"><a href="/about">About</a></li>
+        <li><a href="http://blog.dribbble.com">Blog</a></li>
+        <li><a href="http://shop.dribbble.com/">Shop</a></li>
+      </ul>
+    </li>
+  </ul>
+</div></div> <!-- /header -->
+
+<hr />
+
+<div class="ajax notice hide">
+  <h2></h2>
+</div>
+
+
+
+
+<div id="wrap">
+
+
+
+<div id="wrap-inner">
+
+<div id="content" class="group">
+
+<div class="notice-alert">
+  <h3><!-- message goes here --></h3>
+  <a href="#" class="close">
+    <img alt="Icon-x-30-white" src="https://d13yacurqjgara.cloudfront.net/assets/icon-x-30-white-2a9688f3ebbef3f32909f220a20509b2.png" width="15" />
+  </a>
+</div>
+
+<div id="main" class="main-full">
+
+<div class="full full-pitch group">
+  <h1 class="compact">
+    <strong>What are you working on?</strong>
+    Dribbble is show and tell for designers.
+    <a href="/about" class="form-btn tagline-action" text="Learn more">Learn more</a>
+    <a href="/signup" class="form-sub tagline-action">Sign up</a>
+  </h1>
+</div>
+
+
+
+
+
+<ul class="shot-menu tabs">
+  <li class="has-dd active"><a href="/shots">Popular</a><ul class="sub"><li><a href="/shots?sort=recent">Recent</a></li><li><a href="/shots?sort=views">Most Viewed</a></li><li><a href="/shots?sort=comments">Most Commented</a></li></ul></li>
+
+  <li class="has-dd active"><a href="/shots">Shots</a><ul class="sub"><li><a href="/shots?list=teams">Team Shots</a></li><li><a href="/shots?list=debuts">Debuts</a></li><li><a href="/shots?list=playoffs">Playoffs</a></li><li><a href="/shots?list=rebounds">Rebounds</a></li><li><a href="/shots?list=animated">Animated GIFs</a></li><li><a href="/shots?list=attachments">Shots with Attachments</a></li></ul></li>
+
+
+
+  <li class="has-dd active"><a href="/shots">Now</a><ul class="sub"><li><a href="/shots?timeframe=week">This Past Week</a></li><li><a href="/shots?timeframe=month">This Past Month</a></li><li><a href="/shots?timeframe=year">This Past Year</a></li><li><a href="/shots?timeframe=ever">All Time</a></li></ul></li>
+</ul>
+
+    <ol class="dribbbles group">
+    <li id="screenshot-1887122" class="group team">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887122-New-Thing-Coming" class="dribbble-link"><div data-picture data-alt="New Thing Coming...">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/16711/screenshots/1887122/new_thing_coming_teaser.png"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/16711/screenshots/1887122/new_thing_coming_1x.png" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="New Thing Coming..." src="https://d13yacurqjgara.cloudfront.net/users/16711/screenshots/1887122/new_thing_coming_teaser.png" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887122-New-Thing-Coming" class="dribbble-over">    <strong>New Thing Coming...</strong>
+      <span class="comment">We are cooking something up at @Focus Lab that will be launching next month. I will be leaking photos here and there until then. It is much more than just wh...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887122-New-Thing-Coming/fans" title="See fans of this screenshot">269</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887122-New-Thing-Coming#comments" title="View comments on this screenshot">12</a>
+  </li>
+  <li class="views">
+    3,306
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887122-New-Thing-Coming/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-team">
+      <a href="/focuslab" class="url" rel="contact" title="Focus Lab"><img alt="C9364836c041ca20abd81fba2e52029f" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/414899/avatars/mini/c9364836c041ca20abd81fba2e52029f.png?1413484950" /> Focus Lab</a>
+      <a href="/teams" class="badge-link">
+  <span class="badge badge-team">Team</span>
+</a>
+    </span>
+    <span class="attribution-user">
+      <a href="/BillSKenney" class="url" rel="contact" title="Bill S Kenney"><img alt="Image" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/16711/avatars/mini/image.jpg?1382734315" /> Bill S Kenney</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1886920" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1886920-Zen-Player" class="dribbble-link"><div data-picture data-alt="Zen Player">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/124059/screenshots/1886920/shot_teaser.png"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/124059/screenshots/1886920/shot_1x.png" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Zen Player" src="https://d13yacurqjgara.cloudfront.net/users/124059/screenshots/1886920/shot_teaser.png" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1886920-Zen-Player" class="dribbble-over">    <strong>Zen Player</strong>
+      <span class="comment">Hi Guys,
+
+Here&#x27;s another small ui I did today for practice, I&#x27;ll include this in a larger ui kit and release as a freebie next week.
+
+Larger image: https://d...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1886920-Zen-Player/fans" title="See fans of this screenshot">207</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1886920-Zen-Player#comments" title="View comments on this screenshot">12</a>
+  </li>
+  <li class="views">
+    2,973
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1886920-Zen-Player/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/virgilpana" class="url" rel="contact" title="Virgil Pana"><img alt="Untitled-3" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/124059/avatars/original/Untitled-3.png?1333130134" /> Virgil Pana</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1887143" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887143-Appon-Social-Widgets" class="dribbble-link"><div data-picture data-alt="Appon Social Widgets">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/195330/screenshots/1887143/appon-social-widgets-dribbble-animation_teaser.gif"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/195330/screenshots/1887143/appon-social-widgets-dribbble-animation_1x.gif" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Appon Social Widgets" src="https://d13yacurqjgara.cloudfront.net/users/195330/screenshots/1887143/appon-social-widgets-dribbble-animation_teaser.gif" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887143-Appon-Social-Widgets" class="dribbble-over">    <strong>Appon Social Widgets</strong>
+      <span class="comment">Hi fellows!
+
+Hope you have excellent weekend as do I :)
+What can be better than playing around with animation, yeh?
+Alright let&#x27;s be serious. Very happy to ...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887143-Appon-Social-Widgets/fans" title="See fans of this screenshot">154</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887143-Appon-Social-Widgets#comments" title="View comments on this screenshot">18</a>
+  </li>
+  <li class="views">
+    1,990
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887143-Appon-Social-Widgets/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+      <img alt="Gif-badge-2x" class="is-gif" src="https://d13yacurqjgara.cloudfront.net/assets/gif-badge-2x-815ad7eed9f4644d1e13ecd760bce3f5.png" width="23" />
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/OliaGozha" class="url" rel="contact" title="Olia Gozha"><img alt="Portrait" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/195330/avatars/mini/portrait.jpg?1394124247" /> Olia Gozha</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1886769" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1886769-iOS-News-Feed" class="dribbble-link"><div data-picture data-alt="iOS News Feed">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/257617/screenshots/1886769/news-feed-dribbble_teaser.png"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/257617/screenshots/1886769/news-feed-dribbble_1x.png" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="iOS News Feed" src="https://d13yacurqjgara.cloudfront.net/users/257617/screenshots/1886769/news-feed-dribbble_teaser.png" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1886769-iOS-News-Feed" class="dribbble-over">    <strong>iOS News Feed</strong>
+      <span class="comment">I had this idea for a simple mobile news app that pulls the top stories from the web and filters it into these cards that you can swipe through.
+
+Check out ...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1886769-iOS-News-Feed/fans" title="See fans of this screenshot">162</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1886769-iOS-News-Feed#comments" title="View comments on this screenshot">9</a>
+  </li>
+  <li class="views">
+    2,146
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1886769-iOS-News-Feed/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/tommysadlr" class="url" rel="contact" title="Tommy Sadler"><img alt="A45ca5f0d178b2fac58221e97d95563d" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/257617/avatars/mini/a45ca5f0d178b2fac58221e97d95563d.jpg?1421185152" /> Tommy Sadler</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1887053" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887053-Take-me-to-the-bridge" class="dribbble-link"><div data-picture data-alt="Take me to the bridge">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/61834/screenshots/1887053/creekside_teaser.png"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/61834/screenshots/1887053/creekside_1x.png" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Take me to the bridge" src="https://d13yacurqjgara.cloudfront.net/users/61834/screenshots/1887053/creekside_teaser.png" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887053-Take-me-to-the-bridge" class="dribbble-over">    <strong>Take me to the bridge</strong>
+      <span class="comment">Final mark for Creekside, a mediation group in Frederick. I packed a lot of meaning into this little mark!</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887053-Take-me-to-the-bridge/fans" title="See fans of this screenshot">120</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887053-Take-me-to-the-bridge#comments" title="View comments on this screenshot">4</a>
+  </li>
+  <li class="views">
+    844
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887053-Take-me-to-the-bridge/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/BSteely" class="url" rel="contact" title="Brian Steely"><img alt="266472_2123376085642_3788254_o" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/61834/avatars/mini/266472_2123376085642_3788254_o.jpg?1393971022" /> Brian Steely</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1886890" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1886890-Croatian-Stud-Farm" class="dribbble-link"><div data-picture data-alt="Croatian Stud Farm ...">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/14765/screenshots/1886890/croatian-stud-farm-..._teaser.png"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/14765/screenshots/1886890/croatian-stud-farm-..._1x.png" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Croatian Stud Farm ..." src="https://d13yacurqjgara.cloudfront.net/users/14765/screenshots/1886890/croatian-stud-farm-..._teaser.png" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1886890-Croatian-Stud-Farm" class="dribbble-over">    <strong>Croatian Stud Farm ...</strong>
+      <span class="comment">... working on an additional design for our »Croatian Gift Items &amp;amp; Souvenirs Project«. This design is dedicated to the »Croatian State Stud Farm« in Đako...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1886890-Croatian-Stud-Farm/fans" title="See fans of this screenshot">117</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1886890-Croatian-Stud-Farm#comments" title="View comments on this screenshot">35</a>
+  </li>
+  <li class="views">
+    941
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1886890-Croatian-Stud-Farm/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/arnoKath" class="url" rel="contact" title="Arno Kathollnig"><img alt="Ak_drib_ava" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/14765/avatars/mini/ak_drib_ava.png?1389894523" /> Arno Kathollnig</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1886579" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1886579-Stuff15" class="dribbble-link"><div data-picture data-alt="Stuff15">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/22136/screenshots/1886579/stuff15_teaser.jpg"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/22136/screenshots/1886579/stuff15.jpg" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Stuff15" src="https://d13yacurqjgara.cloudfront.net/users/22136/screenshots/1886579/stuff15_teaser.jpg" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1886579-Stuff15" class="dribbble-over">    <strong>Stuff15</strong>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1886579-Stuff15/fans" title="See fans of this screenshot">112</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1886579-Stuff15#comments" title="View comments on this screenshot">13</a>
+  </li>
+  <li class="views">
+    739
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1886579-Stuff15/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/Type08" class="url" rel="contact" title="Alen Type08 Pavlovic"><img alt="9ab8f67def79c1b8c442ee1874999148" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/22136/avatars/mini/9ab8f67def79c1b8c442ee1874999148.jpg?1411082459" /> Alen Type08 Pavlovic</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1887010" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887010-City-Mark" class="dribbble-link"><div data-picture data-alt="City Mark">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/434375/screenshots/1887010/city_logo_teaser.jpg"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/434375/screenshots/1887010/city_logo_1x.jpg" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="City Mark" src="https://d13yacurqjgara.cloudfront.net/users/434375/screenshots/1887010/city_logo_teaser.jpg" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887010-City-Mark" class="dribbble-over">    <strong>City Mark</strong>
+      <span class="comment">Finalist entry and a winner of public voting for Batumi city logo design contest. Openbrand Rising Star 2015
+https://openbrand.com/risingstar/detail/23750</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887010-City-Mark/fans" title="See fans of this screenshot">115</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887010-City-Mark#comments" title="View comments on this screenshot">15</a>
+  </li>
+  <li class="views">
+    858
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887010-City-Mark/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/ana_martsvaladze" class="url" rel="contact" title="Anano Martsvaladze"><img alt="An" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/434375/avatars/mini/an.jpg?1399943766" /> Anano Martsvaladze</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1887302" class="group team">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887302-Landing-Page-For-Quicklink-Product" class="dribbble-link"><div data-picture data-alt="Landing Page For Quicklink Product">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/4605/screenshots/1887302/snapp_teaser.jpg"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/4605/screenshots/1887302/snapp_1x.jpg" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Landing Page For Quicklink Product" src="https://d13yacurqjgara.cloudfront.net/users/4605/screenshots/1887302/snapp_teaser.jpg" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887302-Landing-Page-For-Quicklink-Product" class="dribbble-over">    <strong>Landing Page For Quick...</strong>
+      <span class="comment">A project I have been working on with @Victor Erixon that we just wrapped up and is now headed to dev!  Love it when a good project comes together!
+
+Full pix...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887302-Landing-Page-For-Quicklink-Product/fans" title="See fans of this screenshot">88</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887302-Landing-Page-For-Quicklink-Product#comments" title="View comments on this screenshot">9</a>
+  </li>
+  <li class="views">
+    1,356
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887302-Landing-Page-For-Quicklink-Product/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-team">
+      <a href="/JellyJar" class="url" rel="contact" title="JellyJar Co"><img alt="22b6f90a93322524f716eb77bda541df" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/440962/avatars/mini/22b6f90a93322524f716eb77bda541df.png?1412462398" /> JellyJar Co</a>
+      <a href="/teams" class="badge-link">
+  <span class="badge badge-team">Team</span>
+</a>
+    </span>
+    <span class="attribution-user">
+      <a href="/kolage" class="url" rel="contact" title="Eric Hoffman"><img alt="Me-compressed" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/4605/avatars/mini/me-compressed.png?1376845005" /> Eric Hoffman</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1886611" class="group team">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1886611-More-cards" class="dribbble-link"><div data-picture data-alt="More cards!">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/28445/screenshots/1886611/cards1_teaser.jpg"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/28445/screenshots/1886611/cards1_1x.jpg" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="More cards!" src="https://d13yacurqjgara.cloudfront.net/users/28445/screenshots/1886611/cards1_teaser.jpg" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1886611-More-cards" class="dribbble-over">    <strong>More cards!</strong>
+      <span class="comment">Here is a bunch of the face cards in the deck we built for Run It Once.
+
+Go get your own deck here!
+</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1886611-More-cards/fans" title="See fans of this screenshot">71</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1886611-More-cards#comments" title="View comments on this screenshot">3</a>
+  </li>
+  <li class="views">
+    716
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1886611-More-cards/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-team">
+      <a href="/underbelly" class="url" rel="contact" title="Underbelly"><img alt="30542f04cf216d7d0f17a63a158ea113" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/354716/avatars/mini/30542f04cf216d7d0f17a63a158ea113.png?1405369532" /> Underbelly</a>
+      <a href="/teams" class="badge-link">
+  <span class="badge badge-team">Team</span>
+</a>
+    </span>
+    <span class="attribution-user">
+      <a href="/scribner" class="url" rel="contact" title="Matt Scribner"><img alt="B91f3f1fbd9dee16cb38f44f6b769d1c" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/28445/avatars/mini/b91f3f1fbd9dee16cb38f44f6b769d1c.jpg?1407205999" /> Matt Scribner</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1887359" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887359-Playstation-20th-Anniversary-icons" class="dribbble-link"><div data-picture data-alt="Playstation 20th Anniversary icons">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/215/screenshots/1887359/ps_icons_dribbble_teaser.png"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/215/screenshots/1887359/ps_icons_dribbble_1x.png" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="Playstation 20th Anniversary icons" src="https://d13yacurqjgara.cloudfront.net/users/215/screenshots/1887359/ps_icons_dribbble_teaser.png" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887359-Playstation-20th-Anniversary-icons" class="dribbble-over">    <strong>Playstation 20th Anniv...</strong>
+      <span class="comment">Icons designed for an app I helped design to commemorate the 20th anniversary of Playstation, using the original Playstation colors. This was a fun one!
+
+Mor...</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887359-Playstation-20th-Anniversary-icons/fans" title="See fans of this screenshot">44</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887359-Playstation-20th-Anniversary-icons#comments" title="View comments on this screenshot">2</a>
+  </li>
+  <li class="views">
+    827
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887359-Playstation-20th-Anniversary-icons/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/shots">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/sdw" class="url" rel="contact" title="Sebastiaan de With"><img alt="399f8f68d22186675e1a500656b06493" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/215/avatars/mini/399f8f68d22186675e1a500656b06493.png?1411751678" /> Sebastiaan de With</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+<li id="screenshot-1887144" class="group ">
+  <div class="dribbble">
+    <div class="dribbble-shot">
+      <div class="dribbble-img">
+  <a href="/shots/1887144-New-Computer" class="dribbble-link"><div data-picture data-alt="New Computer">
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/488076/screenshots/1887144/listia-intro_teaser.gif"></div>
+  <div data-src="https://d13yacurqjgara.cloudfront.net/users/488076/screenshots/1887144/listia-intro_1x.gif" data-media="(-webkit-min-device-pixel-ratio: 1.5),
+       (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 1.5dppx)"></div>
+  <noscript>
+    <img alt="New Computer" src="https://d13yacurqjgara.cloudfront.net/users/488076/screenshots/1887144/listia-intro_teaser.gif" />
+  </noscript>
+</div>
+</a>
+  <a href="/shots/1887144-New-Computer" class="dribbble-over">    <strong>New Computer</strong>
+      <span class="comment">https://vimeo.com/106832789</span>
+
+    <em class="timestamp"></em>
+</a></div>
+
+      <ul class="tools group">
+  <li class="fav">
+    <a href="/shots/1887144-New-Computer/fans" title="See fans of this screenshot">70</a>
+  </li>
+  <li class="cmnt">
+    <a href="/shots/1887144-New-Computer#comments" title="View comments on this screenshot">5</a>
+  </li>
+  <li class="views">
+    754
+  </li>
+</ul>
+
+    </div>
+    <div class="extras">
+      <a href="/shots/1887144-New-Computer/rebounds">
+        <span rel="tipsy" title="This shot has rebounds." class="rebound-mark has-rebounds">
+          0
+        </span>
+</a>      <a href="/players/rloubersanes">
+        <span rel="tipsy" title="This shot is a rebound (reply) of another shot. The icon links to the original." class="rebound-mark is-rebound">
+          <img alt="Rebound" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-rebound-2x-4e319131bd80b6cbec99c4d549028a1f.png" width="16" />
+        </span>
+</a>      <span rel="tipsy" title="This shot has attachments" class="attachments-mark">
+        <img alt="Attachments" height="16" src="https://d13yacurqjgara.cloudfront.net/assets/icon-attach-16-2x-d2bda314e8e3cbe85a7ab293749d66b0.png" width="16" />
+      </span>
+    </div>
+
+      <img alt="Gif-badge-2x" class="is-gif" src="https://d13yacurqjgara.cloudfront.net/assets/gif-badge-2x-815ad7eed9f4644d1e13ecd760bce3f5.png" width="23" />
+  </div>
+
+  <h2>
+    <span class="attribution-user">
+      <a href="/rloubersanes" class="url" rel="contact" title="Romain Loubersanes"><img alt="Logo" class="photo" src="https://d13yacurqjgara.cloudfront.net/users/488076/avatars/mini/logo.jpg?1391680032" /> Romain Loubersanes</a>
+      <a href="/pro" class="badge-link">
+  <span class="badge badge-pro">Pro</span>
+
+</a>
+    </span>
+  </h2>
+</li>
+
+  </ol>
+
+  <script>
+  SHOTS = (typeof(SHOTS) == 'undefined') ? [] : SHOTS;
+  SHOTS = SHOTS.concat([{
+      id: 1887122,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 0,
+      view_count: 3464,
+      comments_count: 13,
+      likes_count: 276,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1886920,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 1,
+      view_count: 3104,
+      comments_count: 12,
+      likes_count: 213,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1887143,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 0,
+      view_count: 2092,
+      comments_count: 19,
+      likes_count: 160,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1886769,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 2,
+      view_count: 2156,
+      comments_count: 9,
+      likes_count: 163,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1887053,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 0,
+      view_count: 865,
+      comments_count: 4,
+      likes_count: 121,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1886890,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 2,
+      view_count: 975,
+      comments_count: 35,
+      likes_count: 118,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1886579,
+      created_at: 'January 16, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 0,
+      view_count: 762,
+      comments_count: 13,
+      likes_count: 116,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1887010,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 3,
+      view_count: 862,
+      comments_count: 15,
+      likes_count: 116,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1887302,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 1,
+      view_count: 1495,
+      comments_count: 9,
+      likes_count: 99,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1886611,
+      created_at: 'January 16, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 1,
+      view_count: 745,
+      comments_count: 3,
+      likes_count: 74,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1887359,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 0,
+      view_count: 1126,
+      comments_count: 3,
+      likes_count: 79,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    },{
+      id: 1887144,
+      created_at: 'January 17, 2015',
+      is_rebound: false,
+      rebounds_count: 0,
+      attachments_count: 0,
+      view_count: 844,
+      comments_count: 7,
+      likes_count: 80,
+      commented_on: false,
+      comments_since_last_view: false,
+      liked: false,
+      liked_by_html: null
+    }]);
+
+  SHOT_QUERY_STRING = '?list=shots&sort=popular&timeframe=now';
+  PAGE_OFFSET = 0;
+  </script>
+
+  <div class="page">
+  <div class="pagination"><span class="previous_page disabled">&larr; Prev</span> <a class="next_page" rel="next" href="/shots?page=2">Next &rarr;</a></div>
+</div>
+
+
+
+</div> <!-- /main -->
+
+
+<div class="secondary extra group">
+  <div class="col-33 group">
+    <h3 class="tab"><a href="http://shop.dribbble.com">Equipment <span class="meta">Shop</span></a></h3>
+
+    <div class="equipment-pitch">
+      <a href="http://shop.dribbble.com">
+        <img alt="Dribbble-tee-4-100" src="https://d13yacurqjgara.cloudfront.net/assets/dribbble-tee-4-100-98843c3b7838eb0cd3782123cd155c3e.png" width="100" />
+      </a>
+      <p class="copy">Threads and goods for designers like you. Grab a tee or three at our <strong><a href="http://shop.dribbble.com">official Equipment Shop</a></strong>.</p>
+    </div>
+  </div>
+
+  <div class="col-33 group">
+    <h3 class="tab">
+      <a href="/jobs">
+        Jobs <span class="meta">for Designers</span>
+</a>    </h3>
+
+    <ul class="job-ads">
+  <li>
+    <div class="announce-btn announce-job announce-team">
+
+    <a href="/bloc" class="team-avatar" rel="tipsy" title="Visit the team&#x27;s profile">
+      <img alt="679b40923a617433cbc821e4dcf92de5" src="https://d13yacurqjgara.cloudfront.net/users/434141/avatars/mini/679b40923a617433cbc821e4dcf92de5.png?1413404374" />
+</a>
+  <a href="/jobs/7998" data-url="https://www.bloc.io/jobs/designer" target="_blank" title="posted January 14, 2015">
+    <span class="job-info">
+      <strong class="title">
+        <span class="employer">Bloc</span> is hiring
+      </strong>
+
+      a
+      <span class="position">Designer</span>
+    </span>
+
+    <span class="location">San Francisco, CA</span>
+
+</a></div>
+
+  </li>
+  <li>
+    <div class="announce-btn announce-job announce-team">
+
+    <a href="/eventbrite" class="team-avatar" rel="tipsy" title="Visit the team&#x27;s profile">
+      <img alt="Eblogo" src="https://d13yacurqjgara.cloudfront.net/users/415038/avatars/mini/eblogo.png?1392950789" />
+</a>
+  <a href="/jobs/7939" data-url="https://hire.jobvite.com/j?cj=oWn6Zfw8&amp;s=Dribbble" target="_blank" title="posted January 6, 2015">
+    <span class="job-info">
+      <strong class="title">
+        <span class="employer">Eventbrite</span> is hiring
+      </strong>
+
+      a
+      <span class="position">Senior UI Designer</span>
+    </span>
+
+    <span class="location">San Francisco</span>
+
+</a></div>
+
+  </li>
+  <li>
+    <div class="announce-btn announce-job announce-team">
+
+    <a href="/352inc" class="team-avatar" rel="tipsy" title="Visit the team&#x27;s profile">
+      <img alt="4a534c56fd85cf2514587d66ff1bdadc" src="https://d13yacurqjgara.cloudfront.net/users/189653/avatars/mini/4a534c56fd85cf2514587d66ff1bdadc.png?1418738941" />
+</a>
+  <a href="/jobs/7885" data-url="https://352-inc.workable.com/j/6101F26E92" target="_blank" title="posted December 24, 2014">
+    <span class="job-info">
+      <strong class="title">
+        <span class="employer">352 Inc</span> is hiring
+      </strong>
+
+      an
+      <span class="position">Interactive Designer</span>
+    </span>
+
+    <span class="location">Atlanta, GA</span>
+
+</a></div>
+
+  </li>
+</ul>
+
+  </div>
+
+  <div class="col-33 col-33-last group">
+    <h3 class="tab">
+      <a href="http://decknetwork.net">Ads <span class="meta">via The Deck</span></a>
+    </h3>
+    <div class="ad thedeck target group">
+  <a href="http://decknetwork.net/" class="flag">Ads via The Deck</a>
+</div>
+
+  </div>
+</div> <!-- /secondary -->
+
+
+
+</div> <!-- /content -->
+
+</div></div> <!-- /wrap -->
+
+<hr />
+
+<div id="footer"><div id="footer-inner">
+  <div class="group">
+    <div class="footer-links">
+      <p class="logo"><a href="/"><img alt="dribbble" src="https://d13yacurqjgara.cloudfront.net/assets/logo-footer-hd-d72e671581ad7c13e49435ff5fc926bb.png" width="80" /></a><br />Show and tell for designers</p>
+
+      <p>What are you working on? Dribbble is a community of designers sharing screenshots of their work, process, and projects.</p>
+    </div>
+    <div class="footer-links">
+      <h3>Company</h3>
+      <ul>
+        <li><a href="/about" id="f-home">About</a></li>
+        <li><a href="http://help.dribbble.com">Help</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/terms">Terms</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="http://shop.dribbble.com/">Shop</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-links">
+      <h3>Community</h3>
+      <ul>
+        <li><a href="http://blog.dribbble.com">Blog</a></li>
+        <li><a href="/meetups">Meetups</a></li>
+          <li><a href="https://confirmsubscription.com/h/y/D6A3AA96A2E03744">Newsletter</a></li>
+        <li><a href="/testimonials">Testimonials</a></li>
+        <li><a href="/handbook">Handbook</a></li>
+        <li><a href="/branding">Brand Guidelines</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Connect</h3>
+      <ul>
+        <li><a href="/designers">Find Designers</a></li>
+        <li><a href="/jobs">Jobs for Designers</a></li>
+        <li><a href="/pro" class="footer-pro">Go Pro</a></li>
+        <li><a href="/teams/info">Teams</a></li>
+        <li><a href="/advertise">Advertise</a></li>
+        <li><a href="http://developer.dribbble.com">API</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <h4 id="pixels-total" class="group">
+  <strong>297,870,474,490</strong> pixels dribbbled
+</h4>
+
+
+  <p>Copyright &copy; 2009&ndash;2015 Dribbble LLC. All screenshots &copy; their respective owners. Shipped from Salem, Mass. USA.</p>
+
+  <p class="follow">
+    <a href="http://twitter.com/dribbble"><img alt="Icon-team-twitter" src="https://d13yacurqjgara.cloudfront.net/assets/icon-team-twitter-3ca7fb4afdc0cba521a6576ceca4b1f0.png" width="24" /></a>
+    <a href="http://facebook.com/dribbble"><img alt="Icon-team-facebook" src="https://d13yacurqjgara.cloudfront.net/assets/icon-team-facebook-30a6e41ca6b7245e577b31ef01903e00.png" width="24" /></a>
+    <a href="http://instagram.com/dribbble"><img alt="Icon-team-instagram" src="https://d13yacurqjgara.cloudfront.net/assets/icon-team-instagram-5b410d5e5d64305e0d9acd2651ba9035.png" width="24" /></a>
+    <a href="http://blog.dribbble.com"><img alt="Icon-team-blog" src="https://d13yacurqjgara.cloudfront.net/assets/icon-team-blog-5532bb877391dc47e7b0ddb0dc9dc5af.png" width="24" /></a>
+  </p>
+</div></div> <!-- /footer -->
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+<script src="https://d13yacurqjgara.cloudfront.net/assets/global-0c6ec5c5275fd9c416cd149321fcea97.js" type="text/javascript"></script>
+
+
+<div class="thedeck loading-dock hide">
+<script>
+var $deckAdContainer = $('.ad.thedeck.target');
+if ($deckAdContainer.length) {
+  var id = "DB";
+  var scriptLink = '<script type="text/javascript" src="https://connect.decknetwork.net/deck' + id + '_js.php?' + (new Date().getTime()) + '"></' + 'script>';
+  document.write(scriptLink);
+}
+</script>
+
+<script>
+// Move Deck ad content from loading area to display location
+$deckAdContainer.
+  append($('.thedeck.loading-dock>a')).
+  append($('.thedeck.loading-dock>p'));
+</script>
+</div>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i["GoogleAnalyticsObject"]=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,"script","//www.google-analytics.com/analytics.js","ga");
+
+    ga("create", "UA-24041469-1", "auto");
+
+    if (window.location.pathname == "/") {
+      ga("send", "pageview",
+         (User.loggedIn() ? "/following" : "/shots") + location.search);
+    } else {
+      ga("send", "pageview");
+    }
+
+    if ($(".ad.thedeck.target").length > 0) {
+      ga("send", "event", "Deck", "View", "View of a Deck ad", 1);
+    }
+
+
+  </script>
+
+
+</body>
+</html>
