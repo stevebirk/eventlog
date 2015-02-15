@@ -1,8 +1,23 @@
 Eventlog
 ========
 
-Gather and store events from various web service's APIs, and retrieve them
-using an HTTP/JSON api which supports full text search.
+Gather and store events and related media from various web service JSON APIs.
+Provides a common HTTP/JSON api supporting full text search for retrieving
+said data.
+
+Currently includes built-in support for the following services:
+
+* Behance
+* Delicious
+* Dribbble
+* Fitbit
+* Flickr
+* Foursquare
+* Instagram
+* Last.FM
+* Reddit
+* Runkeeper
+* Twitter
 
 Installation
 ------------
@@ -45,7 +60,7 @@ columns:
 
     full_name     - full name of feed (can contain spaces, etc)
     short_name    - short name of feed (only alphanumeric characters)
-    favicon       - path within `MEDIA_DIR` where favicon for feed is stored
+    favicon       - path within MEDIA_DIR where favicon for feed is stored
     color         - 6-character HEX code for colour associated with feed
     module        - module name for feed (i.e. eventlog.ext.feeds.lastfm)
     config        - any module specific config in JSON form (see below)
@@ -55,7 +70,81 @@ columns:
 
 ### Feed Specific
 
-TODO
+Most feeds require their own configuration to specify usernames, OAuth
+credentials, etc. This configuration is stored in JSON form in the
+correspoding row of the `feeds` database table.
+
+The expected configuration parameters for the built-in feeds are documented
+below:
+
+**Behance**
+
+    username                # Behance username
+    oauth2_client_id        # OAuth2 client ID
+    oauth2_client_secret    # OAuth2 client secret
+    oauth2_access_token     # OAuth2 access token
+
+**Delicious**
+
+    username                # Delicious username
+
+**Dribbble**
+
+    username                # Dribbble username
+
+**Fitbit**
+
+    oauth1_consumer_key     # OAuth1 consumer key
+    oauth1_consumer_secret  # OAuth1 consumer secret
+    oauth1_user_key         # OAuth1 user key
+    oauth1_user_secret      # Oauth1 user secret
+    encoded_user_id         # Encoded Fitbit user ID (see Fitbit API docs)
+    signup_date             # date Fitbit account was created in YYYY-MM-DD
+                            # form
+
+**Flickr**
+
+    oauth1_consumer_key     # OAuth1 consumer key
+    oauth1_consumer_secret  # OAuth1 consumer secret
+    oauth1_user_key         # OAuth1 user key
+    oauth1_user_secret      # Oauth1 user secret
+
+**Foursquare**
+
+    oauth2_client_id        # OAuth2 client ID
+    oauth2_client_secret    # OAuth2 client secret
+    oauth2_access_token     # OAuth2 access token
+
+**Instagram**
+
+    oauth2_client_id        # OAuth2 client ID
+    oauth2_client_secret    # OAuth2 client secret
+    oauth2_access_token     # OAuth2 access token
+
+**Last.FM**
+
+    username                # Last.FM username
+    api_key                 # API key
+    num_limit               # limit of how many recent tracks to request at a
+                            # time (i.e. 50)
+
+**Reddit**
+
+    username                # Reddit username
+    feed_key                # feed key
+
+**Runkeeper**
+
+    oauth2_client_id        # OAuth2 client ID
+    oauth2_client_secret    # OAuth2 client secret
+    oauth2_access_token     # OAuth2 access token
+
+**Twitter**
+
+    oauth1_consumer_key     # OAuth1 consumer key
+    oauth1_consumer_secret  # OAuth1 consumer secret
+    oauth1_user_key         # OAuth1 user key
+    oauth1_user_secret      # Oauth1 user secret
 
 Setup
 -----
@@ -82,6 +171,16 @@ served up using any of the various methods for serving such an application.
 
 The suggested setup is to use something like `uwsgi` for the application itself
 and `nginx` or another webserver for the static media content.
+
+Adding New Services
+-------------------
+
+Adding a new service requires creating an appropriate class inheriting from
+`eventlog.lib.feeds.Feed`, and overloading the appropriate methods. Please see
+existing feeds in `eventlog.ext.feeds` for examples of how to do so.
+
+This class should be placed in a module accessible on the `PYTHONPATH`, and
+configured appropriately as described above.
 
 Tests
 -----

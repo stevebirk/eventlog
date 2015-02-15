@@ -7,8 +7,23 @@ from setuptools import setup
 Eventlog
 ========
 
-Gather and store events from various web services APIs, and retrieve them
-using an HTTP/JSON api which supports full text search.
+Gather and store events and related media from various web service JSON APIs.
+Provides a common HTTP/JSON api supporting full text search for retrieving
+said data.
+
+Currently includes built-in support for the following services:
+
+* Behance
+* Delicious
+* Dribbble
+* Fitbit
+* Flickr
+* Foursquare
+* Instagram
+* Last.FM
+* Reddit
+* Runkeeper
+* Twitter
 
 """
 
