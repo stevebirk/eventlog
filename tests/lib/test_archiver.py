@@ -31,7 +31,7 @@ class TestArchiver(unittest.TestCase):
             url, '../', 'testarchiver'
         )
 
-        self.assertEquals(
+        self.assertEqual(
             res,
             expected
         )
@@ -46,7 +46,7 @@ class TestArchiver(unittest.TestCase):
             url, '../', 'testarchiver', dry=True
         )
 
-        self.assertEquals(
+        self.assertEqual(
             res,
             expected
         )
@@ -148,7 +148,7 @@ class TestArchiver(unittest.TestCase):
         self.assertIsNone(res)
 
     def test_parse_localized_path_failure(self):
-        res = eventlog.lib.archiver.parse_localized_path('')
+        res = eventlog.lib.archiver.parse_localized_path(b'')
 
         self.assertIsNone(res)
 

@@ -1,7 +1,7 @@
 # flask standard SECRET_KEY used for API tokens
 SECRET_KEY = "e50faf4ebfbe5c1bb44bf9407dcb3d0ed6ada15c"
 
-# flask standard DEBUG flag (should be set to True for production environments)
+# flask standard DEBUG flag (should be set to False for production environments)
 DEBUG = False
 
 # uncomment the below fields to enable Flask-Cache using memcached

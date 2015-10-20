@@ -128,7 +128,7 @@ class Runkeeper(Feed):
             format_seconds(seconds_per_km)
         )
 
-        return unicode(text)
+        return text
 
     @staticmethod
     def get_date(entry, tz):

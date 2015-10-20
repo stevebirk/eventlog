@@ -22,7 +22,7 @@ from eventlog.lib.util import tz_unaware_utc_dt_to_local
 from util import db_drop_all_data, db_init_schema, db_drop_all_events
 from util import db_insert_feeds, feeds_create_fake
 from util import events_create_fake, events_compare, events_create_single
-from util import index_check_documents
+from util import index_check_documents, to_pg_datetime_str
 
 import feed_generator
 
@@ -103,7 +103,7 @@ class TestStoreModify(TestStoreWithDBBase):
         store._index.clear()
 
     def _add_events(self, dry=False):
-        distribution = {json.dumps(feed): 3 for feed in self._feeds}
+        distribution = [(json.dumps(feed), 3) for feed in self._feeds]
 
         event_dicts = events_create_fake(
             distribution,
@@ -429,7 +429,7 @@ class TestStoreModify(TestStoreWithDBBase):
                                                   pytz.timezone(tz))
 
             new_event_dict = e.dict()
-            new_event_dict['occurred'] += '+00'
+            to_pg_datetime_str(new_event_dict, 'occurred')
             new_event_dict['related'] = None
 
             new_event = Event.from_dict(new_event_dict)  # need a copy
@@ -551,9 +551,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         TestStoreWithDBBase.setUpClass()
 
         # add our events
-        distribution = {
-            json.dumps(feed): 30 for feed in cls._feeds
-        }
+        distribution = [(json.dumps(feed), 30) for feed in cls._feeds]
 
         event_dicts = events_create_fake(
             distribution,
@@ -579,7 +577,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
     def test_get_feeds_no_args(self):
         feeds = store.get_feeds()
 
-        self.assertEquals(len(feeds), feed_generator.MAX_NUM)
+        self.assertEqual(len(feeds), feed_generator.MAX_NUM)
 
         for f in self._feeds:
             short_name = f['short_name']
@@ -589,7 +587,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             check_fields = ['short_name', 'full_name', 'color', 'favicon']
 
             for field in check_fields:
-                self.assertEquals(f[field], getattr(loaded_feed, field))
+                self.assertEqual(f[field], getattr(loaded_feed, field))
 
     def test_exists_return_false(self):
         self.assertFalse(store.exists('title', 'oijweoiur319831_'))
@@ -619,7 +617,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         es = store.get_events_by_ids(ids)
 
-        self.assertEquals(es.count, 0)
+        self.assertEqual(es.count, 0)
 
     def test_get_events_by_ids_single_invalid_id(self):
 
@@ -629,7 +627,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         es = store.get_events_by_ids(ids)
 
-        self.assertEquals(es.count, 0)
+        self.assertEqual(es.count, 0)
 
     def test_get_events_no_args_invalid_page(self):
         es = store.get_events()
@@ -646,14 +644,14 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         expected = [f['short_name'] for f in self._feeds if f['is_updating']]
 
-        self.assertEquals(len(expected), 12)
+        self.assertEqual(len(expected), 12)
 
-        from_store = feeds.keys()
+        from_store = list(feeds.keys())
 
         expected.sort()
         from_store.sort()
 
-        self.assertEquals(expected, from_store)
+        self.assertEqual(expected, from_store)
 
     def test_get_feeds_multiple_filter(self):
         feeds = store.get_feeds(is_updating=False, is_searchable=True)
@@ -663,14 +661,14 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             for f in self._feeds
             if (not f['is_updating'] and f['is_searchable'])
         ]
-        self.assertEquals(len(expected), 5)
+        self.assertEqual(len(expected), 5)
 
-        from_store = feeds.keys()
+        from_store = list(feeds.keys())
 
         expected.sort()
         from_store.sort()
 
-        self.assertEquals(expected, from_store)
+        self.assertEqual(expected, from_store)
 
     def test_get_events_no_embed_page_1_2(self):
 
@@ -854,8 +852,10 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             value = None
 
             for e in self._events:
-                if hasattr(e, field):
-                    value = getattr(e, field)
+                candidate = getattr(e, field, None)
+
+                if candidate is not None:
+                    value = candidate
                     break
 
             self.assertIsNotNone(value)
@@ -881,11 +881,11 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             if (new_time.date() == d.date()):
 
                 new_event_dict = e.dict()
-                new_event_dict['occurred'] += '+00'
+                to_pg_datetime_str(new_event_dict, 'occurred')
 
                 if new_event_dict['related'] is not None:
                     for r in new_event_dict['related']:
-                        r['occurred'] += '+00'
+                        to_pg_datetime_str(r, 'occurred')
 
                 new_event = Event.from_dict(new_event_dict)  # need a copy
                 new_event.localize(tz)
@@ -920,11 +920,11 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             if (new_time.date() == d.date()):
 
                 new_event_dict = e.dict()
-                new_event_dict['occurred'] += '+00'
+                to_pg_datetime_str(new_event_dict, 'occurred')
 
                 if new_event_dict['related'] is not None:
                     for r in new_event_dict['related']:
-                        r['occurred'] += '+00'
+                        to_pg_datetime_str(r, 'occurred')
 
                 new_event = Event.from_dict(new_event_dict)  # need a copy
                 new_event.localize(tz)
@@ -943,7 +943,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         tz = 'America/Toronto'
 
-        feeds = ['testfeed7', 'testfeed8']
+        feeds = ['testfeed17', 'testfeed18']
 
         es = store.get_events_by_date(
             d, feeds=feeds, timezone=tz
@@ -962,11 +962,11 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             if (new_time.date() == d.date()):
 
                 new_event_dict = e.dict()
-                new_event_dict['occurred'] += '+00'
+                to_pg_datetime_str(new_event_dict, 'occurred')
 
                 if new_event_dict['related'] is not None:
                     for r in new_event_dict['related']:
-                        r['occurred'] += '+00'
+                        to_pg_datetime_str(r, 'occurred')
 
                 new_event = Event.from_dict(new_event_dict)  # need a copy
                 new_event.localize(tz)
@@ -1065,7 +1065,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         es = store.get_events(flattened=True)
 
-        self.assertEquals(es.count, expected)
+        self.assertEqual(es.count, expected)
 
     def test_get_events_flattened_by_feed_with_related(self):
         expected = None
@@ -1095,7 +1095,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         es = store.get_events(flattened=True, feeds=[feed])
 
-        self.assertEquals(es.count, total)
+        self.assertEqual(es.count, total)
 
     def test_get_events_flattened_by_feed_without_related(self):
         expected = None
@@ -1125,7 +1125,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         es = store.get_events(flattened=True, feeds=[feed])
 
-        self.assertEquals(es.count, total)
+        self.assertEqual(es.count, total)
 
 if __name__ == '__main__':
     unittest.main()

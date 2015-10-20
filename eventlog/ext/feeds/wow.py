@@ -28,9 +28,9 @@ class WoW(Feed):
     def to_event(self, raw):
         e = Event()
         e.feed = self.dict()
-        e.title = unicode("[" + raw["name"] + "]")
-        e.text = u"Obtained"
-        e.link = unicode("http://www.wowhead.com/item=" + str(raw['id']))
+        e.title = "[" + raw["name"] + "]"
+        e.text = "Obtained"
+        e.link = "http://www.wowhead.com/item=" + str(raw['id'])
         e.occurred = WoW.parse_date(raw['timestamp'])
         e.raw = raw
 

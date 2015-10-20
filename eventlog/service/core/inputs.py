@@ -11,7 +11,7 @@ def limit(value):
     value = int(value)
     if not (0 < value <= max_allowed):
         raise ValueError(
-            "valid range is: 0 < limit <= %d" % (
+            "valid range is 0 < limit <= %d" % (
                 max_allowed
             )
         )
@@ -33,7 +33,7 @@ def datetime_format(value):
         return datetime.datetime.strptime(value, DATEFMT.replace('%z', ''))
     except Exception:
         raise ValueError(
-            "expected datetime format: '%s'" % (
+            "expected datetime format is '%s'" % (
                 DATEFMT.replace('%z', '')
             )
         )
@@ -45,7 +45,7 @@ def date_format(value):
         return datetime.datetime.strptime(value, fmt)
     except Exception:
         raise ValueError(
-            "expected date format: '%s'" % (fmt)
+            "expected date format is '%s'" % (fmt)
         )
 
 

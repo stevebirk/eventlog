@@ -91,7 +91,7 @@ class Fitbit(Feed):
         if activeScore > -1:
             text += ', %d active score' % (activeScore)
 
-        return unicode(text)
+        return text
 
     def _make_request(self):
 

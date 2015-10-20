@@ -122,14 +122,14 @@ def feeds_create_fake(num, modulename):
 
 
 def events_create_fake(distribution, start, end):
-    total = sum(distribution.values())
+    total = sum([i[1] for i in distribution])
 
     events = []
 
-    delta = (end - start)/total
+    delta = (end - start) / total
     occurred = start
 
-    for feed_json, num in distribution.items():
+    for feed_json, num in distribution:
         feed = json.loads(feed_json)
 
         for i in range(num):
@@ -159,22 +159,22 @@ def events_create_single(feed, occurred, has_original=False, has_raw=True,
                          has_archived=False, has_thumbnail=False,
                          num_related=0, text=False, title=True):
 
-    occurred_str = occurred.strftime("%Y-%m-%d %H:%M:%S.%f+00")
+    occurred_str = occurred.strftime("%Y-%m-%dT%H:%M:%S.%f+00:00")
     if occurred.microsecond == 0:
-        occurred_str = occurred.strftime("%Y-%m-%d %H:%M:%S+00")
+        occurred_str = occurred.strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
     d = {
-        'id': unicode(uuid.uuid4()),
-        'title': unicode(random_string(10)) if title else None,
-        'text': unicode(random_string(20)) if text else None,
-        'link': unicode(random_string(20)),
+        'id': str(uuid.uuid4()),
+        'title': str(random_string(10)) if title else None,
+        'text': str(random_string(20)) if text else None,
+        'link': str(random_string(20)),
         'occurred': occurred_str,
         'feed': {
-            u'id': feed['id'],
-            u'full_name': unicode(feed['full_name']),
-            u'short_name': unicode(feed['short_name']),
-            u'favicon': unicode(feed['favicon']),
-            u'color': unicode(feed['color'])
+            'id': feed['id'],
+            'full_name': str(feed['full_name']),
+            'short_name': str(feed['short_name']),
+            'favicon': str(feed['favicon']),
+            'color': str(feed['color'])
         },
         'raw': None,
         'thumbnail': None,
@@ -184,12 +184,12 @@ def events_create_single(feed, occurred, has_original=False, has_raw=True,
     }
 
     if has_original:
-        path = u'original/' + d['id'][-2:] + '/' + d['id'] + '_orig.png'
+        path = 'original/' + d['id'][-2:] + '/' + d['id'] + '_orig.png'
         d['original'] = {
-            u'path': path,
-            u'size': {
-                u'height': random.randint(200, 10000),
-                u'width': random.randint(200, 10000)
+            'path': path,
+            'size': {
+                'height': random.randint(200, 10000),
+                'width': random.randint(200, 10000)
             }
         }
 
@@ -197,32 +197,37 @@ def events_create_single(feed, occurred, has_original=False, has_raw=True,
         d['raw'] = random_dict(feed['short_name'])
 
     if has_archived:
-        path = u'archive/' + d['id'] + '/' + feed['short_name'] + '.html'
+        path = 'archive/' + d['id'] + '/' + feed['short_name'] + '.html'
         d['archived'] = {
-            u'path': path
+            'path': path
         }
 
     if has_thumbnail:
-        path = u'thumbnail/' + d['id'][:2] + '/' + d['id'] + '_thumb.png'
+        path = 'thumbnail/' + d['id'][:2] + '/' + d['id'] + '_thumb.png'
         d['thumbnail'] = {
-            u'path': path,
-            u'size': {
-                u'height': 200,
-                u'width': 200
+            'path': path,
+            'size': {
+                'height': 200,
+                'width': 200
             }
         }
 
     if num_related > 0:
         d['related'] = []
         for i in range(num_related):
-            related_occurred = occurred + (i+1)*datetime.timedelta(minutes=3)
+            related_occurred = (
+                occurred + (i + 1) * datetime.timedelta(minutes=3)
+            )
+
             d['related'].append(
-                events_create_single(feed,
-                                     related_occurred,
-                                     has_original=has_original,
-                                     has_raw=has_raw,
-                                     has_archived=has_archived,
-                                     has_thumbnail=has_thumbnail)
+                events_create_single(
+                    feed,
+                    related_occurred,
+                    has_original=has_original,
+                    has_raw=has_raw,
+                    has_archived=has_archived,
+                    has_thumbnail=has_thumbnail
+                )
             )
 
     return d
@@ -250,7 +255,7 @@ def events_compare(testcase, orig, new):
 
 def random_string(length):
     return ''.join(random.sample(
-        (string.lowercase + string.uppercase + "012345689")*2, length
+        (string.ascii_letters + "012345689") * 2, length
     ))
 
 
@@ -259,7 +264,7 @@ def random_dict(base, leaf=False):
 
     for l in base[:5]:
         key = l + random_string(random.randint(3, 10))
-        key = unicode(key)
+        key = str(key)
 
         if l == 'e' and not leaf:
             d[key] = random_dict(key, leaf=True)
@@ -276,7 +281,7 @@ def random_dict(base, leaf=False):
 def random_val():
     my_int = random.randint(1, 10)
     return random.choice(
-        [None, u"foo", u"bar", u"jazz123", my_int]
+        [None, "foo", "bar", "jazz123", my_int]
     )
 
 
@@ -304,6 +309,12 @@ def index_check_documents(testcase, store, from_store, should_exist=True):
             else:
                 testcase.assertNotIn(doc['id'], events_by_id)
 
+
+def to_pg_datetime_str(data, field):
+    data[field] = data[field].replace(' ', 'T')
+    data[field] += '+00:00'
+
+
 if __name__ == "__main__":
     import time
     import feed_generator
@@ -315,10 +326,9 @@ if __name__ == "__main__":
     ]
 
     s = time.time()
+
     # add our events
-    distribution = {
-        json.dumps(feed): 100 for feed in feeds
-    }
+    distribution = [(json.dumps(feed), 100) for feed in feeds]
 
     event_dicts = events_create_fake(
         distribution,
@@ -326,5 +336,5 @@ if __name__ == "__main__":
         datetime.datetime(2013, 3, 24, 0, 0, 0, 0)
     )
     e = time.time()
-    print len(event_dicts), (e-s) / len(event_dicts)
-    print e-s
+    print(len(event_dicts), (e - s) / len(event_dicts))
+    print(e - s)

@@ -421,14 +421,14 @@ class TestFeeds(unittest.TestCase):
         # test date keyed feed
         date_key_func = self._feed.get_key_func()
 
-        self.assertEquals(date_key_func(e), e.occurred.strftime(DATEFMT))
+        self.assertEqual(date_key_func(e), e.occurred.strftime(DATEFMT))
 
         # test non-date keyed feed
         self._feed.key_field = fields.LINK
 
         non_date_key_func = self._feed.get_key_func()
 
-        self.assertEquals(non_date_key_func(e), 'http://localhost/link0')
+        self.assertEqual(non_date_key_func(e), 'http://localhost/link0')
 
     def test_update_no_latest_no_media(self):
         self._feed.store = Mock()
@@ -439,7 +439,7 @@ class TestFeeds(unittest.TestCase):
         added = self._feed.update()
 
         # confirm what is passed to add_events makes sense
-        self.assertEquals(
+        self.assertEqual(
             len(self._feed.store.add_events.call_args[0][0]),
             PER_PAGE*PAGES
         )
@@ -448,7 +448,7 @@ class TestFeeds(unittest.TestCase):
             self._feed.store.add_events.call_args[1]['dry']
         )
 
-        self.assertEquals(added, PER_PAGE*PAGES)
+        self.assertEqual(added, PER_PAGE*PAGES)
 
     def test_update_with_latest_no_media(self):
         e_raw = {
@@ -467,7 +467,7 @@ class TestFeeds(unittest.TestCase):
         added = self._feed.update()
 
         # confirm what is passed to add_events makes sense
-        self.assertEquals(
+        self.assertEqual(
             len(self._feed.store.add_events.call_args[0][0]),
             5
         )
@@ -476,7 +476,7 @@ class TestFeeds(unittest.TestCase):
             self._feed.store.add_events.call_args[1]['dry']
         )
 
-        self.assertEquals(added, 5)
+        self.assertEqual(added, 5)
 
     def test_update_with_exception(self):
         self._feed.store = Mock()

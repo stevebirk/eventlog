@@ -27,8 +27,7 @@ _COMMAND = [
 
 def parse_localized_path(output):
     # 2013-11-27 23:38:03 URL:<original url> [44756] -> "<new path>" [1]
-
-    m = re.search(".* -> \"(.*)\".*\n", output)
+    m = re.search(".* -> \"(.*)\".*\n", output.decode('utf-8'))
 
     if m is not None:
         return m.group(1)
@@ -84,7 +83,7 @@ def archive_url(url, rootdir, subdir, dry=False):
         if 0 < retcode < 8:
             _LOG.error(
                 'unable to archive url: %s, returncode: %d, stderr:\n%s',
-                url, retcode, unicode(error, 'utf-8')
+                url, retcode, str(error, 'utf-8')
             )
         else:
             localized_path = parse_localized_path(error)
@@ -92,7 +91,7 @@ def archive_url(url, rootdir, subdir, dry=False):
             if localized_path is None:
                 _LOG.error(
                     'unable to parse local archive path:\n%s',
-                    unicode(error, 'utf-8')
+                    str(error, 'utf-8')
                 )
             else:
                 res = os.path.join(subdir, localized_path)

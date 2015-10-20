@@ -19,7 +19,7 @@ class TestToken(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("token", resp_data["data"])

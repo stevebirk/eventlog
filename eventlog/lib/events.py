@@ -137,20 +137,20 @@ class Event(object):
     def documents(self):
 
         docs = [{
-            'id': unicode(self.id),
-            'feed': unicode(self.feed['short_name']),
-            'title': unicode(self.title),
-            'text': unicode(self.text)
+            'id': str(self.id),
+            'feed': str(self.feed['short_name']),
+            'title': str(self.title),
+            'text': str(self.text)
         }]
 
         # add any related documents
         if self.related is not None:
             for r in self.related:
                 docs.append({
-                    'id': unicode(r.id),
-                    'feed': unicode(self.feed['short_name']),
-                    'title': unicode(r.title),
-                    'text': unicode(r.text),
+                    'id': str(r.id),
+                    'feed': str(self.feed['short_name']),
+                    'title': str(r.title),
+                    'text': str(r.text),
                 })
 
         return docs

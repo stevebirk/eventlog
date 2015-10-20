@@ -61,4 +61,4 @@ if __name__ == "__main__":
 
     end = time.time()
 
-    print 'indexing took %.3fs' % (end - start)
+    print('indexing took %.3fs' % (end - start))

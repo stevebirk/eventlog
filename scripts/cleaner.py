@@ -117,7 +117,7 @@ def check_media(root, subdir, used, dry=False):
             if path in IGNORE:
                 continue
 
-            to_check = unicode(os.path.join(subdir, hexpair, path.rstrip('/')))
+            to_check = str(os.path.join(subdir, hexpair, path.rstrip('/')))
             checked += 1
 
             if to_check not in used:

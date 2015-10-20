@@ -63,7 +63,7 @@ class TestCommon(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("meta", resp_data)
         self.assertIn("code", resp_data['meta'])
@@ -77,7 +77,7 @@ class TestCommon(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("meta", resp_data)
         self.assertIn("code", resp_data['meta'])
@@ -91,7 +91,7 @@ class TestCommon(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("meta", resp_data)
         self.assertIn("code", resp_data['meta'])

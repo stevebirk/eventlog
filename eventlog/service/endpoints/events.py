@@ -153,22 +153,21 @@ class EventsList(Resource):
 
         if args.q:  # fetch by search query
 
-            to_mask = set(store.get_feeds())  # all feeds
-            to_mask -= set(feeds)  # remove feeds requested
-            to_mask = to_mask.union(set(store.get_feeds(
-                is_searchable=False)
-            ))  # add back unsearchable
-            to_mask = list(to_mask)
+            # all feeds
+            to_mask = set(store.get_feeds())
 
-            print to_mask
+            # remove feeds requested
+            to_mask -= set(feeds)
+
+            # add back unsearchable
+            to_mask = to_mask.union(set(store.get_feeds(is_searchable=False)))
+            to_mask = sorted(to_mask)
 
             to_filter = set(feeds)
-            to_filter -= set(store.get_feeds(
-                is_searchable=False)
-            )  # remove unsearchable feeds
-            to_filter = list(to_filter)
 
-            print to_filter
+            # remove unsearchable feeds
+            to_filter -= set(store.get_feeds(is_searchable=False))
+            to_filter = list(to_filter)
 
             # optimization: use the smaller subset
             if len(to_mask) > len(to_filter):
@@ -253,8 +252,10 @@ class EventsList(Resource):
         related_count_only = True if (args.embed_related == 'count') else False
 
         data['data'] = [
-            e.dict(base_uri=current_app.config['STATIC_URL'],
-                   related_count_only=related_count_only)
+            e.dict(
+                base_uri=current_app.config['STATIC_URL'],
+                related_count_only=related_count_only
+            )
             for e in p.events
         ]
 

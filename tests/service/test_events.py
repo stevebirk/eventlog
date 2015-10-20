@@ -91,7 +91,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -108,7 +108,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_timezone(self):
         rv = self.app.get('/events?tz=America/Toronto')
@@ -126,7 +126,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -140,7 +140,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_limit(self):
         rv = self.app.get('/events?limit=20')
@@ -158,7 +158,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -172,7 +172,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_after(self):
 
@@ -196,7 +196,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -213,7 +213,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_before(self):
 
@@ -237,7 +237,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -276,7 +276,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -304,7 +304,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_on(self):
 
@@ -328,7 +328,7 @@ class TestEvents(unittest.TestCase):
 
         self._event_set.get_page.assert_called_with(1)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -345,7 +345,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_malformed_feeds(self):
 
@@ -355,7 +355,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_feeds(self):
 
@@ -372,7 +372,7 @@ class TestEvents(unittest.TestCase):
             timezone=None
         )
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
         self.assertIn("pagination", resp_data)
@@ -387,7 +387,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_search(self):
 
@@ -407,7 +407,7 @@ class TestEvents(unittest.TestCase):
             timezone=None
         )
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_all_with_search_with_unsearchable_feeds(self):
 
@@ -437,13 +437,13 @@ class TestEvents(unittest.TestCase):
 
         store.get_events_by_search.assert_called_with(
             query,
-            to_mask=['foo', 'bar'],
+            to_mask=['bar', 'foo'],
             to_filter=None,
             pagesize=10,
             timezone=None
         )
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_single(self):
 
@@ -466,7 +466,7 @@ class TestEvents(unittest.TestCase):
             timezone=None
         )
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
 
@@ -479,7 +479,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
     def test_get_single_with_timezone(self):
 
@@ -502,7 +502,7 @@ class TestEvents(unittest.TestCase):
             timezone="America/Toronto"
         )
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("data", resp_data)
 
@@ -519,7 +519,7 @@ class TestEvents(unittest.TestCase):
 
         util.verify_response(rv)
 
-        resp_data = json.loads(rv.data)
+        resp_data = json.loads(rv.data.decode('utf-8'))
 
         self.assertIn("meta", resp_data)
         self.assertIn("code", resp_data['meta'])

@@ -8,6 +8,6 @@ cache = Cache()
 
 
 def make_cache_key():
-    key = request.path + '?' + request.query_string
+    key = request.path + '?' + request.query_string.decode('utf-8')
     key += 'authenticated' if is_authorized() else ''
     return key

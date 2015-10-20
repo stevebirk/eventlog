@@ -82,7 +82,7 @@ class Index(object):
 
             _LOG.info(
                 "indexed %s and %d related events",
-                unicode(e),
+                str(e),
                 num_related
             )
 
@@ -119,7 +119,7 @@ class Index(object):
 
                 _LOG.info(
                     "remove indexed %s and %d related events",
-                    unicode(e),
+                    str(e),
                     num_related
                 )
 

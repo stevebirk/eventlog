@@ -6,16 +6,18 @@ import os.path
 import pprint
 import math
 import logging
-import urlparse
+import urllib.parse
 import mimetypes
 import hashlib
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 import httplib2
 
 from bs4 import BeautifulSoup, SoupStrainer
 
 from PIL import Image
-from cStringIO import StringIO
+from io import BytesIO
 
 SLICE_WIDTH = 5
 
@@ -49,7 +51,7 @@ def image_url_to_file(url, rootdir, subdir, fileprefix, dry=False):
 
     # download file to temporary location
     try:
-        tmpfile, headers = urllib.urlretrieve(url)
+        tmpfile, headers = urllib.request.urlretrieve(url)
     except Exception:
         _LOG.exception("unable to fetch url: %s", repr(url))
         return None
@@ -70,7 +72,7 @@ def image_url_to_file(url, rootdir, subdir, fileprefix, dry=False):
 
     # change ownerships (urlretrieve seems to set funny ones)
     try:
-        os.chmod(tmpfile, 0664)
+        os.chmod(tmpfile, 0o664)
     except Exception:
         _LOG.exception("unable to set reasonable file permissions")
         return None
@@ -127,13 +129,13 @@ def url_to_image(url):
 def content_to_image_obj(content, url):
 
     try:
-        im = Image.open(StringIO(content))
+        im = Image.open(BytesIO(content))
 
         # is it valid?
         im.verify()
 
         # reset file
-        im = Image.open(StringIO(content))
+        im = Image.open(BytesIO(content))
     except Exception:
         _LOG.exception("unable to verify image from url: %s", repr(url))
         im = None
@@ -161,7 +163,7 @@ def get_images_from_html(content, url):
             if uri.startswith('data:'):  # ignore binary encoded data uri's
                 continue
 
-            image_url = urlparse.urljoin(url, uri)
+            image_url = urllib.parse.urljoin(url, uri)
 
             image = url_to_image(image_url)
 
@@ -265,7 +267,7 @@ def crop_image(img, width, height):
         if bottom_entr and abs(top_entr / bottom_entr - 1) < 0.01:
             # less than 1% difference between the two,
             # chop off slice_height/2 from both
-            half_slice = slice_height / 2
+            half_slice = slice_height // 2
 
             if half_slice * 2 == slice_height:
                 img = img.crop((0, half_slice, x, y - half_slice))
@@ -295,7 +297,7 @@ def crop_image(img, width, height):
         if right_entr and abs(left_entr / right_entr - 1) < 0.01:
             # less than 1% difference between the two,
             # chop off slice_height/2 from both
-            half_slice = slice_width / 2
+            half_slice = slice_width // 2
 
             if half_slice * 2 == slice_width:
                 img = img.crop((half_slice, 0, x - half_slice, y))
@@ -324,7 +326,7 @@ def save_img_to_dir(img, rootdir, subdir, dry=False,
         img_format = img.format
 
     # generate MD5 hash from image
-    md5 = hashlib.md5(img.tostring()).hexdigest()
+    md5 = hashlib.md5(img.tobytes()).hexdigest()
 
     # create filepath from hash
     filepath = os.path.join(rootdir, subdir, md5[:2])

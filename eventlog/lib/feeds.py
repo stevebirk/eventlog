@@ -15,9 +15,7 @@ class HTTPRequestFailure(Exception):
     pass
 
 
-class Feed(object):
-
-    __metaclass__ = abc.ABCMeta
+class Feed(object, metaclass=abc.ABCMeta):
 
     # properties
     key_field = fields.OCCURRED
@@ -155,7 +153,7 @@ class Feed(object):
                 else:  # pragma: no cover
                     _LOG.debug(
                         "%s... already exists. Ignoring.",
-                        unicode(e)
+                        str(e)
                     )
 
             else:   # add any events newer then the last entry for that source
@@ -163,7 +161,7 @@ class Feed(object):
                 if (last_updated is None) or (e.occurred > last_updated):
                     events.append(e)
                 else:
-                    _LOG.debug("%s... is old.", unicode(e))
+                    _LOG.debug("%s... is old.", str(e))
                     break
 
         return events
@@ -197,7 +195,7 @@ class Feed(object):
                 # remove this as an event to be added
                 events.remove(e)
 
-                _LOG.info("grouped %s", unicode(e))
+                _LOG.info("grouped %s", str(e))
 
             # otherwise we have a new group
             else:
@@ -303,7 +301,7 @@ class Feed(object):
                 _LOG.info(
                     'last known event with %s: %s',
                     self.key_field.name,
-                    unicode(latest_key)
+                    str(latest_key)
                 )
 
         kwargs = {

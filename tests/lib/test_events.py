@@ -36,7 +36,7 @@ class TestEvents(unittest.TestCase):
         self.assertTrue(link in fields)
 
     def test_from_dict(self):
-        distribution = {json.dumps(feed): 1 for feed in self._feeds}
+        distribution = [(json.dumps(feed), 1) for feed in self._feeds]
 
         event_dicts = events_create_fake(
             distribution,
@@ -350,7 +350,7 @@ class TestEvents(unittest.TestCase):
             )
 
             self.assertEqual(
-                len(d.keys()),
+                len(list(d.keys())),
                 11
             )
 

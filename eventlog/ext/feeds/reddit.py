@@ -1,7 +1,7 @@
 import json
 import datetime
 import httplib2
-import urlparse
+import urllib.parse
 import logging
 import time
 import re
@@ -40,7 +40,7 @@ class Reddit(Feed):
     def to_event(self, raw):
         e = Event()
         e.feed = self.dict()
-        e.link = urlparse.urljoin(
+        e.link = urllib.parse.urljoin(
             'http://www.reddit.com', raw['data']['permalink']
         )
         e.title = raw['data']['title']

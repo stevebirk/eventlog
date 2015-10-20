@@ -61,12 +61,12 @@ class Delicious(Feed):
                     dt = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
                     data = {
-                        u"a": u"ruuk",
-                        u"d": unicode(title),
-                        u"n": u"",
-                        u"u": unicode(link),
-                        u"t": unicode(tags),
-                        u"dt": unicode(dt)
+                        "a": "ruuk",
+                        "d": str(title),
+                        "n": "",
+                        "u": str(link),
+                        "t": str(tags),
+                        "dt": str(dt)
 
                     }
 

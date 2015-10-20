@@ -6,14 +6,14 @@ import difflib
 from flask import request, current_app
 from flask.signals import got_request_exception
 
-from werkzeug.exceptions import abort, BadRequest
+from werkzeug.exceptions import abort, BadRequest, HTTPException
 
 from werkzeug.http import HTTP_STATUS_CODES
 
 from flask.ext.restful import Api as _Api
 from flask.ext.restful import abort as _abort
 from flask.ext.restful.reqparse import Argument as _Argument
-from flask.ext.restful.utils import error_data, cors
+from flask.ext.restful.utils import http_status_message, cors
 
 envelope = {
     "meta": {
@@ -52,50 +52,68 @@ class Api(_Api):
             current_app._get_current_object(), exception=e
         )
 
-        if not hasattr(e, 'code') and current_app.propagate_exceptions:
+        is_http_exception = isinstance(e, HTTPException)
+
+        if not is_http_exception and current_app.propagate_exceptions:
             exc_type, exc_value, tb = sys.exc_info()
             if exc_value is e:
                 raise
             else:  # pragma: no cover
                 raise e
 
-        code = getattr(e, 'code', 500)
-        data = getattr(e, 'data', error_data(code))
+        if is_http_exception:
+            code = e.code
+            default_data = {
+                'message': getattr(e, 'description', http_status_message(code))
+            }
+        else:
+            code = 500
+            default_data = {
+                'message': http_status_message(code),
+            }
+
+        data = getattr(e, 'data', default_data)
         headers = {
             'Access-Control-Allow-Origin': '*'
         }
 
         if code >= 500:
+            exc_info = sys.exc_info()
 
-            # There's currently a bug in Python3 that disallows calling
-            # logging.exception() when an exception hasn't actually be raised
-            if sys.exc_info() == (None, None, None):  # pragma: no cover
-                current_app.logger.error("Internal Error")
-            else:
-                current_app.logger.exception("Internal Error")
+            if exc_info[1] is None:  # pragma: no cover
+                exc_info = None
+
+            current_app.log_exception(exc_info)
 
         help_on_404 = current_app.config.get("ERROR_404_HELP", True)
-        if (code == 404 and help_on_404 and
-            ('message' not in data or
-             data['message'] == HTTP_STATUS_CODES[404])):
+        if code == 404 and help_on_404:
+            rules = dict(
+                [
+                    (re.sub('(<.*>)', '', rule.rule), rule.rule)
+                    for rule in current_app.url_map.iter_rules()
+                ]
+            )
 
-            rules = dict([(re.sub('(<.*>)', '', rule.rule), rule.rule)
-                          for rule in current_app.url_map.iter_rules()])
-            close_matches = difflib.get_close_matches(request.path,
-                                                      rules.keys())
+            close_matches = difflib.get_close_matches(
+                request.path, rules.keys()
+            )
+
             if close_matches:
                 # If we already have a message, add punctuation and
                 # continue it.
                 if "message" in data:
-                    data["message"] += ". "
+                    data["message"] = data["message"].rstrip('.') + '. '
                 else:  # pragma: no cover
                     data["message"] = ""
 
                 data['message'] += ('You have requested this URI [' +
                                     request.path + '] but did you mean ' +
-                                    ' or '.join((rules[match]
-                                                for match in close_matches)) +
-                                    ' ?')
+                                    ' or '.join(
+                                        (
+                                            rules[match]
+                                            for match in close_matches
+                                        )
+                                    ) + ' ?')
 
         if code == 405:
             headers['Allow'] = e.valid_methods
@@ -119,11 +137,10 @@ class Argument(_Argument):
         try:
             return super(Argument, self).convert(value, op)
         except Exception as e:
-            old_message = e.message
-            message = "Invalid value for '%s': %s" % (self.name, old_message)
+            message = "Invalid value for '%s': %s" % (self.name, str(e))
             raise type(e)(message)
 
-    def handle_validation_error(self, error):
+    def handle_validation_error(self, error, bundle_errors):
         _abort(400, message=str(error))
 
 

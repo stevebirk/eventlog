@@ -1,6 +1,6 @@
 import pytz
 import datetime
-import urlparse
+import urllib.parse
 
 
 def tz_unaware_local_dt_to_utc(dt, tz):
@@ -17,9 +17,9 @@ def tz_unaware_utc_dt_to_local(dt, tz):
 
 def pg_strptime(s):
     if '.' in s:
-        return datetime.datetime.strptime(s, "%Y-%m-%d %H:%M:%S.%f+00")
+        return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%f+00:00")
     else:
-        return datetime.datetime.strptime(s, "%Y-%m-%d %H:%M:%S+00")
+        return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S+00:00")
 
 
 def urlize(target, base_uri, key=None):
@@ -29,4 +29,4 @@ def urlize(target, base_uri, key=None):
     if target.get(key) is None:
         return
 
-    target[key] = urlparse.urljoin(base_uri, target[key])
+    target[key] = urllib.parse.urljoin(base_uri, target[key])

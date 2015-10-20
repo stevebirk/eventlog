@@ -25,7 +25,7 @@ class TestLoader(unittest.TestCase):
 
         loaded_feeds = load(Feed, config, store=None, timezone='UTC')
 
-        self.assertEquals(len(loaded_feeds), num_to_create)
+        self.assertEqual(len(loaded_feeds), num_to_create)
 
     def test_load_feeds_exclude_via_config(self):
         num_to_create = feed_generator.MAX_NUM
@@ -40,14 +40,14 @@ class TestLoader(unittest.TestCase):
 
         to_exclude = 3
 
-        for key in config.keys()[:to_exclude]:
+        for key in list(config.keys())[:to_exclude]:
             del config[key]
 
         loaded_feeds = load(Feed, config, store=None, timezone='UTC')
 
-        self.assertEquals(len(loaded_feeds), num_to_create - to_exclude)
+        self.assertEqual(len(loaded_feeds), num_to_create - to_exclude)
 
-    @patch('__builtin__.__import__')
+    @patch('builtins.__import__')
     def test_load_with_import_error(self, mock_import):
         class Test(object):
             pass
@@ -58,7 +58,7 @@ class TestLoader(unittest.TestCase):
 
         self.assertEqual(len(loaded), 0)
 
-    @patch('__builtin__.__import__')
+    @patch('builtins.__import__')
     def test_load_with_instantiation_error(self, mock_import):
         class Test(object):
             pass
@@ -71,7 +71,7 @@ class TestLoader(unittest.TestCase):
 
         self.assertEqual(len(loaded), 0)
 
-    @patch('__builtin__.__import__')
+    @patch('builtins.__import__')
     def test_load_with_subclass_not_in_config(self, mock_import):
         class Test(object):
             pass

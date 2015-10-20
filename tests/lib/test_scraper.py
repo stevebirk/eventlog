@@ -151,7 +151,7 @@ class TestScraper(unittest.TestCase):
 
         self.files_to_cleanup.append(filename)
 
-    @patch('urllib.urlretrieve')
+    @patch('urllib.request.urlretrieve')
     def test_image_url_to_file_bad_retrieve(self, mock_url_retrieve):
         def side_effect(url):
             raise Exception
@@ -205,7 +205,7 @@ class TestScraper(unittest.TestCase):
 
     @patch('os.rename')
     @patch('os.makedirs')
-    @patch('urllib.urlretrieve')
+    @patch('urllib.request.urlretrieve')
     def test_image_url_to_file_invalid_img(self,
                                            mock_url_retrieve,
                                            mock_makedirs,
@@ -292,7 +292,7 @@ class TestScraper(unittest.TestCase):
 
         self.assertIsNone(res)
 
-        md5 = hashlib.md5(image.tostring()).hexdigest()
+        md5 = hashlib.md5(image.tobytes()).hexdigest()
 
         filepath = os.path.join('.', '', md5[:2], md5 + '.png')
 
@@ -307,7 +307,7 @@ class TestScraper(unittest.TestCase):
 
         url = 'http://test.local/image.png'
 
-        test_content = open(test_image_path).read()
+        test_content = open(test_image_path, 'rb').read()
 
         mock_fetch_url.return_value = ('image/jpeg', test_content)
 

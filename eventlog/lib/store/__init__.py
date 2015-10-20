@@ -175,12 +175,10 @@ class Store(object):
                             insert into related_events (parent, child)
                             values (%s, %s)
                             """,
-                            (e.id,
-                             c.id)
-
+                            (e.id, c.id)
                         )
 
-                _LOG.info("saved %s", unicode(e))
+                _LOG.info("saved %s", str(e))
 
             if not dry:
                 conn.commit()
@@ -221,7 +219,7 @@ class Store(object):
                     _event_to_tuple(e)[2:-1] + (e.id, )
                 )
 
-                _LOG.info("updated %s", unicode(e))
+                _LOG.info("updated %s", str(e))
 
             if not dry:
                 conn.commit()
@@ -263,7 +261,7 @@ class Store(object):
 
                     cur.execute("delete from events where id=%s", (e.id,))
 
-                    _LOG.info("removed %s", unicode(e))
+                    _LOG.info("removed %s", str(e))
 
             elif feed is not None:
                 cur.execute(

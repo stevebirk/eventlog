@@ -15,11 +15,11 @@ Usage: updater.py [-hjvd]
 # monkey patch away!
 import gevent
 import gevent.monkey
-gevent.monkey.patch_all(subprocess=True)
+gevent.monkey.patch_all(subprocess=True)  # noqa
 
 # psycopg2 monkey patch!
 import psycogreen.gevent
-psycogreen.gevent.patch_psycopg()
+psycogreen.gevent.patch_psycopg()  # noqa
 
 import sys
 import os
@@ -58,13 +58,13 @@ def init_logging():
 
     if not os.path.exists(logdir):
         try:
-            os.makedirs(logdir, 0755)
+            os.makedirs(logdir, 0o755)
         except Exception:
             errmsg = "ERROR: unable to create LOG_ROOT directory: '%s'" % (
                 logdir
             )
-            print >>sys.stderr, errmsg
-            print >>sys.stderr, traceback.format_exc()
+            print(errmsg, file=sys.stderr)
+            print(traceback.format_exc(), file=sys.stderr)
             sys.exit(1)
 
     if args["--debug"]:

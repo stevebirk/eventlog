@@ -50,7 +50,7 @@ class TestFeeds(unittest.TestCase):
         # get an auth token
         token_rv = self.app.get('/token')
 
-        token = json.loads(token_rv.data)['data']['token']
+        token = json.loads(token_rv.data.decode('utf-8'))['data']['token']
 
         rv = self.app.get('/feeds?admin=true&access_token=' + token)
 
@@ -99,7 +99,7 @@ class TestFeeds(unittest.TestCase):
         # get an auth token
         token_rv = self.app.get('/token')
 
-        token = json.loads(token_rv.data)['data']['token']
+        token = json.loads(token_rv.data.decode('utf-8'))['data']['token']
 
         rv = self.app.get('/feeds/foo?admin=true&access_token=' + token)
 

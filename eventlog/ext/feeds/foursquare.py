@@ -77,9 +77,7 @@ class Foursquare(Feed):
     @staticmethod
     def get_link(entry):
         if entry['type'] == 'checkin':
-            return unicode(
-                "https://foursquare.com/v/%s" % entry['venue']['id']
-            )
+            return "https://foursquare.com/v/%s" % entry['venue']['id']
         else:
             return None
 
