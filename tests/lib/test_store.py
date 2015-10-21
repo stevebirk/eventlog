@@ -217,7 +217,13 @@ class TestStoreModify(TestStoreWithDBBase):
         from_store = es.get_page(1).events[0]
 
         self.assertEqual(es.count, 1)
-        self.assertIsNone(from_store.related)
+        self.assertEqual(len(from_store.related), 1)
+
+        # need to remove feed from related
+        related_dict = related.dict()
+        related_dict['feed'] = None
+
+        self.assertEqual(from_store.related[0].dict(), related_dict)
 
     def test_add_existing_event(self):
         event_dicts, events = self._add_events()

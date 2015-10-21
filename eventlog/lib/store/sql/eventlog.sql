@@ -5,7 +5,7 @@ CREATE TABLE feeds (
     favicon text,
     color char(6),
     module text,
-    config json,
+    config jsonb,
     is_public boolean,
     is_updating boolean,
     is_searchable boolean
@@ -19,9 +19,9 @@ CREATE TABLE events (
     link text,
     occurred timestamptz NOT NULL,
     raw json,
-    thumbnail json,
-    original json,
-    archived json,
+    thumbnail jsonb,
+    original jsonb,
+    archived jsonb,
     is_related boolean
 );
 
@@ -32,9 +32,9 @@ CREATE INDEX events_title ON events(title);
 CREATE INDEX events_link ON events(link);
 
 CREATE TABLE related_events (
-    id SERIAL PRIMARY KEY,
     parent uuid references events(id),
-    child uuid references events(id)
+    child uuid references events(id),
+    PRIMARY KEY(parent, child)
 );
 
 CREATE INDEX related_events_by_parent ON related_events(parent);

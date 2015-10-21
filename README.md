@@ -27,8 +27,8 @@ the `setup.py` file:
 
     python setup.py install
 
-A PostgreSQL database and user should be created for this application and
-the schema in `eventlog/lib/store/sql/eventlog.sql` applied to it.
+A PostgreSQL (>= 9.5) database and user should be created for this application
+and the schema in `eventlog/lib/store/sql/eventlog.sql` applied to it.
 
 PostgreSQL must have it's timezone set to UTC for datetime storage to work
 correctly. This is done by settings `timezone = 'UTC'` in your

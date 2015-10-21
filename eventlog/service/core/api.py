@@ -8,8 +8,6 @@ from flask.signals import got_request_exception
 
 from werkzeug.exceptions import abort, BadRequest, HTTPException
 
-from werkzeug.http import HTTP_STATUS_CODES
-
 from flask.ext.restful import Api as _Api
 from flask.ext.restful import abort as _abort
 from flask.ext.restful.reqparse import Argument as _Argument

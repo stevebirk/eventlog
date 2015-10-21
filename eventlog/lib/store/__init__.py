@@ -139,33 +139,29 @@ class Store(object):
 
             for e in events:
 
-                if not _id_exists(cur, e.id):
-                    cur.execute(
-                        """
-                        insert into events
-                        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        """,
-                        _event_to_tuple(e)
-                    )
-                else:
+                cur.execute(
+                    """
+                    insert into events
+                    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    on conflict do nothing
+                    """,
+                    _event_to_tuple(e)
+                )
+
+                if not cur.rowcount:
                     _LOG.warning('skipping existing event id=%s', e.id)
 
                 if e.related is not None:
                     for c in e.related:
 
-                        if _id_exists(cur, c.id):
-                            # TODO: this will currently just ignore the
-                            #       existing event, rather then modify it
-                            #       or even mark it as related
-                            _LOG.warning(
-                                'skipping existing related event id=%s', c.id
-                            )
-                            continue
-
+                        # if the event already exists need is_related to be set
+                        # properly
                         cur.execute(
                             """
                             insert into events
                             values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            on conflict (id) do update
+                            set is_related = excluded.is_related
                             """,
                             _event_to_tuple(c, is_related=True)
                         )
@@ -174,6 +170,7 @@ class Store(object):
                             """
                             insert into related_events (parent, child)
                             values (%s, %s)
+                            on conflict do nothing
                             """,
                             (e.id, c.id)
                         )
