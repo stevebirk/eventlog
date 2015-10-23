@@ -369,7 +369,8 @@ class Store(object):
             self._pool,
             eq,
             kwargs.get('pagesize', 10),
-            timezone=kwargs.get('timezone'))
+            timezone=kwargs.get('timezone')
+        )
 
         return es
 
@@ -388,7 +389,8 @@ class Store(object):
             self._pool,
             eq,
             kwargs.get('pagesize', 10),
-            timezone=kwargs.get('timezone'))
+            timezone=kwargs.get('timezone')
+        )
 
         return es
 
@@ -420,7 +422,8 @@ class Store(object):
             self._pool,
             eq,
             kwargs.get('pagesize', 10),
-            timezone=timezone)
+            timezone=timezone
+        )
 
         if feed is None:
             # TODO: should return dict of feed: latest
@@ -485,7 +488,8 @@ class Store(object):
             self._pool,
             eq,
             kwargs.get('pagesize', 10),
-            timezone=kwargs.get('timezone'))
+            timezone=kwargs.get('timezone')
+        )
 
         return es
 

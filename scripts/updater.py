@@ -83,10 +83,8 @@ def init_logging():
 
     fmt = ('[%(asctime)s.%(msecs)03d]: %(levelname)10s | ' +
            '%(threadName)15s | %(name)20s | %(message)s')
-    handler.setFormatter(logging.Formatter(
-        fmt,
-        '%H:%M:%S'
-    ))
+
+    handler.setFormatter(logging.Formatter(fmt, '%H:%M:%S'))
 
     l = logging.getLogger()
     l.addHandler(handler)
