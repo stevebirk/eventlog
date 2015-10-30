@@ -1,14 +1,14 @@
 import logging
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 _LOG = logging.getLogger(__name__)
 
 
 class Digg(Feed):
 
-    key_field = fields.TITLE
+    key_field = Fields.TITLE
 
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)

@@ -1,7 +1,7 @@
 import datetime
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 
 class Instagram(Feed):

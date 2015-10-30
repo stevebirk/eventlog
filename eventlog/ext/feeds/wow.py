@@ -4,7 +4,7 @@ import datetime
 import pprint
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 EPIC = 4
 

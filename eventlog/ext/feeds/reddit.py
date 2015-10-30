@@ -7,7 +7,7 @@ import time
 import re
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 _LOG = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ def _get_id(link):
 
 class Reddit(Feed):
 
-    key_field = fields.TITLE
+    key_field = Fields.TITLE
 
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)

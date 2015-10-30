@@ -4,7 +4,7 @@ import httplib2
 import pytz
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 
 def format_seconds(val):

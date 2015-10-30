@@ -1,7 +1,7 @@
 import sys
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 MAX_NUM = 25
 
@@ -27,7 +27,7 @@ for i in range(MAX_NUM):
 
     holder['TestFeed%d' % i] = type(
         'TestFeed%d' % i, (Feed, ), {
-            'key_field': fields.TITLE,
+            'key_field': Fields.TITLE,
             '__module__': __name__ + '.testfeed%d' % i,
             '__init__': init_func,
             'init_parse_params': init_parse_params_func,

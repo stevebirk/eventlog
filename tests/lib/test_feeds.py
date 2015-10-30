@@ -11,7 +11,7 @@ import os.path
 import httplib2
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
-from eventlog.lib.events import Event, fields, DATEFMT
+from eventlog.lib.events import Event, Fields, DATEFMT
 
 from util import events_create_single, events_create_fake, events_compare
 
@@ -98,7 +98,7 @@ class TestFeed(Feed):
 
 
 class TestFeedWithNonDateKey(TestFeed):
-    key_field = fields.TITLE
+    key_field = Fields.TITLE
 
 
 @patch('httplib2.Http', MockHttp)
@@ -174,7 +174,7 @@ class TestFeeds(unittest.TestCase):
 
     def test_non_date_key_with_last_key(self):
 
-        self._feed.key_field = fields.LINK
+        self._feed.key_field = Fields.LINK
 
         last_key = "http://localhost/link5"
 
@@ -196,14 +196,14 @@ class TestFeeds(unittest.TestCase):
         # change feed key to non-DATE
         # iter_events should yield only the first page
 
-        self._feed.key_field = fields.LINK
+        self._feed.key_field = Fields.LINK
         events = list(self._feed.iter_events())
 
         self.assertEqual(len(events), PER_PAGE)
 
     def test_non_date_key_iter_events_get_all(self):
         # change feed key to non-DATE
-        self._feed.key_field = fields.LINK
+        self._feed.key_field = Fields.LINK
 
         events = list(self._feed.iter_events(all=True))
         self.assertEqual(len(events), PER_PAGE*PAGES)
@@ -424,7 +424,7 @@ class TestFeeds(unittest.TestCase):
         self.assertEqual(date_key_func(e), e.occurred.strftime(DATEFMT))
 
         # test non-date keyed feed
-        self._feed.key_field = fields.LINK
+        self._feed.key_field = Fields.LINK
 
         non_date_key_func = self._feed.get_key_func()
 

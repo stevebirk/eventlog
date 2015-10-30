@@ -1,12 +1,12 @@
 import datetime
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 
 class Behance(Feed):
 
-    key_field = fields.LINK
+    key_field = Fields.LINK
 
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)

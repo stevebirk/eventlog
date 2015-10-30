@@ -6,7 +6,7 @@ import logging
 import oauth2 as oauth
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, fields
+from eventlog.lib.events import Event, Fields
 
 _LOG = logging.getLogger(__name__)
 

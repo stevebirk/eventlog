@@ -3,7 +3,7 @@ import datetime
 import pytz
 import simplejson as json
 
-from eventlog.lib.events import (Event, _Field, _Fields, fields, DATEFMT,
+from eventlog.lib.events import (Event, Fields, DATEFMT,
                                  UnableToRetrieveImageException)
 from eventlog.lib.util import pg_strptime, tz_unaware_utc_dt_to_local
 from eventlog.lib.store.search import _SCHEMA
@@ -25,15 +25,12 @@ class TestEvents(unittest.TestCase):
             for i in range(feed_generator.MAX_NUM)
         ]
 
-    def test_init_empty_fields(self):
-        empty = _Fields()
-
     def test_in_fields(self):
-        f = _Field('foo')
-        link = _Field('link')
+        f = 'foo'
+        link = Fields.LINK
 
-        self.assertFalse(f in fields)
-        self.assertTrue(link in fields)
+        self.assertFalse(f in Fields)
+        self.assertTrue(link in Fields)
 
     def test_from_dict(self):
         distribution = [(json.dumps(feed), 1) for feed in self._feeds]
@@ -282,18 +279,18 @@ class TestEvents(unittest.TestCase):
         )
 
     def test_compare_two_fields(self):
-        foo = _Field('foo')
-        bar = _Field('bar')
-        jazz = _Field('foo')
+        foo = Fields.LINK
+        bar = Fields.TEXT
+        jazz = Fields.LINK
 
         self.assertTrue(foo != bar)
         self.assertFalse(foo == bar)
         self.assertTrue(foo == jazz)
 
     def test_get_field_str(self):
-        foo = _Field('foo')
+        foo = Fields.OCCURRED
 
-        self.assertEqual('foo', str(foo))
+        self.assertEqual('occurred', str(foo))
 
     def test_field_get_from(self):
         event_dict = events_create_single(
@@ -303,7 +300,7 @@ class TestEvents(unittest.TestCase):
 
         e = Event.from_dict(event_dict)
 
-        link = _Field('link')
+        link = Fields.LINK
 
         self.assertEqual(
             link.get_from(e),

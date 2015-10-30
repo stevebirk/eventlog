@@ -6,7 +6,7 @@ import time
 import httplib2
 
 from .util import urlize
-from .events import fields, DATEFMT
+from .events import Fields, DATEFMT
 
 _LOG = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ class HTTPRequestFailure(Exception):
 class Feed(object, metaclass=abc.ABCMeta):
 
     # properties
-    key_field = fields.OCCURRED
+    key_field = Fields.OCCURRED
     grouped = False
     grouped_window = None
     rate_limit = 1
@@ -116,7 +116,7 @@ class Feed(object, metaclass=abc.ABCMeta):
 
             # if this feed is not keyed on the occurred time
             # and we have not explicitly requested all data, return early
-            if not load_all and (self.key_field != fields.OCCURRED):
+            if not load_all and (self.key_field is not Fields.OCCURRED):
                 break
 
             # if rate limiting is in effect, pause now
@@ -132,21 +132,20 @@ class Feed(object, metaclass=abc.ABCMeta):
 
         for e in self.iter_events(**kwargs):
 
-            if self.key_field != fields.OCCURRED:
+            if self.key_field is not Fields.OCCURRED:
 
                 # attempt to grab event, if it doesn't exist, add it
-                key_name = self.key_field.name
                 key_val = self.key_field.get_from(e)
 
                 if last_key is not None and (key_val == last_key):
                     _LOG.debug(
                         "%s matches last known value :'%s'. Stopping.",
-                        key_name,
+                        str(self.key_field),
                         key_val
                     )
                     break
 
-                exists = self.store.exists(key_name, key_val)
+                exists = self.store.exists(self.key_field, key_val)
 
                 if not exists:
                     events.append(e)
@@ -264,7 +263,7 @@ class Feed(object, metaclass=abc.ABCMeta):
 
     def get_key_func(self):
 
-        if self.key_field == fields.OCCURRED:
+        if self.key_field is Fields.OCCURRED:
             def func(e):
                 key_value = self.key_field.get_from(e)
                 return key_value.strftime(DATEFMT)
@@ -293,14 +292,14 @@ class Feed(object, metaclass=abc.ABCMeta):
 
         if events:
 
-            if self.key_field == fields.OCCURRED:
+            if self.key_field is Fields.OCCURRED:
                 latest_date = events[-1].latest_occurred
                 _LOG.info('last known event from: %s', str(latest_date))
             else:
                 latest_key = self.key_field.get_from(events[-1])
                 _LOG.info(
                     'last known event with %s: %s',
-                    self.key_field.name,
+                    str(self.key_field),
                     str(latest_key)
                 )
 

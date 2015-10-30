@@ -9,7 +9,7 @@ import psycopg2.pool
 import psycopg2.extras
 import psycopg2.extensions
 
-from eventlog.lib.events import fields, InvalidField, MissingEventIdException
+from eventlog.lib.events import Fields, InvalidField, MissingEventIdException
 from eventlog.lib.feeds import Feed
 from eventlog.lib.loader import load
 from eventlog.lib.util import tz_unaware_local_dt_to_utc
@@ -106,7 +106,7 @@ class Store(object):
     def exists(self, field, value):
 
         # verify field is valid
-        if field not in fields:
+        if field not in Fields:
             raise InvalidField
 
         basequery = "select * from events where " + str(field) + "=%s"

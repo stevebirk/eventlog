@@ -3,6 +3,7 @@ import logging
 import pytz
 import uuid
 import datetime
+import enum
 
 from .scraper import (get_thumbnail_from_url, save_img_to_dir, url_to_image,
                       image_url_to_file)
@@ -26,35 +27,17 @@ class UnableToRetrieveImageException(Exception):
     pass
 
 
-class _Field(object):
-    def __init__(self, name):
-        self.name = name
+class Fields(enum.Enum):
+    OCCURRED = 1
+    TITLE = 2
+    TEXT = 3
+    LINK = 4
 
     def __str__(self):
-        return self.name
-
-    def __eq__(self, other):
-        return str(self) == str(other)
-
-    def __ne__(self, other):
-        return str(self) != str(other)
+        return self.name.lower()
 
     def get_from(self, e):
-        return getattr(e, self.name)
-
-
-class _Fields(object):
-    def __init__(self, fields=None):
-        if fields is None:
-            fields = []
-
-        for field in fields:
-            setattr(self, field.upper(), _Field(field))
-
-    def __contains__(self, item):
-        return hasattr(self, str(item).upper())
-
-fields = _Fields(fields=['occurred', 'title', 'text', 'link'])
+        return getattr(e, self.name.lower())
 
 
 class Event(object):

@@ -16,7 +16,7 @@ from flask import Flask
 from eventlog.lib.store import Store, InvalidTimeRangeException
 from eventlog.lib.store.eventquery import EventQuery
 from eventlog.lib.store.search import open_index, Index
-from eventlog.lib.events import InvalidField, Event
+from eventlog.lib.events import Event, Fields, InvalidField
 from eventlog.lib.util import tz_unaware_utc_dt_to_local
 
 from util import db_drop_all_data, db_init_schema, db_drop_all_events
@@ -596,7 +596,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
                 self.assertEqual(f[field], getattr(loaded_feed, field))
 
     def test_exists_return_false(self):
-        self.assertFalse(store.exists('title', 'oijweoiur319831_'))
+        self.assertFalse(store.exists(Fields.TITLE, 'oijweoiur319831_'))
 
     def test_exists_invalid_field(self):
         self.assertRaises(
@@ -854,11 +854,11 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
     def test_exists_return_true(self):
 
-        for field in ['title', 'text', 'link']:
+        for field in [Fields.TITLE, Fields.TEXT, Fields.LINK]:
             value = None
 
             for e in self._events:
-                candidate = getattr(e, field, None)
+                candidate = getattr(e, str(field), None)
 
                 if candidate is not None:
                     value = candidate
