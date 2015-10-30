@@ -1,8 +1,8 @@
-import mock
+import unittest.mock
 
 import eventlog.lib.store
 
-eventlog.lib.store.Store = mock.Mock
+eventlog.lib.store.Store = unittest.mock.Mock
 
 
 def check_content_type(resp):

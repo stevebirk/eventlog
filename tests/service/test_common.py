@@ -1,7 +1,7 @@
 import unittest
+import unittest.mock
 import os
 import json
-import mock
 
 # NOTE: this mocks out Store, so import needs to before app
 import util
@@ -21,7 +21,7 @@ class TestCommon(unittest.TestCase):
         # setup mock Feed
         feed_attrs = {'dict.return_value': {}}
 
-        cls._feed = mock.Mock(**feed_attrs)
+        cls._feed = unittest.mock.Mock(**feed_attrs)
 
         # setup mock Store
         attrs = {'get_feeds.return_value': {'foo': cls._feed}}
@@ -48,7 +48,7 @@ class TestCommon(unittest.TestCase):
         store.reset()
 
     def test_load_default_config(self):
-        app = mock.Mock()
+        app = unittest.mock.Mock()
 
         # unset EVENTLOG_SETTINGS
         del os.environ['EVENTLOG_SETTINGS']

@@ -1,8 +1,7 @@
 import unittest
+import unittest.mock
 import json
 import datetime
-
-import mock
 
 # NOTE: this mocks out Store, so import needs to before app
 import util
@@ -34,20 +33,20 @@ class TestEvents(unittest.TestCase):
             '__getitem__': lambda x, y: feed_dict[y]
         }
 
-        self._bar_feed = mock.Mock(**feed_attrs)
-        self._foo_feed = mock.Mock(**feed_attrs)
-        self._jazz_feed = mock.Mock(**feed_attrs)
-        self._bazz_feed = mock.Mock(**feed_attrs)
+        self._bar_feed = unittest.mock.Mock(**feed_attrs)
+        self._foo_feed = unittest.mock.Mock(**feed_attrs)
+        self._jazz_feed = unittest.mock.Mock(**feed_attrs)
+        self._bazz_feed = unittest.mock.Mock(**feed_attrs)
 
         # setup mock Page
         page_attrs = {'events': [], 'next': True, 'prev': True}
 
-        self._page = mock.Mock(**page_attrs)
+        self._page = unittest.mock.Mock(**page_attrs)
 
         # setup mock EventSet
         event_set_attrs = {'get_page.return_value': self._page}
 
-        self._event_set = mock.Mock(**event_set_attrs)
+        self._event_set = unittest.mock.Mock(**event_set_attrs)
 
         # setup mock Store
         attrs = {
@@ -450,7 +449,7 @@ class TestEvents(unittest.TestCase):
         def iterable(obj):
             event_attrs = {'dict.return_value': {}}
 
-            yield mock.Mock(feed=self._bar_feed, **event_attrs)
+            yield unittest.mock.Mock(feed=self._bar_feed, **event_attrs)
 
         self._event_set.count = 1
         self._event_set.__iter__ = iterable
@@ -486,7 +485,7 @@ class TestEvents(unittest.TestCase):
         def iterable(obj):
             event_attrs = {'dict.return_value': {}}
 
-            yield mock.Mock(feed=self._bar_feed, **event_attrs)
+            yield unittest.mock.Mock(feed=self._bar_feed, **event_attrs)
 
         self._event_set.count = 1
         self._event_set.__iter__ = iterable

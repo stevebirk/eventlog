@@ -188,7 +188,7 @@ Tests
 The `eventlog.lib` and `eventlog.service` modules both currently have tests,
 with 100% code coverage.
 
-The tests require the `mock`, `nose` and `coverage` modules to be installed.
+The tests require the `nose` and `coverage` modules to be installed.
 
 To run the tests, you will need a PostgreSQL instance with a `test` user who
 is the owner of a `test` db with password `test`.

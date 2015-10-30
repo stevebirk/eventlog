@@ -9,7 +9,7 @@ from eventlog.lib.scraper import (fetch_url, get_largest_image, crop_image,
                                   get_images, content_to_image_obj,
                                   get_thumbnail_from_url)
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 
 from PIL import Image
 

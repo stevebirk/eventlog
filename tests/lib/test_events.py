@@ -11,7 +11,7 @@ from eventlog.lib.store.search import _SCHEMA
 from util import feeds_create_fake, events_create_fake, events_compare
 from util import events_create_single
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 
 import feed_generator
 

@@ -254,9 +254,9 @@ def events_compare(testcase, orig, new):
 
 
 def random_string(length):
-    return ''.join(random.sample(
-        (string.ascii_letters + "012345689") * 2, length
-    ))
+    return ''.join(
+        random.sample((string.ascii_letters + "012345689") * 2, length)
+    )
 
 
 def random_dict(base, leaf=False):

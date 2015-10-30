@@ -6,7 +6,7 @@ import shutil
 
 import eventlog.lib.archiver
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 
 TEMP_DIR = '../testarchiver'
 

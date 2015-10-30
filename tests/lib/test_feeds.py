@@ -15,7 +15,7 @@ from eventlog.lib.events import Event, Fields, DATEFMT
 
 from util import events_create_single, events_create_fake, events_compare
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 
 LATEST = time.time()
 DELTA = 10*60
