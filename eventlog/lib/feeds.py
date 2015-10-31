@@ -111,8 +111,7 @@ class Feed(object, metaclass=abc.ABCMeta):
 
             events, next_url, next_headers = self.parse(data)
 
-            for e in events:
-                yield e
+            yield from events
 
             # if this feed is not keyed on the occurred time
             # and we have not explicitly requested all data, return early

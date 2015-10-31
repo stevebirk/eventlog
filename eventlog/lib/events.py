@@ -19,7 +19,7 @@ class InvalidField(Exception):
     pass
 
 
-class MissingEventIdException(Exception):
+class MissingEventIDException(Exception):
     pass
 
 

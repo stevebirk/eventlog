@@ -9,7 +9,7 @@ import psycopg2.pool
 import psycopg2.extras
 import psycopg2.extensions
 
-from eventlog.lib.events import Fields, InvalidField, MissingEventIdException
+from eventlog.lib.events import Fields, InvalidField, MissingEventIDException
 from eventlog.lib.feeds import Feed
 from eventlog.lib.loader import load
 from eventlog.lib.util import tz_unaware_local_dt_to_utc
@@ -40,15 +40,6 @@ def _event_to_tuple(e, is_related=False):
             e.original,
             e.archived,
             is_related)
-
-
-def _id_exists(cur, event_id):
-    cur.execute(
-        "select count(id) from events where id=%s",
-        (event_id, )
-    )
-
-    return bool(cur.fetchone()[0])
 
 
 class Store(object):
@@ -200,11 +191,6 @@ class Store(object):
 
             for e in events:
 
-                if not _id_exists(cur, e.id):
-                    raise MissingEventIdException(
-                        "Event with ID '%s' does not exist" % (e.id)
-                    )
-
                 cur.execute(
                     """
                     update events
@@ -215,6 +201,11 @@ class Store(object):
                     """,
                     _event_to_tuple(e)[2:-1] + (e.id, )
                 )
+
+                if not cur.rowcount:
+                    raise MissingEventIDException(
+                        "Event with ID '%s' does not exist" % (e.id)
+                    )
 
                 _LOG.info("updated %s", str(e))
 
