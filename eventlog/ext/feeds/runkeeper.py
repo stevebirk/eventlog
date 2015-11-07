@@ -82,7 +82,7 @@ class Runkeeper(Feed):
                     )
                 )
 
-            activity = json.loads(content)
+            activity = json.loads(content.decode('utf-8'))
 
             activities.append(activity)
 

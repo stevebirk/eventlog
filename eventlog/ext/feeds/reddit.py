@@ -102,7 +102,7 @@ class Reddit(Feed):
                         )
                     )
 
-                parsed = json.loads(content)
+                parsed = json.loads(content.decode('utf-8'))
 
                 entry = parsed[0]['data']['children'][0]
 

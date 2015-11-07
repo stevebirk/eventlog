@@ -38,7 +38,10 @@ class Behance(Feed):
         e.occurred = datetime.datetime.utcfromtimestamp(raw['timestamp'])
 
         # get largest cover
-        sizes = sorted([int(size) for size in raw['project']['covers']])
+        sizes = sorted(
+            [int(size) for size in raw['project']['covers']
+             if size != 'original']
+        )
         largest = sizes[-1]
 
         e.thumbnail_url = raw['project']['covers'][str(largest)]

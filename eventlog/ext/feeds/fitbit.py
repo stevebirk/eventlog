@@ -1,12 +1,13 @@
 import json
 import datetime
 import pytz
+import urllib.parse
+import httplib2
 import logging
+import base64
 
-import oauth2 as oauth
-
-from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.feeds import Feed, HTTPRequestFailure
+from eventlog.lib.events import Event
 
 _LOG = logging.getLogger(__name__)
 
@@ -23,6 +24,10 @@ class DateMissing(Exception):
     pass
 
 
+class RefreshTokenFailure(Exception):
+    pass
+
+
 class Fitbit(Feed):
 
     rate_limit = 150.0 / (60 * 60)  # 150 per hour
@@ -34,17 +39,14 @@ class Fitbit(Feed):
         self.uri = '/1/user/-/activities/date/%Y-%m-%d.json'
 
         # OAuth
-        self._CONSUMER_KEY = self.config['oauth1_consumer_key']
-        self._CONSUMER_SECRET = self.config['oauth1_consumer_secret']
-        self._USER_KEY = self.config['oauth1_user_key']
-        self._USER_SECRET = self.config['oauth1_user_secret']
+        self._CLIENT_ID = self.config['oauth2_client_id']
+        self._CLIENT_SECRET = self.config['oauth2_client_secret']
+        self._ACCESS_TOKEN = self.config['oauth2_access_token']
+        self._REFRESH_TOKEN = self.config['oauth2_refresh_token']
+        self.refresh_token_url = "https://api.fitbit.com/oauth2/token"
+
         self._ENCODED_USER_ID = self.config['encoded_user_id']
         self._SIGNUP_DATE = self.config['signup_date']
-        self.consumer = oauth.Consumer(
-            self._CONSUMER_KEY, self._CONSUMER_SECRET
-        )
-        self.signature_method = oauth.SignatureMethod_HMAC_SHA1()
-        self.token = oauth.Token(key=self._USER_KEY, secret=self._USER_SECRET)
 
         # convert SIGNUP_DATE to naive UTC datetime
         self.signup_date = self.timezone.localize(
@@ -52,6 +54,11 @@ class Fitbit(Feed):
         ).astimezone(pytz.utc).replace(tzinfo=None)
 
         self.next_date = None
+
+        self._headers = {
+            'Authorization': 'Bearer %s' % (self._ACCESS_TOKEN)
+        }
+        self._last_status = None
 
     def to_event(self, raw):
         e = Event()
@@ -63,6 +70,73 @@ class Fitbit(Feed):
         e.raw = raw
 
         return e
+
+    def refresh_access_token(self):
+        h = httplib2.Http()
+
+        body = {
+            "grant_type": "refresh_token",
+            "refresh_token": self._REFRESH_TOKEN
+        }
+
+        # make refresh request, update config
+        resp, content = h.request(
+            self.refresh_token_url,
+            "POST",
+            urllib.parse.urlencode(body),
+            headers={
+                'Authorization': 'Basic ' + base64.b64encode(
+                    str.encode(self._CLIENT_ID + ":" + self._CLIENT_SECRET)
+                ).decode('utf-8'),
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        )
+
+        if resp.status != 200:
+            raise HTTPRequestFailure(
+                "received non-200 status %s while refreshing tokens:\n%s" % (
+                    str(resp.status),
+                    content
+                )
+            )
+
+        data = json.loads(content.decode('utf-8'))
+
+        self._ACCESS_TOKEN = data["access_token"]
+        self.config['oauth2_access_token'] = self._ACCESS_TOKEN
+        self.overrides['oauth2_access_token'] = self._ACCESS_TOKEN
+
+        self._REFRESH_TOKEN = data["refresh_token"]
+        self.config['oauth2_refresh_token'] = self._REFRESH_TOKEN
+        self.overrides['oauth2_refresh_token'] = self._REFRESH_TOKEN
+
+        self._headers = {
+            'Authorization': 'Bearer %s' % (self._ACCESS_TOKEN)
+        }
+
+    def parse_status(self, resp, content, url, headers):
+        # response status of 401 indicates we need to refresh our token
+        if resp.status == 401:
+
+            # prevent infinite loop of attempting to refresh token if something
+            # goes wrong
+            if self._last_status == 401:
+                raise RefreshTokenFailure(
+                    "Received 401 response after attempt to refresh tokens."
+                )
+
+            self._last_status = 401
+            self.refresh_access_token()
+
+            # this update must always occur even in dry-run mode or any
+            # subsequent API requests will fail
+            self.store.update_feeds([self])
+
+            return True, url, self._headers
+        else:
+            self._last_status = resp.status
+
+        return Feed.parse_status(self, resp, content, url, headers)
 
     @staticmethod
     def get_text(raw):
@@ -105,15 +179,7 @@ class Fitbit(Feed):
 
         request_url = self.url + uri
 
-        oauth_request = oauth.Request.from_consumer_and_token(
-            self.consumer, token=self.token, http_url=request_url
-        )
-
-        oauth_request.sign_request(
-            self.signature_method, self.consumer, self.token
-        )
-
-        return request_url, oauth_request.to_header()
+        return request_url, self._headers
 
     def init_parse_params(self, **kwargs):
 

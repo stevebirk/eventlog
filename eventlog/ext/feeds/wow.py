@@ -60,7 +60,7 @@ class WoW(Feed):
                     )
                 )
 
-            item_data = json.loads(content)
+            item_data = json.loads(content.decode('utf-8'))
 
             quality = item_data.get('quality', 0)
             ilevel = item_data.get('itemLevel', 0)
