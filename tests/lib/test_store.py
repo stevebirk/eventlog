@@ -16,7 +16,9 @@ from flask import Flask
 from eventlog.lib.store import Store, InvalidTimeRangeException
 from eventlog.lib.store.eventquery import EventQuery
 from eventlog.lib.store.search import open_index, Index
-from eventlog.lib.events import Event, Fields, InvalidField
+from eventlog.lib.events import (Event, Fields,
+                                 InvalidField, MissingEventIDException)
+from eventlog.lib.feeds import MissingFeedIDException
 from eventlog.lib.util import tz_unaware_utc_dt_to_local
 
 from util import db_drop_all_data, db_init_schema, db_drop_all_events
@@ -236,6 +238,61 @@ class TestStoreModify(TestStoreWithDBBase):
 
         self.assertEqual(es.count, len(event_dicts))
 
+    def test_update_feeds_with_nonexistent(self):
+        feeds = store.get_feeds()
+
+        # grab the first feed
+        f = next(iter(feeds.values()))
+
+        # increment ID to one that doesn't exist
+        f.id = feed_generator.MAX_NUM + 1
+
+        self.assertRaises(
+            MissingFeedIDException,
+            store.update_feeds,
+            [f]
+        )
+
+    def test_update_feeds_change_config(self):
+        new_key = 'test_update_feeds_change_config'
+        new_value = "OMGVALUE"
+
+        feeds = store.get_feeds()
+
+        # grab the first feed
+        f = next(iter(feeds.values()))
+        f.overrides[new_key] = new_value
+
+        store.update_feeds([f])
+
+        # regrab the feed
+        feeds = store.get_feeds()
+
+        new_f = next(iter(feeds.values()))
+
+        self.assertIn(new_key, new_f.overrides)
+        self.assertEqual(new_value, new_f.overrides[new_key])
+        self.assertDictEqual(f.dict(admin=True), new_f.dict(admin=True))
+
+    def test_update_feeds_change_config_dry(self):
+        new_key = 'test_update_feeds_change_config_dry'
+        new_value = "OMGVALUE"
+
+        feeds = store.get_feeds()
+
+        # grab the first feed
+        f = next(iter(feeds.values()))
+        f.overrides[new_key] = new_value
+
+        store.update_feeds([f], dry=True)
+
+        # regrab the feed
+        feeds = store.get_feeds()
+
+        new_f = next(iter(feeds.values()))
+
+        self.assertNotIn(new_key, new_f.overrides)
+
     def test_update_events_change_title(self):
 
         event_dicts, events = self._add_events()
@@ -263,10 +320,8 @@ class TestStoreModify(TestStoreWithDBBase):
 
         event_dicts, events = self._add_events()
 
-        num = 1
-        for d in event_dicts:
-            d['title'] = 'changed to %d' % (num)
-            num += 1
+        for i, d in enumerate(event_dicts):
+            d['title'] = 'changed to %d' % (i)
 
         events = [Event.from_dict(d) for d in event_dicts]
 
@@ -293,7 +348,7 @@ class TestStoreModify(TestStoreWithDBBase):
         )
 
         self.assertRaises(
-            Exception,
+            MissingEventIDException,
             store.update_events,
             [e]
         )

@@ -10,7 +10,7 @@ import psycopg2.extras
 import psycopg2.extensions
 
 from eventlog.lib.events import Fields, InvalidField, MissingEventIDException
-from eventlog.lib.feeds import Feed
+from eventlog.lib.feeds import Feed, MissingFeedIDException
 from eventlog.lib.loader import load
 from eventlog.lib.util import tz_unaware_local_dt_to_utc
 
@@ -40,6 +40,19 @@ def _event_to_tuple(e, is_related=False):
             e.original,
             e.archived,
             is_related)
+
+
+def _feed_to_tuple(f):
+    return (f.id,
+            f.full_name,
+            f.short_name,
+            f.favicon,
+            f.color,
+            f.module,
+            f.overrides,
+            f.flags['is_public'],
+            f.flags['is_updating'],
+            f.flags['is_searchable'])
 
 
 class Store(object):
@@ -120,6 +133,44 @@ class Store(object):
             self._pool.putconn(conn)
 
         return True if res is not None else False
+
+    def update_feeds(self, feeds, dry=False):
+        conn = self._pool.getconn()
+        conn.autocommit = False
+        try:
+            cur = conn.cursor()
+
+            for f in feeds:
+
+                _LOG.info("updating %s", str(f))
+
+                cur.execute(
+                    """
+                    update feeds
+                    set (full_name, short_name, favicon, color, module, config,
+                         is_public, is_updating, is_searchable) =
+                        (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    where id = %s
+                    """,
+                    _feed_to_tuple(f)[1:] + (f.id, )
+                )
+
+                if not cur.rowcount:
+                    raise MissingFeedIDException(
+                        "Feed with ID '%s' does not exist" % (f.id)
+                    )
+
+            if not dry:
+                conn.commit()
+            else:
+                conn.rollback()
+
+        except Exception:
+            conn.rollback()
+            _LOG.error('rolled back update feed changes')
+            raise
+        finally:
+            self._pool.putconn(conn)
 
     def add_events(self, events, dry=False):
 

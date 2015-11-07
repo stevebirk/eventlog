@@ -22,6 +22,8 @@ DELTA = 10*60
 PAGES = 20
 PER_PAGE = 10
 STATUS = 200
+LAST_URL = None
+LAST_HEADERS = None
 
 
 class MockHttpResponse(object):
@@ -34,6 +36,11 @@ class MockHttp(object):
         pass
 
     def request(self, url, method, **kwargs):
+        global STATUS, LAST_URL, LAST_HEADERS
+
+        LAST_URL = url
+        LAST_HEADERS = kwargs.get('headers')
+
         if 'page' not in url:
             page = 1
         else:
@@ -60,7 +67,7 @@ class MockHttp(object):
 
         resp = MockHttpResponse(STATUS)
 
-        return resp, json.dumps(content)
+        return resp, json.dumps(content).encode('utf8')
 
 
 class TestFeed(Feed):
@@ -331,8 +338,8 @@ class TestFeeds(unittest.TestCase):
         resp2, second_last_page = conn.request('page=' + str(PAGES - 1), 'GET')
 
         with open(infile, 'w') as fh:
-            fh.write(last_page + '\n')
-            fh.write(second_last_page + '\n')
+            fh.write(last_page.decode('utf-8') + '\n')
+            fh.write(second_last_page.decode('utf-8') + '\n')
 
         events = self._feed.load(loadfile=infile)
 
@@ -347,8 +354,8 @@ class TestFeeds(unittest.TestCase):
         resp2, second_last_page = conn.request('page=' + str(PAGES - 1), 'GET')
 
         with open(infile, 'w') as fh:
-            fh.write(last_page + '\n')
-            fh.write(second_last_page + '\n')
+            fh.write(last_page.decode('utf-8') + '\n')
+            fh.write(second_last_page.decode('utf-8') + '\n')
 
         self._feed_non_date_key.store = Mock()
         self._feed_non_date_key.store.exists.return_value = False
@@ -505,6 +512,25 @@ class TestFeeds(unittest.TestCase):
 
         with self.assertRaises(HTTPRequestFailure):
             list(self._feed.iter_events())
+
+    def test_iter_events_with_retry_url_and_headers(self):
+        retry_url = "foo"
+        retry_headers = {"foo": "bar"}
+
+        with patch.object(self._feed, 'parse_status') as mock_parse_status:
+            mock_parse_status.side_effect = [
+                (True, retry_url, retry_headers), (False, None, None)
+            ]
+
+            # trigger first page load
+            for i in self._feed.iter_events():
+                break
+
+            self.assertEqual(LAST_URL, retry_url)
+            self.assertDictEqual(LAST_HEADERS, retry_headers)
+
+    def test_to_str(self):
+        self.assertEqual(str(self._feed), str(self._feed.dict(admin=True)))
 
 if __name__ == '__main__':
     unittest.main()

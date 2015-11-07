@@ -15,6 +15,10 @@ class HTTPRequestFailure(Exception):
     pass
 
 
+class MissingFeedIDException(Exception):
+    pass
+
+
 class Feed(object, metaclass=abc.ABCMeta):
 
     # properties
@@ -64,6 +68,9 @@ class Feed(object, metaclass=abc.ABCMeta):
 
         return d
 
+    def __str__(self):
+        return str(self.dict(admin=True))
+
     @abc.abstractmethod
     def init_parse_params(self, **kwargs):  # pragma: no cover
         pass
@@ -75,6 +82,18 @@ class Feed(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def to_event(self, raw):  # pragma: no cover
         pass
+
+    def parse_status(self, resp, content, url, headers):
+        if resp.status != 200:
+            raise HTTPRequestFailure(
+                'received non-200 status %s for url "%s":\n%s' % (
+                    str(resp.status),
+                    url,
+                    content
+                )
+            )
+
+        return False, None, None
 
     def iter_events(self, **kwargs):
 
@@ -91,25 +110,33 @@ class Feed(object, metaclass=abc.ABCMeta):
         conn = httplib2.Http(cache=self.config.get('http_cache'))
 
         # get initial request URL and headers
-        next_url, next_headers = self.init_parse_params(**kwargs)
+        url, headers = self.init_parse_params(**kwargs)
 
-        while next_url:
-            _LOG.debug("making request to: %s", next_url)
+        while url:
+            _LOG.debug("making request url: %s, headers: %s", url, headers)
 
-            resp, content = conn.request(next_url, "GET", headers=next_headers)
+            resp, content = conn.request(url, "GET", headers=headers)
 
-            if resp.status != 200:
-                raise HTTPRequestFailure(
-                    'received non-200 status %s for url "%s":\n%s' % (
-                        str(resp.status),
-                        next_url,
-                        content
-                    )
-                )
+            # retry request if required
+            retry, retry_url, retry_headers = self.parse_status(
+                resp, content, url, headers
+            )
 
-            data = json.loads(content)
+            if retry:
 
-            events, next_url, next_headers = self.parse(data)
+                if retry_url is not None:
+                    url = retry_url
+
+                if retry_headers is not None:
+                    headers = retry_headers
+
+                _LOG.warn("retrying with url: %s, headers: %s", url, headers)
+
+                continue
+
+            data = json.loads(content.decode('utf-8'))
+
+            events, url, headers = self.parse(data)
 
             yield from events
 
