@@ -91,13 +91,15 @@ below:
 **Dribbble**
 
     username                # Dribbble username
+    oauth2_client_id        # OAuth2 client ID
+    oauth2_client_secret    # OAuth2 client secret
+    oauth2_access_token     # OAuth2 access token
 
 **Fitbit**
 
-    oauth1_consumer_key     # OAuth1 consumer key
-    oauth1_consumer_secret  # OAuth1 consumer secret
-    oauth1_user_key         # OAuth1 user key
-    oauth1_user_secret      # Oauth1 user secret
+    oauth2_client_id        # OAuth2 client ID
+    oauth2_client_secret    # OAuth2 client secret
+    oauth2_access_token     # OAuth2 access token
     encoded_user_id         # Encoded Fitbit user ID (see Fitbit API docs)
     signup_date             # date Fitbit account was created in YYYY-MM-DD
                             # form
