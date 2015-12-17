@@ -8,7 +8,7 @@ import eventlog.lib.archiver
 
 from unittest.mock import patch, Mock
 
-TEMP_DIR = '../testarchiver'
+TEMP_DIR = 'tests/testarchiver'
 
 
 class TestArchiver(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestArchiver(unittest.TestCase):
         )
 
         res = eventlog.lib.archiver.archive_url(
-            url, '../', 'testarchiver'
+            url, 'tests', 'testarchiver'
         )
 
         self.assertEqual(
@@ -43,7 +43,7 @@ class TestArchiver(unittest.TestCase):
         )
 
         res = eventlog.lib.archiver.archive_url(
-            url, '../', 'testarchiver', dry=True
+            url, 'tests', 'testarchiver', dry=True
         )
 
         self.assertEqual(
@@ -51,7 +51,7 @@ class TestArchiver(unittest.TestCase):
             expected
         )
 
-        self.assertEqual(os.path.exists('../' + expected), False)
+        self.assertEqual(os.path.exists('tests' + expected), False)
 
     @patch('eventlog.lib.archiver.parse_localized_path')
     @patch('os.makedirs')
@@ -70,10 +70,10 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, '../', 'doesntexist'
+            url, 'tests', 'doesntexist'
         )
 
-        mock_makedirs.assert_called_with('../doesntexist')
+        mock_makedirs.assert_called_with('tests/doesntexist')
 
     @patch('eventlog.lib.archiver.parse_localized_path')
     @patch('os.makedirs')
@@ -94,10 +94,10 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, '../', 'doesntexist'
+            url, 'tests', 'doesntexist'
         )
 
-        mock_makedirs.assert_called_with('../doesntexist')
+        mock_makedirs.assert_called_with('tests/doesntexist')
 
         self.assertIsNone(res)
 
@@ -118,7 +118,7 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, '../', 'doesntexist'
+            url, 'tests', 'doesntexist'
         )
 
         self.assertIsNone(res)
@@ -142,7 +142,7 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, '../', 'doesntexist'
+            url, 'tests', 'doesntexist'
         )
 
         self.assertIsNone(res)

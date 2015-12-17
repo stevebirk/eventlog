@@ -13,3 +13,4 @@ tests/testindex
 tests/testarchive
 .coverage
 *.egg-info
+.cache
