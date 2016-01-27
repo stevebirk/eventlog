@@ -152,7 +152,6 @@ class EventsList(Resource):
             feeds = accessible_feeds
 
         if args.q:  # fetch by search query
-
             # all feeds
             to_mask = set(store.get_feeds())
 
@@ -190,9 +189,7 @@ class EventsList(Resource):
                 pagesize=args.limit,
                 timezone=args.tz
             )
-
         elif args.after and args.before:  # fetch by timerange
-
             if args.after >= args.before:
                 abort(
                     400,
@@ -208,7 +205,6 @@ class EventsList(Resource):
                 timezone=args.tz
             )
         elif args.after:  # fetch by timerange
-
             es = store.get_events_by_timerange(
                 start=args.after,
                 feeds=feeds,
@@ -217,7 +213,6 @@ class EventsList(Resource):
                 timezone=args.tz
             )
         elif args.before:  # fetch by timerange
-
             es = store.get_events_by_timerange(
                 end=args.before,
                 feeds=feeds,

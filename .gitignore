@@ -14,3 +14,4 @@ tests/testarchive
 .coverage
 *.egg-info
 .cache
+__pycache__
