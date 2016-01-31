@@ -196,6 +196,12 @@ class Store(object):
                 if e.related is not None:
                     for c in e.related:
 
+                        # this is needed for _event_to_tuple call below to
+                        # succeed for events fetched from the store since their
+                        # related events have no feed data
+                        if c.feed is None:
+                            c.feed = e.feed
+
                         # if the event already exists need is_related to be set
                         # properly
                         cur.execute(

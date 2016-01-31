@@ -13,9 +13,16 @@ class Delicious(Feed):
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)
 
-        self.url = "http://feeds.delicious.com/v2/json/%s" % (
-            self.config['username']
-        )
+        now = datetime.datetime.now()
+
+        username = self.config['username']
+
+        # HACK: change username case every hour to avoid weird server-side
+        # caching that results in always stale data
+        if now.hour % 2 == 0:
+            username = username.upper()
+
+        self.url = "http://feeds.delicious.com/v2/json/%s" % (username)
 
     def parse(self, data):
         return [self.to_event(entry) for entry in data], None, None
@@ -25,8 +32,9 @@ class Delicious(Feed):
         e.feed = self.dict()
         e.title = raw['d']
         e.link = raw['u']
-        e.occurred = datetime.datetime.strptime(raw['dt'],
-                                                '%Y-%m-%dT%H:%M:%SZ')
+        e.occurred = datetime.datetime.strptime(
+            raw['dt'], '%Y-%m-%dT%H:%M:%SZ'
+        )
         e.thumbnail_url = raw['u']
         e.archive_url = raw['u']
         e.raw = raw
@@ -61,7 +69,7 @@ class Delicious(Feed):
                     dt = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
                     data = {
-                        "a": "ruuk",
+                        "a": self.config['username'],
                         "d": str(title),
                         "n": "",
                         "u": str(link),

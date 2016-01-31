@@ -29,7 +29,7 @@ Currently includes built-in support for the following services:
 
 setup(
     name='Eventlog',
-    version='1.0.dev0',
+    version='1.1.dev0',
     author='Steve Birk',
     author_email='stevebirk@gmail.com',
     description='storage and HTTP/JSON retrieval API for web service data',
@@ -77,7 +77,7 @@ setup(
         'Whoosh>=2.5',
         'beautifulsoup4',
         'docopt',
-        'gevent>=1.0',
+        'gevent>=1.1',
         'httplib2',
         'itsdangerous',
         'lxml',
