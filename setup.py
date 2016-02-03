@@ -77,7 +77,7 @@ setup(
         'Whoosh>=2.5',
         'beautifulsoup4',
         'docopt',
-        'gevent>=1.1',
+        'gevent>=1.1rc2',
         'httplib2',
         'itsdangerous',
         'lxml',
