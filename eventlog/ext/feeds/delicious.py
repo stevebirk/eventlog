@@ -13,16 +13,9 @@ class Delicious(Feed):
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)
 
-        now = datetime.datetime.now()
-
-        username = self.config['username']
-
-        # HACK: change username case every hour to avoid weird server-side
-        # caching that results in always stale data
-        if now.hour % 2 == 0:
-            username = username.upper()
-
-        self.url = "http://feeds.delicious.com/v2/json/%s" % (username)
+        self.url = "http://feeds.delicious.com/v2/json/%s" % (
+            self.config['username']
+        )
 
     def parse(self, data):
         return [self.to_event(entry) for entry in data], None, None
@@ -43,6 +36,24 @@ class Delicious(Feed):
 
     def init_parse_params(self, **kwargs):
         return self.url, None
+
+    def parse_status(self, resp, content, url, headers):
+        retry, retry_url, retry_headers = Feed.parse_status(
+            self, resp, content, url, headers
+        )
+
+        if resp.get('x-cache') == 'HIT':
+
+            link_header = resp.get('link')
+
+            if link_header is not None:
+                m = re.search('<(.*?)>', link_header)
+
+                if m is not None:
+                    retry = True
+                    retry_url = m.group(1)
+
+        return retry, retry_url, retry_headers
 
     def load(self, loadfile=None, dumpfile=None):
 
