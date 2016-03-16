@@ -101,8 +101,9 @@ below:
     oauth2_client_secret    # OAuth2 client secret
     oauth2_access_token     # OAuth2 access token
     encoded_user_id         # Encoded Fitbit user ID (see Fitbit API docs)
-    signup_date             # date Fitbit account was created in YYYY-MM-DD
-                            # form
+    signup_date             # date Fitbit account was created in YYYY-MM-DD form
+    embed_intraday_steps    # whether or not to embded intraday step data in
+                            # the raw response data (default=True)
 
 **Flickr**
 

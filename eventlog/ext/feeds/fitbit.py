@@ -30,23 +30,28 @@ class RefreshTokenFailure(Exception):
 
 class Fitbit(Feed):
 
-    rate_limit = 150.0 / (60 * 60)  # 150 per hour
+    # 150 per hour is the normal Fitbit rate limit, but we do two requests
+    rate_limit = (150.0 / 2) / (60 * 60)
 
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)
 
         self.url = 'https://api.fitbit.com'
         self.uri = '/1/user/-/activities/date/%Y-%m-%d.json'
+        self.steps_uri = '/1/user/-/activities/steps/date/%Y-%m-%d/1d.json'
+        self.refresh_token_uri = '/oauth2/token'
 
         # OAuth
         self._CLIENT_ID = self.config['oauth2_client_id']
         self._CLIENT_SECRET = self.config['oauth2_client_secret']
         self._ACCESS_TOKEN = self.config['oauth2_access_token']
         self._REFRESH_TOKEN = self.config['oauth2_refresh_token']
-        self.refresh_token_url = "https://api.fitbit.com/oauth2/token"
 
         self._ENCODED_USER_ID = self.config['encoded_user_id']
         self._SIGNUP_DATE = self.config['signup_date']
+        self._EMBED_INTRADAY_STEPS = self.config.get(
+            'embed_intraday_steps', True
+        )
 
         # convert SIGNUP_DATE to naive UTC datetime
         self.signup_date = self.timezone.localize(
@@ -81,7 +86,7 @@ class Fitbit(Feed):
 
         # make refresh request, update config
         resp, content = h.request(
-            self.refresh_token_url,
+            self.url + self.refresh_token_uri,
             "POST",
             urllib.parse.urlencode(body),
             headers={
@@ -137,6 +142,41 @@ class Fitbit(Feed):
             self._last_status = resp.status
 
         return Feed.parse_status(self, resp, content, url, headers)
+
+    def fetch_intraday_steps(self, data):
+        h = httplib2.Http()
+
+        # convert nextdate to our local timezone
+        nextdate_local = self.timezone.normalize(
+            self.next_date.astimezone(self.timezone)
+        )
+
+        # create request
+        uri = nextdate_local.strftime(self.steps_uri)
+
+        url = self.url + uri
+
+        success = False
+
+        while not success:
+            resp, content = h.request(url, "GET", headers=self._headers)
+
+            # retry request if required (using the same url and headers)
+            retry, _, _ = self.parse_status(resp, content, url, self._headers)
+
+            success = not retry
+
+        steps_data = json.loads(content.decode('utf-8'))
+
+        # prune the 0 steps minutes out
+        steps_data['activities-steps-intraday']['dataset'] = list(
+            filter(
+                lambda x: x['value'] != 0,
+                steps_data['activities-steps-intraday']['dataset']
+            )
+        )
+
+        data.update(steps_data)
 
     @staticmethod
     def get_text(raw):
@@ -195,6 +235,10 @@ class Fitbit(Feed):
         return self._make_request()
 
     def parse(self, data):
+
+        # before we update self.next_date, add the intraday data
+        if self._EMBED_INTRADAY_STEPS:
+            self.fetch_intraday_steps(data)
 
         if 'datetime' not in data and self.next_date is not None:
             data['datetime'] = self.next_date.strftime(
