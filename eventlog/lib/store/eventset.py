@@ -113,6 +113,7 @@ class EventSetBySearch(object):
         self.pagesize = pagesize
         self.timezone = timezone
         self.query = query
+        self.count = 0
 
         parser = MultifieldParser(["title", "text"], self._index.schema)
         self._parsed_query = parser.parse(self.query)
@@ -136,13 +137,9 @@ class EventSetBySearch(object):
         self._mask_terms = mask_terms
 
         hits = self._search_page(1, to_events=False)
+
         if hits is not None:
             self.count = hits.total
-
-            if to_filter is not None or to_mask is not None:
-                self.count -= hits.results.filtered_count
-        else:
-            self.count = 0
 
         self.num_pages = int(math.ceil(self.count / float(self.pagesize)))
 
