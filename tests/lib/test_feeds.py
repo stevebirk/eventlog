@@ -70,7 +70,7 @@ class MockHttp(object):
         return resp, json.dumps(content).encode('utf8')
 
 
-class TestFeed(Feed):
+class MockFeed(Feed):
 
     rate_limit = 100
 
@@ -104,7 +104,7 @@ class TestFeed(Feed):
         return e
 
 
-class TestFeedWithNonDateKey(TestFeed):
+class MockFeedWithNonDateKey(MockFeed):
     key_field = Fields.TITLE
 
 
@@ -122,7 +122,7 @@ class TestFeeds(unittest.TestCase):
     def setUp(self):
         global STATUS
 
-        self._feed = TestFeed({
+        self._feed = MockFeed({
             'overrides': {
                 'media_dir': '/notreal/',
                 'thumbnail_subdir': 'thumb',
@@ -133,7 +133,7 @@ class TestFeeds(unittest.TestCase):
             }
         })
 
-        self._feed_non_date_key = TestFeedWithNonDateKey({
+        self._feed_non_date_key = MockFeedWithNonDateKey({
             'overrides': {
                 'media_dir': '/notreal/',
                 'thumbnail_subdir': 'thumb',
@@ -389,7 +389,7 @@ class TestFeeds(unittest.TestCase):
         }
         config['module'] = 'testfeeds.testfeed'
 
-        testfeed = TestFeed(config)
+        testfeed = MockFeed(config)
 
         base_dict = testfeed.dict()
 

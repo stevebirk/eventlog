@@ -13,7 +13,7 @@ from unittest.mock import patch, Mock
 
 from PIL import Image
 
-TEMP_DIR = '2f'
+TEMP_DIR = 'testsub'
 
 
 class TestScraper(unittest.TestCase):
@@ -236,7 +236,7 @@ class TestScraper(unittest.TestCase):
         )
         image = Image.open(test_image_path)
 
-        res = save_img_to_dir(image, '.', '')
+        res = save_img_to_dir(image, '.', TEMP_DIR)
 
         self.assertIsNotNone(res)
 
@@ -253,7 +253,7 @@ class TestScraper(unittest.TestCase):
         )
         image = Image.open(test_image_path)
 
-        res = save_img_to_dir(image, '.', '', use_original_format=True)
+        res = save_img_to_dir(image, '.', TEMP_DIR, use_original_format=True)
 
         self.assertIsNotNone(res)
 
@@ -275,7 +275,7 @@ class TestScraper(unittest.TestCase):
 
         mock_exists.return_value = True
 
-        res = save_img_to_dir(image, '.', '')
+        res = save_img_to_dir(image, '.', TEMP_DIR)
 
         self.assertIsNotNone(res)
 
@@ -288,7 +288,7 @@ class TestScraper(unittest.TestCase):
         )
         image = Image.open(test_image_path)
 
-        res = save_img_to_dir(image, '.', '', dry=True)
+        res = save_img_to_dir(image, '.', TEMP_DIR, dry=True)
 
         self.assertIsNone(res)
 

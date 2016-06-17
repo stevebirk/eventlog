@@ -74,7 +74,7 @@ setup(
         'Flask-Cache>=0.13.1',
         'Flask-RESTful>=0.3.1',
         'Pillow',
-        'Whoosh>=2.5',
+        'Whoosh==2.7.0',
         'beautifulsoup4',
         'docopt',
         'gevent>=1.1',

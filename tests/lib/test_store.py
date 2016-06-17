@@ -204,6 +204,10 @@ class TestStoreModify(TestStoreWithDBBase):
 
         store.add_events([related])
 
+        # remove feed data on related event to match what is retrieved from the
+        # store
+        related.feed = None
+
         e = Event.from_dict(
             events_create_single(
                 self._feeds[0],
@@ -216,16 +220,22 @@ class TestStoreModify(TestStoreWithDBBase):
 
         es = store.get_events_by_ids([e.id])
 
+        self.assertEqual(es.count, 1)
+
         from_store = es.get_page(1).events[0]
 
-        self.assertEqual(es.count, 1)
         self.assertEqual(len(from_store.related), 1)
 
-        # need to remove feed from related
         related_dict = related.dict()
         related_dict['feed'] = None
 
         self.assertEqual(from_store.related[0].dict(), related_dict)
+
+        es = store.get_events_by_ids([related.id])
+
+        related_from_store = es.get_page(1).events[0]
+
+        self.assertIsNotNone(related_from_store.feed)
 
     def test_add_existing_event(self):
         event_dicts, events = self._add_events()
