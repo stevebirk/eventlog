@@ -13,7 +13,7 @@ class Delicious(Feed):
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)
 
-        self.url = "http://feeds.delicious.com/v2/json/%s" % (
+        self.url = "http://feeds.del.icio.us/v2/json/%s" % (
             self.config['username']
         )
 
