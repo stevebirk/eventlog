@@ -13,8 +13,10 @@ class Digg(Feed):
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)
 
-        self.url = ("http://services.digg.com/2.0/user.getActivity"
-                    "?type=json&username=%s") % (self.config['username'])
+        self.url = (
+            "http://services.digg.com/2.0/user.getActivity"
+            "?type=json&username=%s"
+        ) % (self.config['username'])
 
     def init_parse_params(self, **kwargs):
         raise Exception("Digg feed does not support parsing new data.")

@@ -65,10 +65,7 @@ class EventQuery(object):
         self.baseparams += params
 
     def add_sort(self, field, direction='desc'):
-        self.sort = 'order by %s %s' % (
-            field,
-            direction
-        )
+        self.sort = 'order by %s %s' % (field, direction)
 
     def add_limit(self, limit, offset=None):
         self.limit = limit

@@ -22,11 +22,14 @@ class Twitter(Feed):
         self._CONSUMER_SECRET = self.config['oauth1_consumer_secret']
         self._USER_KEY = self.config['oauth1_user_key']
         self._USER_SECRET = self.config['oauth1_user_secret']
+
         self.consumer = oauth.Consumer(
             self._CONSUMER_KEY,
             self._CONSUMER_SECRET
         )
+
         self.signature_method = oauth.SignatureMethod_HMAC_SHA1()
+
         self.token = oauth.Token(key=self._USER_KEY, secret=self._USER_SECRET)
 
     def to_event(self, raw):
@@ -34,8 +37,7 @@ class Twitter(Feed):
         e.feed = self.dict()
         e.text = raw['text']
         e.occurred = datetime.datetime.strptime(
-            raw['created_at'],
-            '%a %b %d %H:%M:%S +0000 %Y'
+            raw['created_at'], '%a %b %d %H:%M:%S +0000 %Y'
         )
         e.raw = raw
 
@@ -45,10 +47,9 @@ class Twitter(Feed):
         url = self.url
 
         oauth_request = oauth.Request.from_consumer_and_token(
-            self.consumer,
-            token=self.token,
-            http_url=url
+            self.consumer, token=self.token, http_url=url
         )
+
         oauth_request.sign_request(
             self.signature_method, self.consumer, self.token
         )

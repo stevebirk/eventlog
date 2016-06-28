@@ -176,10 +176,7 @@ class Feed(object, metaclass=abc.ABCMeta):
                 if not exists:
                     events.append(e)
                 else:  # pragma: no cover
-                    _LOG.debug(
-                        "%s... already exists. Ignoring.",
-                        str(e)
-                    )
+                    _LOG.debug("%s... already exists. Ignoring.", str(e))
 
             else:   # add any events newer then the last entry for that source
 
@@ -330,7 +327,7 @@ class Feed(object, metaclass=abc.ABCMeta):
                 )
 
         kwargs = {
-            'rate_limit': True,
+            'rate_limit': True
         }
 
         if latest_date is not None:

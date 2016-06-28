@@ -104,14 +104,12 @@ class Api(_Api):
                 else:  # pragma: no cover
                     data["message"] = ""
 
-                data['message'] += ('You have requested this URI [' +
-                                    request.path + '] but did you mean ' +
-                                    ' or '.join(
-                                        (
-                                            rules[match]
-                                            for match in close_matches
-                                        )
-                                    ) + ' ?')
+                data['message'] += (
+                    'You have requested this URI [' + request.path +
+                    '] but did you mean ' +
+                    ' or '.join((rules[match] for match in close_matches)) +
+                    ' ?'
+                )
 
         if code == 405:
             headers['Allow'] = e.valid_methods

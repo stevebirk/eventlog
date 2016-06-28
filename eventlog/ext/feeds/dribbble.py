@@ -31,8 +31,7 @@ class Dribbble(Feed):
         e.title = raw['shot']['title']
         e.link = raw['shot']['html_url']
         e.occurred = datetime.datetime.strptime(
-            raw['created_at'],
-            '%Y-%m-%dT%H:%M:%SZ'
+            raw['created_at'], '%Y-%m-%dT%H:%M:%SZ'
         )
         e.thumbnail_url = raw['shot']['html_url']
         e.original_url = raw['shot']['images'].get('hidpi')

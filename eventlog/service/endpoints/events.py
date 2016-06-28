@@ -45,10 +45,7 @@ class Events(Resource):
     def get(self, event_id):
         args = self.parser.parse_args()
 
-        es = store.get_events_by_ids(
-            [event_id],
-            timezone=args.tz
-        )
+        es = store.get_events_by_ids([event_id], timezone=args.tz)
 
         is_public = True if not is_authorized() else None
 

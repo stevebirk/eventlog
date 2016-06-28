@@ -10,11 +10,7 @@ def limit(value):
     max_allowed = current_app.config['PAGE_SIZE_MAX']
     value = int(value)
     if not (0 < value <= max_allowed):
-        raise ValueError(
-            "valid range is 0 < limit <= %d" % (
-                max_allowed
-            )
-        )
+        raise ValueError("valid range is 0 < limit <= %d" % (max_allowed))
 
     return value
 
@@ -33,9 +29,7 @@ def datetime_format(value):
         return datetime.datetime.strptime(value, DATEFMT.replace('%z', ''))
     except Exception:
         raise ValueError(
-            "expected datetime format is '%s'" % (
-                DATEFMT.replace('%z', '')
-            )
+            "expected datetime format is '%s'" % (DATEFMT.replace('%z', ''))
         )
 
 
@@ -44,9 +38,7 @@ def date_format(value):
     try:
         return datetime.datetime.strptime(value, fmt)
     except Exception:
-        raise ValueError(
-            "expected date format is '%s'" % (fmt)
-        )
+        raise ValueError("expected date format is '%s'" % (fmt))
 
 
 def tz(value):
@@ -54,6 +46,4 @@ def tz(value):
         pytz.timezone(value)
         return value
     except pytz.exceptions.UnknownTimeZoneError:
-        raise ValueError(
-            "unrecognized timezone '%s'" % (value)
-        )
+        raise ValueError("unrecognized timezone '%s'" % (value))

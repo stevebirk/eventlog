@@ -80,9 +80,7 @@ class Store(object):
             'TIME_ZONE': 'UTC'
         }
 
-        default_config.update(
-            app.config.get('STORE', {})
-        )
+        default_config.update(app.config.get('STORE', {}))
 
         self._config = default_config
         self._pool = self._init_pool()
@@ -117,7 +115,8 @@ class Store(object):
         params = (value,)
 
         eq = EventQuery(
-            basequery, params,
+            basequery,
+            params,
             embed_feeds=False,
             embed_related=False
         )
@@ -544,11 +543,7 @@ class Store(object):
     def get_events_by_search(self, query, timezone=None, **kwargs):
         basequery = "select * from events where id in %s"
 
-        eq = EventQuery(
-            basequery,
-            embed_feeds=True,
-            embed_related=False
-        )
+        eq = EventQuery(basequery, embed_feeds=True, embed_related=False)
 
         es = self._index.search(
             query,

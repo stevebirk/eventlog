@@ -39,10 +39,7 @@ def archive_url(url, rootdir, subdir, dry=False):
 
     command = _COMMAND[:]
 
-    archive_dir = os.path.join(
-        rootdir,
-        subdir,
-    )
+    archive_dir = os.path.join(rootdir, subdir)
 
     if dry:
         # when in dry mode, write files to /tmp and remove them after
@@ -83,7 +80,9 @@ def archive_url(url, rootdir, subdir, dry=False):
         if 0 < retcode < 8:
             _LOG.error(
                 'unable to archive url: %s, returncode: %d, stderr:\n%s',
-                url, retcode, str(error, 'utf-8')
+                url,
+                retcode,
+                str(error, 'utf-8')
             )
         else:
             localized_path = parse_localized_path(error)

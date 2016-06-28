@@ -21,8 +21,10 @@ class Flickr(Feed):
     def __init__(self, config, **kwargs):
         Feed.__init__(self, config, **kwargs)
 
-        baseurl = ("https://secure.flickr.com/services/rest/"
-                   "?method=flickr.people.getPhotos")
+        baseurl = (
+            "https://secure.flickr.com/services/rest/"
+            "?method=flickr.people.getPhotos"
+        )
 
         extras = [
             'description', 'license', 'date_upload',
@@ -48,11 +50,15 @@ class Flickr(Feed):
         self._CONSUMER_SECRET = self.config['oauth1_consumer_secret']
         self._USER_KEY = self.config['oauth1_user_key']
         self._USER_SECRET = self.config['oauth1_user_secret']
-        self.consumer = oauth.Consumer(self._CONSUMER_KEY,
-                                       self._CONSUMER_SECRET)
+
+        self.consumer = oauth.Consumer(
+            self._CONSUMER_KEY,
+            self._CONSUMER_SECRET
+        )
+
         self.signature_method = oauth.SignatureMethod_HMAC_SHA1()
-        self.token = oauth.Token(key=self._USER_KEY,
-                                 secret=self._USER_SECRET)
+
+        self.token = oauth.Token(key=self._USER_KEY, secret=self._USER_SECRET)
 
     def _make_url(self, page=1):
         url = self.url + ("&page=%d" % (page))

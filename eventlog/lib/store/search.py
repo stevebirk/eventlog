@@ -38,9 +38,7 @@ def open_index(path, force_new=False):
             index = create_in(path, _SCHEMA)
 
     except Exception:
-        _LOG.exception(
-            "Unable to get search index at '%s'", path
-        )
+        _LOG.exception("Unable to get search index at '%s'", path)
 
     return index
 
@@ -142,6 +140,12 @@ class Index(object):
             return
 
         return EventSetBySearch(
-            self._index, pool, query, eventquery, pagesize,
-            timezone=timezone, to_mask=to_mask, to_filter=to_filter
+            self._index,
+            pool,
+            query,
+            eventquery,
+            pagesize,
+            timezone=timezone,
+            to_mask=to_mask,
+            to_filter=to_filter
         )

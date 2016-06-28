@@ -121,10 +121,7 @@ class EventSetBySearch(object):
         filter_terms = None
         if to_filter is not None:
             filter_terms = whoosh.query.Or(
-                [
-                    whoosh.query.Term("feed", str(feed))
-                    for feed in to_filter
-                ]
+                [whoosh.query.Term("feed", str(feed)) for feed in to_filter]
             )
 
         mask_terms = None

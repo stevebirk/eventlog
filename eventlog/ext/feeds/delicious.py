@@ -86,7 +86,6 @@ class Delicious(Feed):
                         "u": str(link),
                         "t": str(tags),
                         "dt": str(dt)
-
                     }
 
                     events.append(self.to_event(data))

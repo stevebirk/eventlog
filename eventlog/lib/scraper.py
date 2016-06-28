@@ -349,9 +349,7 @@ def save_img_to_dir(img, rootdir, subdir, dry=False,
         if not dry:
             img.save(filename, img_format, quality=95)
     else:
-        _LOG.info(
-            "image file matching MD5 '%s' already exists", md5
-        )
+        _LOG.info("image file matching MD5 '%s' already exists", md5)
 
     if dry:
         metadata = None

@@ -60,7 +60,7 @@ class Foursquare(Feed):
         next_headers = None
         next_url = None
 
-        if (found == self.limit):
+        if found == self.limit:
             next_url = self._make_url(self.offset)
             self.offset += 100
             self.limit = 100

@@ -39,8 +39,10 @@ class Behance(Feed):
 
         # get largest cover
         sizes = sorted(
-            [int(size) for size in raw['project']['covers']
-             if size != 'original']
+            [
+                int(size) for size in raw['project']['covers']
+                if size != 'original'
+            ]
         )
         largest = sizes[-1]
 
