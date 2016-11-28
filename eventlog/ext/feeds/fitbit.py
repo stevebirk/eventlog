@@ -8,16 +8,9 @@ import base64
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
 from eventlog.lib.events import Event
+from eventlog.lib.util import tz_unaware_local_dt_to_utc
 
 _LOG = logging.getLogger(__name__)
-
-
-def _should_make_request(dt):
-    # get datetime for now in UTC
-    now = pytz.utc.localize(datetime.datetime.utcnow())
-
-    # create requests for dates that are within nextdate + 10m
-    return (dt + datetime.timedelta(hours=5, days=1) < now)
 
 
 class DateMissing(Exception):
@@ -25,6 +18,10 @@ class DateMissing(Exception):
 
 
 class RefreshTokenFailure(Exception):
+    pass
+
+
+class DeviceIDNotFound(Exception):
     pass
 
 
@@ -40,6 +37,7 @@ class Fitbit(Feed):
         self.uri = '/1/user/-/activities/date/%Y-%m-%d.json'
         self.steps_uri = '/1/user/-/activities/steps/date/%Y-%m-%d/1d.json'
         self.refresh_token_uri = '/oauth2/token'
+        self.devices_uri = '/1/user/-/devices.json'
 
         # OAuth
         self._CLIENT_ID = self.config['oauth2_client_id']
@@ -47,17 +45,19 @@ class Fitbit(Feed):
         self._ACCESS_TOKEN = self.config['oauth2_access_token']
         self._REFRESH_TOKEN = self.config['oauth2_refresh_token']
 
-        self._ENCODED_USER_ID = self.config['encoded_user_id']
         self._SIGNUP_DATE = self.config['signup_date']
         self._EMBED_INTRADAY_STEPS = self.config.get(
             'embed_intraday_steps', True
         )
+        self._DEVICE_ID = self.config['device_id']
 
         # convert SIGNUP_DATE to naive UTC datetime
-        self.signup_date = self.timezone.localize(
-            datetime.datetime.strptime(self._SIGNUP_DATE, "%Y-%m-%d")
-        ).astimezone(pytz.utc).replace(tzinfo=None)
+        self.signup_date = tz_unaware_local_dt_to_utc(
+            datetime.datetime.strptime(self._SIGNUP_DATE, "%Y-%m-%d"),
+            self.timezone
+        ).replace(tzinfo=None)
 
+        self.last_sync_time = None
         self.next_date = None
 
         self._headers = {
@@ -143,6 +143,47 @@ class Fitbit(Feed):
 
         return Feed.parse_status(self, resp, content, url, headers)
 
+    def fetch_last_sync_time(self):
+        h = httplib2.Http()
+
+        url = self.url + self.devices_uri
+
+        success = False
+
+        while not success:
+            resp, content = h.request(url, "GET", headers=self._headers)
+
+            # retry request if required (using the same url and headers)
+            retry, _, _ = self.parse_status(resp, content, url, self._headers)
+
+            success = not retry
+
+        data = json.loads(content.decode('utf-8'))
+
+        _LOG.warn('Devices response: %s', content.decode('utf-8'))
+
+        device_found = False
+
+        for device in data:
+            if device['id'] == self._DEVICE_ID:
+                device_found = True
+
+                self.last_sync_time = tz_unaware_local_dt_to_utc(
+                    datetime.datetime.strptime(
+                        device['lastSyncTime'],
+                        '%Y-%m-%dT%H:%M:%S.%f'
+                    ),
+                    self.timezone
+                )
+
+                break
+
+        # can't proceed if we didn't find a last sync time
+        if not device_found:
+            raise DeviceIDNotFound(
+                'No sync data for device with ID: ' + self._DEVICE_ID
+            )
+
     def fetch_intraday_steps(self, data):
         h = httplib2.Http()
 
@@ -207,6 +248,15 @@ class Fitbit(Feed):
 
         return text
 
+    def _should_make_request(self):
+
+        if self.last_sync_time is None:
+            return False
+
+        delta = datetime.timedelta(hours=5, days=1)
+
+        return (self.next_date + delta < self.last_sync_time)
+
     def _make_request(self):
 
         # convert nextdate to our local timezone
@@ -229,32 +279,52 @@ class Fitbit(Feed):
         self.next_date = last_updated + datetime.timedelta(days=1)
         self.next_date = pytz.utc.localize(self.next_date)
 
-        if not _should_make_request(self.next_date):
+        # fetch the last synced datetime
+        self.fetch_last_sync_time()
+
+        if not self._should_make_request():
             return None, None
 
         return self._make_request()
 
     def parse(self, data):
 
-        # before we update self.next_date, add the intraday data
-        if self._EMBED_INTRADAY_STEPS:
+        def has_intraday(d):
+            return 'activities-steps-intraday' in d
+
+        # before we update self.next_date, add the intraday data if necessary
+        if self._EMBED_INTRADAY_STEPS and not has_intraday(data):
             self.fetch_intraday_steps(data)
 
-        if 'datetime' not in data and self.next_date is not None:
-            data['datetime'] = self.next_date.strftime(
-                '%a %b %d %H:%M:%S %z %Y'
-            )
-        else:
+        # embed datetime into data, or determine next date from already
+        # embedded value
+        if 'datetime' in data:
             self.next_date = datetime.datetime.strptime(
                 data['datetime'], '%a %b %d %H:%M:%S +0000 %Y'
             )
+            self.next_date = pytz.utc.localize(self.next_date)
 
+        elif self.next_date is not None:
+            data['datetime'] = self.next_date.strftime(
+                '%a %b %d %H:%M:%S %z %Y'
+            )
+
+        else:
+            DateMissing('Unable to embed datetime into event.')
+
+        # parse event
         events = [self.to_event(data)]
 
         self.next_date += datetime.timedelta(days=1)
         next_url, next_headers = None, None
 
-        if _should_make_request(self.next_date):
+        if self._should_make_request():
             next_url, next_headers = self._make_request()
 
         return events, next_url, next_headers
+
+    def load(self, loadfile=None, dumpfile=None):
+        # need to set last sync time before processing any items
+        self.fetch_last_sync_datetime()
+
+        Feed.load(self, loadfile, dumpfile)

@@ -61,13 +61,3 @@ class Dribbble(Feed):
             next_url = self.url + ("?page=%d" % (self._next_page))
 
         return events, next_url, self._headers
-
-    def deep_search(self, e, existing):
-
-        post_id = re.search("(.*?)-", e.link).group(1)
-
-        for key in existing:
-            if post_id in key:
-                return key
-
-        return None

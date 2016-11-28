@@ -354,9 +354,3 @@ class Feed(object, metaclass=abc.ABCMeta):
                 fh.close()
 
         return events
-
-    def deep_search(self, e, existing):  # pragma: no cover
-        return None
-
-    def find_missing(self, missing):  # pragma: no cover
-        return None
