@@ -42,7 +42,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
 
@@ -56,7 +56,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=None)
 
@@ -67,7 +67,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
 
@@ -78,7 +78,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
 
@@ -89,7 +89,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
 
@@ -105,7 +105,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=None)
 
@@ -116,7 +116,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
 
@@ -127,7 +127,7 @@ class TestFeeds(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 404)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
 

@@ -54,7 +54,7 @@ if __name__ == "__main__":
     start = time.time()
 
     # get events
-    es = store.get_events()
+    es = store.get_events_by_timerange()
 
     # index events
     store._index.index(es, dry=args['--dry-run'])

@@ -8,7 +8,7 @@ import enum
 from .scraper import (get_thumbnail_from_url, save_img_to_dir, url_to_image,
                       image_url_to_file)
 from .archiver import archive_url
-from .util import tz_unaware_utc_dt_to_local, pg_strptime, urlize
+from .util import utc_datetime_to_local, pg_strptime, urlize
 
 DATEFMT = '%Y-%m-%d %H:%M:%S.%f%z'
 
@@ -40,7 +40,7 @@ class Fields(enum.Enum):
         return getattr(e, self.name.lower())
 
 
-class Event(object):
+class Event:
     def __init__(self):
         self.id = str(uuid.uuid4())
         self.title = None
@@ -85,6 +85,19 @@ class Event(object):
 
         return e
 
+    def tuple(self, is_related=False):
+        return (self.id,
+                self.feed['id'] if self.feed is not None else None,
+                self.title,
+                self.text,
+                self.link,
+                self.occurred,
+                self.raw,
+                self.thumbnail,
+                self.original,
+                self.archived,
+                is_related)
+
     def dict(self, base_uri=None, related_count_only=False):
         d = {
             'id': self.id,
@@ -123,7 +136,8 @@ class Event(object):
             'id': str(self.id),
             'feed': str(self.feed['short_name']),
             'title': str(self.title),
-            'text': str(self.text)
+            'text': str(self.text),
+            'occurred': self.occurred
         }]
 
         # add any related documents
@@ -134,6 +148,7 @@ class Event(object):
                     'feed': str(self.feed['short_name']),
                     'title': str(r.title),
                     'text': str(r.text),
+                    'occurred': r.occurred
                 })
 
         return docs
@@ -146,10 +161,8 @@ class Event(object):
             return self.related[-1].occurred
 
     def localize(self, timezone):
-        tz = pytz.timezone(timezone)
-
         # localize this event
-        self.occurred = tz_unaware_utc_dt_to_local(self.occurred, tz)
+        self.occurred = utc_datetime_to_local(self.occurred, timezone)
 
         # localize any related events
         if self.related is not None:

@@ -1,4 +1,8 @@
+import abc
 import math
+import datetime
+
+from collections import namedtuple
 
 from psycopg2 import DataError
 
@@ -6,43 +10,104 @@ import whoosh.query
 from whoosh.qparser import QueryParser, MultifieldParser
 
 from eventlog.lib.events import Event
+from eventlog.lib.util import local_datetime_to_utc, utc_datetime_to_local
 
-from .pagination import Page
+from .pagination import Page, InvalidPage, ByTimeRangeCursor, BySearchCursor
 
 
-class EventSet(object):
+class EventSet(metaclass=abc.ABCMeta):
 
     def __init__(self, pool, eventquery, pagesize, timezone=None):
-
-        self._pool = pool
-        self._eventquery = eventquery
-
         self.pagesize = pagesize
         self.timezone = timezone
 
-        conn = self._pool.getconn()
-        conn.autocommit = True
-        try:
-            cur = conn.cursor()
-            cur.execute(
-                "select count(*) from (" + self._eventquery.basequery + ") t",
-                self._eventquery.baseparams
-            )
-            self.count = int(cur.fetchone()[0])
-            cur.close()
-        except DataError:
-            self.count = 0
-        finally:
-            self._pool.putconn(conn)
+        self._eventquery = eventquery
+        self._pool = pool
+        self._cursor = None
 
-        self.num_pages = int(math.ceil(self.count / float(self.pagesize)))
+        # local cache of event count
+        self.__count = None
+
+    @property
+    def count(self):
+        return len(self)
+
+    @property
+    def num_pages(self):
+        return int(math.ceil(self.count / float(self.pagesize)))
+
+    def __len__(self):
+        if self.__count is None:
+            self.__count = self._count()
+
+        return self.__count
+
+    @abc.abstractmethod
+    def __iter__(self):  # pragma: no cover
+        # should iterate through all events in the set
+        pass
+
+    @abc.abstractmethod
+    def _count(self):  # pragma: no cover
+        # returns total count of events
+        pass
+
+    @abc.abstractmethod
+    def page(self, cursor=None):  # pragma: no cover
+        pass
+
+    def pages(self, cursor=None):
+
+        p = self.page(cursor)
+
+        yield p
+
+        while p.next is not None:
+            p = self.page()
+
+            yield p
+
+
+class EventSetByQuery(EventSet):
+
+    def _count(self):
+        # reset query limit
+        self._eventquery.set_limit(None)
+
+        count = None
+
+        try:
+            with self._pool.connect() as cur:
+
+                cur.execute(
+                    "select count(*) from ({basequery}) t".format(
+                        basequery=self._eventquery.basequery
+                    ),
+                    self._eventquery.basequery.params
+                )
+
+                count = int(cur.fetchone()[0])
+
+        except DataError:
+            count = 0
+
+        return count
+
+    @property
+    def num_pages(self):
+        num = super().num_pages
+
+        if (self.count % self.pagesize) == 0:
+            num += 1
+
+        return num
 
     def __iter__(self):
-        conn = self._pool.getconn()
-        conn.autocommit = True
-        try:
+        # reset query limit
+        self._eventquery.set_limit(None)
 
-            cur = conn.cursor()
+        with self._pool.connect() as cur:
+
             # executing as iterable, get all
             cur.execute(self._eventquery.query, self._eventquery.params)
 
@@ -53,147 +118,198 @@ class EventSet(object):
                     e.localize(self.timezone)
 
                 yield e
-        finally:
-            self._pool.putconn(conn)
 
-    def __len__(self):
-        return self.count
+    def page(self, cursor=None):
 
-    def get_page(self, page):
+        # move cursor if provided
+        if cursor is not None:
+            self._cursor = cursor
 
-        if self.num_pages == 0 and page == 1:
-            return Page([], None, None, 0)
+        # set query cursor
+        self._eventquery.set_cursor(self._cursor)
 
-        if not (0 < page <= self.num_pages):
-            return None
+        # set query limit
+        self._eventquery.set_limit(self.pagesize)
 
-        offset = (page - 1) * self.pagesize
-
-        if self._eventquery.sort is None:
-            self._eventquery.add_sort('occurred')
-
-        self._eventquery.add_limit(
-            self.pagesize,
-            offset if offset > 0 else None
-        )
-
-        conn = self._pool.getconn()
-        conn.autocommit = True
-        try:
-            cur = conn.cursor()
+        # perform query
+        with self._pool.connect() as cur:
             cur.execute(self._eventquery.query, self._eventquery.params)
-            rows = cur.fetchall()
-        finally:
-            self._pool.putconn(conn)
 
-        events = [Event.from_dict(r[0]) for r in rows]
+            events = [Event.from_dict(r[0]) for r in cur]
 
-        if self.timezone is not None:
-            [e.localize(self.timezone) for e in events]
+        # if there were at least pagesize events, set up next page
+        if len(events) == self.pagesize:
+            self._cursor = ByTimeRangeCursor(
+                events[-1].occurred,
+                events[-1].id
+            )
 
-        next_page = page + 1
-        if next_page > self.num_pages:
-            next_page = None
+        # otherwise, indicate there is no next page, and reset internal cursor
+        else:
+            self._cursor = None
 
-        prev_page = None
-        if page > 1:
-            prev_page = page - 1
-
-        return Page(events, next_page, prev_page, self.count)
+        return Page(events, self._cursor, timezone=self.timezone)
 
 
-class EventSetBySearch(object):
+SearchMetadata = namedtuple('Metadata', ['count', 'latest'])
+
+
+class EventSetBySearch(EventSet):
 
     def __init__(self, index, pool, query, eventquery, pagesize, timezone=None,
-                 to_mask=None, to_filter=None):
-        self._eventquery = eventquery
-        self._pool = pool
+                 to_mask=None, to_filter=None, before=None, after=None):
+
+        super().__init__(pool, eventquery, pagesize, timezone=timezone)
+
         self._index = index
 
-        self.pagesize = pagesize
-        self.timezone = timezone
+        self._filter_terms = None
+        self._mask_terms = None
+
+        self._metadata = SearchMetadata(0, None)
+
         self.query = query
-        self.count = 0
+
+        self.before = before
+        self.after = after
+
+        # convert any provided timestamps to UTC
+        if self.before is not None:
+            self.before = local_datetime_to_utc(self.before, self.timezone)
+
+        if self.after is not None:
+            self.after = local_datetime_to_utc(self.after, self.timezone)
 
         parser = MultifieldParser(["title", "text"], self._index.schema)
+
         self._parsed_query = parser.parse(self.query)
 
-        filter_terms = None
+        # build feed filters and masks
         if to_filter is not None:
-            filter_terms = whoosh.query.Or(
+            self._filter_terms = whoosh.query.Or(
                 [whoosh.query.Term("feed", str(feed)) for feed in to_filter]
             )
 
-        mask_terms = None
         if to_mask is not None:
-            mask_terms = whoosh.query.Or(
+            self._mask_terms = whoosh.query.Or(
                 [whoosh.query.Term("feed", str(feed)) for feed in to_mask]
             )
 
-        self._filter_terms = filter_terms
-        self._mask_terms = mask_terms
+        # build daterange filter
+        if self.before is not None or self.after is not None:
 
-        hits = self._search_page(1, to_events=False)
+            # default after is a very early timestamp
+            after = (
+                self.after
+                if self.after is not None
+                else datetime.datetime.utcfromtimestamp(1)
+            )
 
-        if hits is not None:
-            self.count = hits.total
+            # default before is the current timestamp
+            before = (
+                self.before
+                if self.before is not None
+                else datetime.datetime.utcnow()
+            )
 
-        self.num_pages = int(math.ceil(self.count / float(self.pagesize)))
+            filter_term = whoosh.query.DateRange(
+                "occurred",
+                after,
+                before,
+                startexcl=True,
+                endexcl=True
+            )
 
-    def __len__(self):
-        return self.count
+            if self._filter_terms is None:
+                self._filter_terms = filter_term
+            else:
+                self._filter_terms &= filter_term
 
-    def _search_page(self, page, to_events=True):
+        # determine metadata
+        self._search_metadata()
+
+    @property
+    def latest(self):
+        if self._metadata.latest is not None:
+            return utc_datetime_to_local(self._metadata.latest, self.timezone)
+
+    def _count(self):
+        return self._metadata.count
+
+    def _search_metadata(self, sortedby="occurred", reverse=True):
         with self._index.searcher() as searcher:
             # search!
             hits = searcher.search_page(
-                self._parsed_query, page,
+                self._parsed_query,
+                1,
+                filter=self._filter_terms,
+                mask=self._mask_terms,
+                pagelen=self.pagesize,
+                sortedby=sortedby,
+                reverse=reverse
+            )
+
+            if hits:
+                # data stored in Whooosh is already UTC
+                self._metadata = SearchMetadata(
+                    hits.total,
+                    hits[0]["occurred"]
+                )
+
+    def _search_page(self):
+
+        if self._cursor is None:
+            # set initial cursor
+            self._cursor = BySearchCursor(1)
+
+        with self._index.searcher() as searcher:
+
+            # search!
+            hits = searcher.search_page(
+                self._parsed_query,
+                self._cursor.page,
                 filter=self._filter_terms,
                 mask=self._mask_terms,
                 pagelen=self.pagesize
             )
 
-            if not hits:
-                return None
-
-            if not to_events:
-                return hits
+            if not hits and self._cursor.page == 1:
+                return []
+            elif not hits:
+                raise InvalidPage
 
             event_ids = tuple([hit["id"] for hit in hits])
 
+            events = {}
+
             # get events from db
-            conn = self._pool.getconn()
-            conn.autocommit = True
-            try:
-                cur = conn.cursor()
+            with self._pool.connect() as cur:
                 cur.execute(self._eventquery.query, (event_ids, ))
-                rows = cur.fetchall()
-            finally:
-                self._pool.putconn(conn)
 
-            events = [Event.from_dict(r[0]) for r in rows]
+                # maintain ordering by score
+                for r in cur:
+                    e = Event.from_dict(r[0])
+                    events[e.id] = e
 
-            if self.timezone is not None:
-                [e.localize(self.timezone) for e in events]
+            return [events[i] for i in event_ids]
 
-            return events
+    def __iter__(self):
+        for _ in range(1, self.num_pages + 1):
+            yield from self.page()
 
-    def get_page(self, page):
+    def page(self, cursor=None):
 
-        if self.num_pages == 0 and page == 1:
-            return Page([], None, None, 0)
+        # set cursor
+        if cursor is not None:
+            self._cursor = cursor
 
-        if not (0 < page <= self.num_pages):
-            return None
+        events = self._search_page()
 
-        events = self._search_page(page)
+        # increment page in cursor
+        self._cursor.page += 1
 
-        next_page = page + 1
-        if next_page > self.num_pages:
-            next_page = None
+        # indicate there is no next page, reset internal cursor
+        if self._cursor.page > self.num_pages:
+            self._cursor = None
 
-        prev_page = None
-        if page > 1:
-            prev_page = page - 1
-
-        return Page(events, next_page, prev_page, self.count)
+        return Page(events, self._cursor, timezone=self.timezone)

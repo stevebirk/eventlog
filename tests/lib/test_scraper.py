@@ -2,6 +2,7 @@ import unittest
 import os.path
 import shutil
 import hashlib
+import tempfile
 
 from eventlog.lib.scraper import (fetch_url, get_largest_image, crop_image,
                                   image_url_to_file, save_img_to_dir,
@@ -13,21 +14,18 @@ from unittest.mock import patch, Mock
 
 from PIL import Image
 
-TEMP_DIR = 'testsub'
+SUB_DIR = 'testscraper'
 
 
 class TestScraper(unittest.TestCase):
 
-    def setUp(self):
-        self.files_to_cleanup = []
+    @classmethod
+    def setUpClass(cls):
+        cls.tempdir = tempfile.mkdtemp()
 
-    def tearDown(self):
-        for filename in self.files_to_cleanup:
-            if os.path.exists(filename):
-                os.unlink(filename)
-
-        if os.path.exists(TEMP_DIR):
-            shutil.rmtree(TEMP_DIR)
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tempdir)
 
     @patch('httplib2.Http')
     def test_fetch_url(self, mock_http):
@@ -143,13 +141,11 @@ class TestScraper(unittest.TestCase):
     def test_image_url_to_file(self):
         url = "http://httpbin.org/image/jpeg"
 
-        res = image_url_to_file(url, '.', '', 'testimg')
+        res = image_url_to_file(url, self.tempdir, '', 'testimg')
 
         self.assertIsNotNone(res)
 
         filename = res['path']
-
-        self.files_to_cleanup.append(filename)
 
     @patch('urllib.request.urlretrieve')
     def test_image_url_to_file_bad_retrieve(self, mock_url_retrieve):
@@ -160,7 +156,7 @@ class TestScraper(unittest.TestCase):
 
         url = "http://httpbin.org/image/jpeg"
 
-        res = image_url_to_file(url, '.', '', 'testimg')
+        res = image_url_to_file(url, self.tempdir, '', 'testimg')
 
         self.assertIsNone(res)
 
@@ -173,7 +169,7 @@ class TestScraper(unittest.TestCase):
 
         url = "http://httpbin.org/image/jpeg"
 
-        res = image_url_to_file(url, '.', '', 'testimg')
+        res = image_url_to_file(url, self.tempdir, '', 'testimg')
 
         self.assertIsNone(res)
 
@@ -199,7 +195,7 @@ class TestScraper(unittest.TestCase):
 
         url = "http://httpbin.org/image/jpeg"
 
-        res = image_url_to_file(url, '.', '', 'testimg')
+        res = image_url_to_file(url, self.tempdir, '', 'testimg')
 
         self.assertIsNone(res)
 
@@ -211,7 +207,7 @@ class TestScraper(unittest.TestCase):
                                            mock_makedirs,
                                            mock_rename):
 
-        filename = 'badimage.jpeg'
+        filename = os.path.join(self.tempdir, 'badimage.jpeg')
 
         def side_effect(url):
             with open(filename, 'w') as fh:
@@ -223,11 +219,9 @@ class TestScraper(unittest.TestCase):
 
         url = "http://test.local/image.jpeg"
 
-        res = image_url_to_file(url, '.', '', 'testimg')
+        res = image_url_to_file(url, self.tempdir, '', 'testimg')
 
         self.assertIsNone(res)
-
-        self.files_to_cleanup.append(filename)
 
     def test_save_img_to_dir(self):
         test_image_path = os.path.join(
@@ -236,15 +230,13 @@ class TestScraper(unittest.TestCase):
         )
         image = Image.open(test_image_path)
 
-        res = save_img_to_dir(image, '.', TEMP_DIR)
+        res = save_img_to_dir(image, self.tempdir, SUB_DIR)
 
         self.assertIsNotNone(res)
 
         filename = res['path']
 
         self.assertTrue(filename.endswith('.png'))
-
-        self.files_to_cleanup.append(filename)
 
     def test_save_img_to_dir_use_original_format(self):
         test_image_path = os.path.join(
@@ -253,15 +245,15 @@ class TestScraper(unittest.TestCase):
         )
         image = Image.open(test_image_path)
 
-        res = save_img_to_dir(image, '.', TEMP_DIR, use_original_format=True)
+        res = save_img_to_dir(
+            image, self.tempdir, SUB_DIR, use_original_format=True
+        )
 
         self.assertIsNotNone(res)
 
         filename = res['path']
 
         self.assertTrue(filename.endswith('.jpeg'))
-
-        self.files_to_cleanup.append(filename)
 
     @patch('os.path.exists')
     def test_save_img_to_dir_already_exists(self, mock_exists):
@@ -275,7 +267,7 @@ class TestScraper(unittest.TestCase):
 
         mock_exists.return_value = True
 
-        res = save_img_to_dir(image, '.', TEMP_DIR)
+        res = save_img_to_dir(image, self.tempdir, SUB_DIR)
 
         self.assertIsNotNone(res)
 
@@ -288,13 +280,13 @@ class TestScraper(unittest.TestCase):
         )
         image = Image.open(test_image_path)
 
-        res = save_img_to_dir(image, '.', TEMP_DIR, dry=True)
+        res = save_img_to_dir(image, self.tempdir, SUB_DIR, dry=True)
 
         self.assertIsNone(res)
 
         md5 = hashlib.md5(image.tobytes()).hexdigest()
 
-        filepath = os.path.join('.', '', md5[:2], md5 + '.png')
+        filepath = os.path.join(self.tempdir, '', md5[:2], md5 + '.png')
 
         self.assertFalse(os.path.exists(filepath))
 

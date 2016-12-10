@@ -18,8 +18,13 @@ _SCHEMA = Schema(
     id=ID(unique=True, stored=True),
     feed=ID,
     text=TEXT,
-    title=TEXT
+    title=TEXT,
+    occurred=DATETIME(stored=True, sortable=True)
 )
+
+
+class NoIndexAvailable(Exception):
+    pass
 
 
 def open_index(path, force_new=False):
@@ -43,7 +48,7 @@ def open_index(path, force_new=False):
     return index
 
 
-class Index(object):
+class Index:
 
     def __init__(self, index_dir):
         self._indexref = None
@@ -133,11 +138,10 @@ class Index(object):
 
         _LOCK.release()
 
-    def search(self, query, eventquery, pool, pagesize=10,
-               to_filter=None, to_mask=None, timezone=None):
+    def search(self, query, eventquery, pool, pagesize, **kwargs):
 
         if self._index is None:
-            return
+            return None
 
         return EventSetBySearch(
             self._index,
@@ -145,7 +149,5 @@ class Index(object):
             query,
             eventquery,
             pagesize,
-            timezone=timezone,
-            to_mask=to_mask,
-            to_filter=to_filter
+            **kwargs
         )

@@ -1,57 +1,55 @@
 import unittest
-import json
-import datetime
 import os
+import os.path
 import shutil
+import tempfile
 
 import eventlog.lib.archiver
 
 from unittest.mock import patch, Mock
 
-TEMP_DIR = 'tests/testarchiver'
+SUB_DIR = 'testarchiver'
 
 
 class TestArchiver(unittest.TestCase):
 
     def setUp(self):
         # make tempdir
-        os.makedirs(TEMP_DIR)
+        self.tempdir = tempfile.mkdtemp()
+
+        # create archive dir within it
+        os.makedirs(os.path.join(self.tempdir, SUB_DIR))
 
     def tearDown(self):
-        shutil.rmtree(TEMP_DIR)
+        shutil.rmtree(self.tempdir)
 
     def test_archiver_url_simple(self):
         url = "https://www.google.ca/?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA"
         expected = (
-            "testarchiver/"
+            SUB_DIR + "/"
             "www.google.ca/index.html?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA.html"
         )
 
         res = eventlog.lib.archiver.archive_url(
-            url, 'tests', 'testarchiver'
+            url, self.tempdir, SUB_DIR
         )
 
-        self.assertEqual(
-            res,
-            expected
-        )
+        self.assertEqual(res, expected)
 
     def test_archiver_url_simple_dry(self):
         url = "https://www.google.ca/?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA"
         expected = (
-            "testarchiver/index.html?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA.html"
+            SUB_DIR + "/"
+            "index.html?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA.html"
         )
 
         res = eventlog.lib.archiver.archive_url(
-            url, 'tests', 'testarchiver', dry=True
+            url, self.tempdir, SUB_DIR, dry=True
         )
 
-        self.assertEqual(
-            res,
-            expected
-        )
+        self.assertEqual(res, expected)
 
-        self.assertEqual(os.path.exists('tests' + expected), False)
+        self.assertEqual(os.path.exists(self.tempdir + expected), False)
 
     @patch('eventlog.lib.archiver.parse_localized_path')
     @patch('os.makedirs')
@@ -70,10 +68,12 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, 'tests', 'doesntexist'
+            url, self.tempdir, 'doesntexist'
         )
 
-        mock_makedirs.assert_called_with('tests/doesntexist')
+        mock_makedirs.assert_called_with(
+            os.path.join(self.tempdir, 'doesntexist')
+        )
 
     @patch('eventlog.lib.archiver.parse_localized_path')
     @patch('os.makedirs')
@@ -94,10 +94,12 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, 'tests', 'doesntexist'
+            url, self.tempdir, 'doesntexist'
         )
 
-        mock_makedirs.assert_called_with('tests/doesntexist')
+        mock_makedirs.assert_called_with(
+            os.path.join(self.tempdir, 'doesntexist')
+        )
 
         self.assertIsNone(res)
 
@@ -118,7 +120,7 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, 'tests', 'doesntexist'
+            url, self.tempdir, 'doesntexist'
         )
 
         self.assertIsNone(res)
@@ -142,7 +144,7 @@ class TestArchiver(unittest.TestCase):
         url = 'http://test.local/thingy.html'
 
         res = eventlog.lib.archiver.archive_url(
-            url, 'tests', 'doesntexist'
+            url, self.tempdir, 'doesntexist'
         )
 
         self.assertIsNone(res)

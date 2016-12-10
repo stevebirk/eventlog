@@ -25,9 +25,10 @@ CREATE TABLE events (
     is_related boolean
 );
 
-CREATE INDEX events_occurred_index ON events(occurred DESC);
+CREATE INDEX events_occurred ON events(occurred DESC);
+CREATE INDEX events_occurred_and_id ON events(occurred DESC, id DESC);
 CREATE INDEX events_is_related ON events(is_related);
-CREATE INDEX events_feed_id_and_occurred ON events(feed_id, occurred desc);
+CREATE INDEX events_feed_id_and_occurred ON events(feed_id, occurred DESC);
 CREATE INDEX events_title ON events(title);
 CREATE INDEX events_link ON events(link);
 

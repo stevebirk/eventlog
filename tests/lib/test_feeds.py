@@ -13,7 +13,7 @@ import httplib2
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
 from eventlog.lib.events import Event, Fields, DATEFMT
 
-from util import events_create_single, events_create_fake, events_compare
+from .util import events_create_single, events_create_fake, events_compare
 
 from unittest.mock import patch, Mock
 
@@ -26,12 +26,12 @@ LAST_URL = None
 LAST_HEADERS = None
 
 
-class MockHttpResponse(object):
+class MockHttpResponse:
     def __init__(self, status=200):
         self.status = status
 
 
-class MockHttp(object):
+class MockHttp:
     def __init__(self, *args, **kwargs):
         pass
 
@@ -130,6 +130,11 @@ class TestFeeds(unittest.TestCase):
                 'thumbnail_width': 200,
                 'original_subdir': 'orig',
                 'archive_subdir': 'arch'
+            },
+            'flags': {
+                'is_searchable': True,
+                'is_public': True,
+                'is_updating': True
             }
         })
 
@@ -145,6 +150,12 @@ class TestFeeds(unittest.TestCase):
         })
 
         STATUS = 200
+
+    def test_flag_attributes(self):
+        self.assertTrue(self._feed.is_searchable)
+
+        with self.assertRaises(AttributeError):
+            self._feed.is_foo
 
     def test_date_key_iter_events_no_args(self):
         events = list(self._feed.iter_events())
@@ -171,9 +182,7 @@ class TestFeeds(unittest.TestCase):
         # TODO: better verification
 
     def test_date_key_fetch_with_last_updated(self):
-        last_updated = datetime.datetime.utcfromtimestamp(
-            LATEST - 5*DELTA
-        )
+        last_updated = datetime.datetime.utcfromtimestamp(LATEST - 5 * DELTA)
 
         events = self._feed.fetch(last_updated=last_updated)
 
@@ -188,7 +197,7 @@ class TestFeeds(unittest.TestCase):
         self._feed.store = Mock()
 
         def mock_exists(key_name, key_value):
-            if (key_value == last_key and key_name == 'link'):
+            if key_value == last_key and key_name == 'link':
                 return True
             else:
                 return False

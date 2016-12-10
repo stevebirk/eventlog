@@ -52,7 +52,7 @@ if __name__ == "__main__":
     feeds = store.get_feeds()
 
     # get events
-    es = store.get_events(flattened=True)
+    es = store.get_events_by_timerange(flattened=True)
 
     batch = []
 

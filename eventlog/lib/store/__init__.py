@@ -1,61 +1,22 @@
-import time
-import math
 import logging
 import datetime
-import pytz
-
-import psycopg2
-import psycopg2.pool
-import psycopg2.extras
-import psycopg2.extensions
 
 from eventlog.lib.events import Fields, InvalidField, MissingEventIDException
 from eventlog.lib.feeds import Feed, MissingFeedIDException
 from eventlog.lib.loader import load
-from eventlog.lib.util import tz_unaware_local_dt_to_utc
+from eventlog.lib.util import local_datetime_to_utc
 
-from .pagination import Page
+from .pagination import ByTimeRangeCursor
 from .eventquery import EventQuery
-from .eventset import EventSet
+from .eventset import EventSetByQuery
 from .search import Index
+from .query import Query
+from .pool import Pool
 
 _LOG = logging.getLogger(__name__)
 
-psycopg2.extensions.register_adapter(dict, psycopg2.extras.Json)
 
-
-class InvalidTimeRangeException(Exception):
-    pass
-
-
-def _event_to_tuple(e, is_related=False):
-    return (e.id,
-            e.feed['id'],
-            e.title,
-            e.text,
-            e.link,
-            e.occurred,
-            e.raw,
-            e.thumbnail,
-            e.original,
-            e.archived,
-            is_related)
-
-
-def _feed_to_tuple(f):
-    return (f.id,
-            f.full_name,
-            f.short_name,
-            f.favicon,
-            f.color,
-            f.module,
-            f.overrides,
-            f.flags['is_public'],
-            f.flags['is_updating'],
-            f.flags['is_searchable'])
-
-
-class Store(object):
+class Store:
 
     def __init__(self):
         self._pool = None
@@ -83,17 +44,16 @@ class Store(object):
         default_config.update(app.config.get('STORE', {}))
 
         self._config = default_config
-        self._pool = self._init_pool()
-        self._index = self._init_index()
 
-    def _init_pool(self):
-        return psycopg2.pool.ThreadedConnectionPool(
+        self._pool = Pool(
             self._config['DB_POOL_MIN_CONN'],
             self._config['DB_POOL_MAX_CONN'],
-            database=self._config['DB_NAME'],
-            user=self._config['DB_USER'],
-            password=self._config['DB_PASS']
+            self._config['DB_NAME'],
+            self._config['DB_USER'],
+            self._config['DB_PASS']
         )
+
+        self._index = self._init_index()
 
     def _init_index(self):
         if self._config['INDEX_DIR'] is None:
@@ -111,33 +71,21 @@ class Store(object):
         if field not in Fields:
             raise InvalidField
 
-        basequery = "select * from events where " + str(field) + "=%s"
-        params = (value,)
+        query = Query("select {events}.* from events {events}")
+        query = query.add_clause("{events}." + str(field) + "=%s", (value, ))
 
-        eq = EventQuery(
-            basequery,
-            params,
-            embed_feeds=False,
-            embed_related=False
-        )
+        with self._pool.connect() as cur:
+            cur.execute(query.format(), query.params)
 
-        conn = self._pool.getconn()
-        conn.autocommit = True
-        try:
-            cur = conn.cursor()
-            cur.execute(eq.query, eq.params)
             res = cur.fetchone()
-            cur.close()
-        finally:
-            self._pool.putconn(conn)
 
         return True if res is not None else False
 
     def update_feeds(self, feeds, dry=False):
-        conn = self._pool.getconn()
-        conn.autocommit = False
-        try:
-            cur = conn.cursor()
+        with self._pool.connect(
+            dry=dry,
+            error_message="rolled back update feed changes"
+        ) as cur:
 
             for f in feeds:
 
@@ -151,7 +99,7 @@ class Store(object):
                         (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     where id = %s
                     """,
-                    _feed_to_tuple(f)[1:] + (f.id, )
+                    f.tuple()[1:] + (f.id, )
                 )
 
                 if not cur.rowcount:
@@ -159,24 +107,12 @@ class Store(object):
                         "Feed with ID '%s' does not exist" % (f.id)
                     )
 
-            if not dry:
-                conn.commit()
-            else:
-                conn.rollback()
-
-        except Exception:
-            conn.rollback()
-            _LOG.error('rolled back update feed changes')
-            raise
-        finally:
-            self._pool.putconn(conn)
-
     def add_events(self, events, dry=False):
 
-        conn = self._pool.getconn()
-        conn.autocommit = False
-        try:
-            cur = conn.cursor()
+        with self._pool.connect(
+            dry=dry,
+            error_message="rolled back new event changes"
+        ) as cur:
 
             for e in events:
 
@@ -186,7 +122,7 @@ class Store(object):
                     values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     on conflict do nothing
                     """,
-                    _event_to_tuple(e)
+                    e.tuple()
                 )
 
                 if not cur.rowcount:
@@ -195,7 +131,7 @@ class Store(object):
                 if e.related is not None:
                     for c in e.related:
 
-                        # this is needed for _event_to_tuple call below to
+                        # this is needed for .tuple call below to
                         # succeed for events fetched from the store since their
                         # related events have no feed data
                         if c.feed is None:
@@ -210,7 +146,7 @@ class Store(object):
                             on conflict (id) do update
                             set is_related = excluded.is_related
                             """,
-                            _event_to_tuple(c, is_related=True)
+                            c.tuple(is_related=True)
                         )
 
                         cur.execute(
@@ -224,26 +160,14 @@ class Store(object):
 
                 _LOG.info("saved %s", str(e))
 
-            if not dry:
-                conn.commit()
-            else:
-                conn.rollback()
-
-        except Exception:  # catches psycopg2.Error
-            conn.rollback()
-            _LOG.error('rolled back new event changes')
-            raise
-        finally:
-            self._pool.putconn(conn)
-
         # index new events
         self._index.index(events, dry=dry)
 
     def update_events(self, events, dry=False):
-        conn = self._pool.getconn()
-        conn.autocommit = False
-        try:
-            cur = conn.cursor()
+        with self._pool.connect(
+            dry=dry,
+            error_message="rolled back update event changes"
+        ) as cur:
 
             for e in events:
 
@@ -255,7 +179,7 @@ class Store(object):
                         (%s, %s, %s, %s, %s, %s, %s, %s)
                     where id = %s
                     """,
-                    _event_to_tuple(e)[2:-1] + (e.id, )
+                    e.tuple()[2:-1] + (e.id, )
                 )
 
                 if not cur.rowcount:
@@ -265,18 +189,6 @@ class Store(object):
 
                 _LOG.info("updated %s", str(e))
 
-            if not dry:
-                conn.commit()
-            else:
-                conn.rollback()
-
-        except Exception:
-            conn.rollback()
-            _LOG.error('rolled back update event changes')
-            raise
-        finally:
-            self._pool.putconn(conn)
-
         # re-index events
         self._index.index(events, dry=dry)
 
@@ -285,10 +197,10 @@ class Store(object):
         if events is None and feed is None:
             return
 
-        conn = self._pool.getconn()
-        conn.autocommit = False
-        try:
-            cur = conn.cursor()
+        with self._pool.connect(
+            dry=dry,
+            error_message="rolled back remove event changes"
+        ) as cur:
 
             if events is not None:  # delete specified events
                 for e in events:
@@ -320,237 +232,166 @@ class Store(object):
 
                 _LOG.info("removed all events for feed %s", feed)
 
-            if not dry:
-                conn.commit()
-            else:
-                conn.rollback()
-
-        except Exception:
-            conn.rollback()
-            _LOG.error('rolled back remove event changes')
-            raise
-        finally:
-            self._pool.putconn(conn)
-
         # remove index values here
         self._index.remove(events=events, feed=feed, dry=dry)
 
     def get_feeds(self, include_admin=False, **kwargs):
         flags = ['is_public', 'is_updating', 'is_searchable']
 
-        basequery = "select * from feeds"
-        clauses = []
-        params = ()
+        config = {}
+
+        # prepare query
+        query = Query("select * from feeds")
 
         for flag, value in kwargs.items():
             if flag in flags:
-                clauses.append(flag + "=%s")
-                params += (value,)
-
-        query = basequery
-        if len(clauses):
-            query += " where "
-            query += " and ".join(clauses)
+                query = query.add_clause(flag + "=%s", (value,))
 
         # grab feeds from database
-        conn = self._pool.getconn()
-        conn.autocommit = True
-        try:
-            cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cur.execute(query, params)
-            rows = cur.fetchall()
-        finally:
-            self._pool.putconn(conn)
+        with self._pool.connect(dict_cursor=True) as cur:
 
-        config = {}
+            cur.execute(query.format(), query.params)
 
-        for row in rows:
-            module = row['module']
+            for row in cur:
+                module = row['module']
 
-            overrides = row['config']
-            del row['config']
+                overrides = row['config']
+                del row['config']
 
-            config[module] = {
-                key: row[key] for key in row if not key.startswith('is_')
-            }
-            config[module]['flags'] = {
-                flag: row[flag] for flag in row if flag.startswith('is_')
-            }
-            config[module]['overrides'] = overrides
+                config[module] = {
+                    key: row[key] for key in row if not key.startswith('is_')
+                }
 
-            config[module]['default'] = {
-                key.lower(): self._config[key]
-                for key in self._config if not key.startswith('DB_')
-            }
+                config[module]['flags'] = {
+                    flag: row[flag] for flag in row if flag.startswith('is_')
+                }
+
+                config[module]['overrides'] = overrides
+
+                config[module]['default'] = {
+                    key.lower(): self._config[key]
+                    for key in self._config if not key.startswith('DB_')
+                }
 
         # load feeds
         feeds = load(Feed, config, store=self)
 
         return {feed.short_name: feed for feed in feeds}
 
-    def get_events(self, feeds=None, **kwargs):
+    def get_events_by_ids(self, ids, pagesize=10, timezone=None,
+                          embed_feeds=True, embed_related=True):
 
-        if feeds is None:
-            basequery = "select * from events where is_related=false"
-        else:
-            basequery = """
-                select events.* from events, feeds
-                where events.feed_id=feeds.id and is_related=false
-            """
-
-        if kwargs.get('flattened', False):
-            kwargs['embed_related'] = False
-            basequery = basequery.replace(' and is_related=false', '')
-            basequery = basequery.replace('where is_related=false', '')
+        basequery = Query("select {events}.* from events {events}")
 
         eq = EventQuery(
             basequery,
-            embed_feeds=True,
-            embed_related=kwargs.get('embed_related', True)
+            embed_feeds=embed_feeds,
+            embed_related=embed_related
         )
 
-        if feeds is not None:
-            eq.add_clause("short_name in %s", (tuple(feeds),))
+        eq.add_clause("{events}.id in %s", (tuple(set(ids)), ))
 
-        es = EventSet(
-            self._pool,
-            eq,
-            kwargs.get('pagesize', 10),
-            timezone=kwargs.get('timezone')
-        )
+        es = EventSetByQuery(self._pool, eq, pagesize, timezone=timezone)
 
         return es
 
-    def get_events_by_ids(self, ids, **kwargs):
+    def get_events_by_latest(self, feed=None, timezone=None, pagesize=10,
+                             embed_related=True):
 
-        basequery = "select * from events where id in %s"
-        params = (tuple(ids), )
-
-        eq = EventQuery(
-            basequery, params,
-            embed_feeds=kwargs.get('embed_feeds', True),
-            embed_related=kwargs.get('embed_related', True)
-        )
-
-        es = EventSet(
-            self._pool,
-            eq,
-            kwargs.get('pagesize', 10),
-            timezone=kwargs.get('timezone')
-        )
-
-        return es
-
-    def get_events_by_latest(self, feed=None, timezone=None, **kwargs):
-
-        basequery = """
-            select e.*
-            from events e
+        basequery = Query("""
+            select {events}.*
+            from events {events}
             inner join (
                 select distinct on (feed_id) id
                 from events where is_related=false
                 order by feed_id, occurred desc
-            ) latest on latest.id = e.id
-        """
+            ) latest on latest.id = {events}.id
+        """)
 
         if feed is not None:
-            basequery += "inner join feeds f on e.feed_id = f.id"
+            basequery += (
+                "inner join feeds {feeds} on {events}.feed_id = {feeds}.id"
+            )
 
         eq = EventQuery(
             basequery,
             embed_feeds=True,
-            embed_related=kwargs.get('embed_related', True)
+            embed_related=embed_related
         )
 
         if feed is not None:
-            eq.add_clause("f.short_name = %s", (feed,))
+            eq.add_clause("{feeds}.short_name = %s", (feed,))
 
-        es = EventSet(
-            self._pool,
-            eq,
-            kwargs.get('pagesize', 10),
-            timezone=timezone
-        )
+        es = EventSetByQuery(self._pool, eq, pagesize, timezone=timezone)
+
+        events = list(es)
 
         if feed is None:
-            # TODO: should return dict of feed: latest
-            return es
+            return {e.feed['short_name']: e for e in events}
+        elif events:
+            return events[0]
         else:
-            if es.count == 1:
-                return list(es)[0]
-            else:
-                return None
+            return None
 
     def get_events_by_date(self, d, feeds=None, **kwargs):
 
         # start of day
-        start = datetime.datetime(d.year, d.month, d.day, 0, 0, 0, 0)
+        dt = datetime.datetime(d.year, d.month, d.day, 0, 0, 0, 0)
 
-        # end of day
-        end = datetime.datetime(d.year, d.month, d.day, 23, 59, 59, 999999)
+        after = dt - datetime.timedelta(microseconds=1)
+        before = dt + datetime.timedelta(days=1)
 
-        return self.get_events_by_timerange(start, end, feeds, **kwargs)
+        return self.get_events_by_timerange(
+            before=before,
+            after=after,
+            feeds=feeds,
+            **kwargs
+        )
 
-    def get_events_by_timerange(self, start=None, end=None, feeds=None,
-                                **kwargs):
+    def get_events_by_timerange(self, before=None, after=None, pagesize=10,
+                                feeds=None, flattened=False, timezone=None,
+                                embed_related=True):
 
-        if feeds is None:
-            basequery = "select * from events where is_related=false"
-        else:
-            basequery = """
-                select events.* from events, feeds
-                where events.feed_id=feeds.id and is_related=false
-            """
+        basequery = Query("select {events}.* from events {events}")
 
-        if kwargs.get('timezone'):
-            # implies dates are localized, need to convert to UTC
-            tz = pytz.timezone(kwargs.get('timezone'))
-            start = tz_unaware_local_dt_to_utc(start, tz)
+        if feeds is not None:
+            basequery += ", feeds {feeds} where {events}.feed_id={feeds}.id"
 
-            if end is not None:
-                end = tz_unaware_local_dt_to_utc(end, tz)
+        if flattened:
+            embed_related = False
 
         eq = EventQuery(
             basequery,
             embed_feeds=True,
-            embed_related=kwargs.get('embed_related', True)
+            embed_related=embed_related
         )
 
-        if start is not None and end is not None:
-            eq.add_clause("occurred between %s and %s", (start, end))
-            eq.add_sort("occurred", "asc")
-        elif start is not None:
-            eq.add_clause("occurred >= %s", (start,))
-            eq.add_sort("occurred", "asc")
-        elif end is not None:
-            eq.add_clause("occurred <= %s", (end,))
-            eq.add_sort("occurred")
-        else:
-            raise InvalidTimeRangeException('must specify start and/or end')
+        if before is not None:
+            eq.add_clause(
+                "{events}.occurred < %s",
+                (local_datetime_to_utc(before, timezone),)
+            )
+
+        if after is not None:
+            eq.add_clause(
+                "{events}.occurred > %s",
+                (local_datetime_to_utc(after, timezone),)
+            )
 
         if feeds is not None:
-            eq.add_clause("short_name in %s", (tuple(feeds),))
+            eq.add_clause("{feeds}.short_name in %s", (tuple(feeds),))
 
-        es = EventSet(
-            self._pool,
-            eq,
-            kwargs.get('pagesize', 10),
-            timezone=kwargs.get('timezone')
+        if not flattened:
+            eq.add_clause("{events}.is_related=false")
+
+        return EventSetByQuery(self._pool, eq, pagesize, timezone=timezone)
+
+    def get_events_by_search(self, query, pagesize=10, **kwargs):
+
+        basequery = Query(
+            "select {events}.* from events {events} where {events}.id in %s"
         )
-
-        return es
-
-    def get_events_by_search(self, query, timezone=None, **kwargs):
-        basequery = "select * from events where id in %s"
 
         eq = EventQuery(basequery, embed_feeds=True, embed_related=False)
 
-        es = self._index.search(
-            query,
-            eq,
-            self._pool,
-            timezone=timezone,
-            **kwargs
-        )
-
-        return es
+        return self._index.search(query, eq, self._pool, pagesize, **kwargs)

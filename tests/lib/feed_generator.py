@@ -6,7 +6,7 @@ from eventlog.lib.events import Event, Fields
 MAX_NUM = 25
 
 
-class FakeFeedModule(object):
+class FakeFeedModule:
     pass
 
 holder = {}

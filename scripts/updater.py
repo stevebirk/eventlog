@@ -15,7 +15,7 @@ Usage: updater.py [-hjvd]
 # monkey patch away!
 import gevent
 import gevent.monkey
-gevent.monkey.patch_all(subprocess=True)  # noqa
+gevent.monkey.patch_all()  # noqa
 
 # psycopg2 monkey patch!
 import psycogreen.gevent

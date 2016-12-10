@@ -1,7 +1,12 @@
-class EventQuery(object):
-    def __init__(self, basequery, baseparams=None, embed_feeds=True,
-                 embed_related=True):
-        template = """with e as (%s)
+from .query import Query
+
+
+class EventQuery:
+    def __init__(self, basequery, embed_feeds=True, embed_related=True):
+
+        template = "with e as ({basequery})"
+
+        template += """
             select row_to_json(row) from (
                 select e.id, e.title, e.text, e.link, e.occurred,
                        e.raw, e.thumbnail, e.original, e.archived"""
@@ -42,58 +47,57 @@ class EventQuery(object):
             ) p on e.id = p.id
             """
 
-        template += " order by occurred desc"
-        template += ") row;"
+        template += " {sort}) row;"
 
         self.template = template
+
         self.basequery = basequery
-        self.baseparams = ()
-        if baseparams is not None:
-            self.baseparams = baseparams
 
-        self.sort = None
+        self.aliases = {'events': 'e'}
+
+        self.sort = 'order by {events}.occurred desc, {events}.id desc'
         self.limit = None
-        self.offset = None
+        self.cursor = None
 
-    def add_clause(self, clause, params):
-        if 'where' not in self.basequery.lower():
-            self.basequery += ' where '
-        else:
-            self.basequery += ' and '
-
-        self.basequery += clause
-        self.baseparams += params
-
-    def add_sort(self, field, direction='desc'):
-        self.sort = 'order by %s %s' % (field, direction)
-
-    def add_limit(self, limit, offset=None):
+    def set_limit(self, limit):
         self.limit = limit
-        self.offset = offset
+
+    def set_cursor(self, cursor):
+        self.cursor = cursor
+
+    def add_clause(self, clause, params=None):
+        self.basequery = self.basequery.add_clause(clause, params=params)
 
     @property
     def query(self):
-        basequery = self.basequery
+        query = self.basequery
 
-        if self.sort is not None:
-            basequery += ' ' + self.sort
+        if self.cursor is not None:
+            query = query.add_clause(
+                "({events}.occurred, {events}.id) < (%s, %s)"
+            )
+
+        query += ' ' + self.sort
 
         if self.limit is not None:
-            basequery += ' limit %s'
+            query += ' limit %s'
 
-        if self.offset is not None:
-            basequery += ' offset %s'
+        query = Query(
+            self.template.format(basequery=query, sort=self.sort),
+            params=query.params,
+            aliases=self.aliases
+        )
 
-        return self.template % basequery
+        return query.format()
 
     @property
     def params(self):
-        params = self.baseparams
+        params = self.basequery.params
+
+        if self.cursor is not None:
+            params += (self.cursor.occurred, self.cursor.id)
 
         if self.limit is not None:
             params += (self.limit,)
-
-        if self.offset is not None:
-            params += (self.offset,)
 
         return params

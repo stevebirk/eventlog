@@ -30,7 +30,7 @@ def check_has_cors(resp):
         )
 
 
-def verify_response(resp):
+def verify_headers(resp):
     check_content_type(resp)
     check_has_allow_origin(resp)
 

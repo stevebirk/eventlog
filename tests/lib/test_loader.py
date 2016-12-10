@@ -5,9 +5,9 @@ from eventlog.lib.feeds import Feed
 
 from unittest.mock import patch, Mock
 
-from util import feeds_create_fake
+from .util import feeds_create_fake
 
-import feed_generator
+from . import feed_generator
 
 
 class TestLoader(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestLoader(unittest.TestCase):
         num_to_create = feed_generator.MAX_NUM
 
         fake_feeds = [
-            feeds_create_fake(i, 'feed_generator')
+            feeds_create_fake(i, 'lib.feed_generator')
             for i in range(num_to_create)
         ]
         config = {
@@ -31,7 +31,7 @@ class TestLoader(unittest.TestCase):
         num_to_create = feed_generator.MAX_NUM
 
         fake_feeds = [
-            feeds_create_fake(i, 'feed_generator')
+            feeds_create_fake(i, 'lib.feed_generator')
             for i in range(num_to_create)
         ]
         config = {
@@ -49,7 +49,7 @@ class TestLoader(unittest.TestCase):
 
     @patch('builtins.__import__')
     def test_load_with_import_error(self, mock_import):
-        class Test(object):
+        class Test:
             pass
 
         mock_import.side_effect = Exception
@@ -60,20 +60,20 @@ class TestLoader(unittest.TestCase):
 
     @patch('builtins.__import__')
     def test_load_with_instantiation_error(self, mock_import):
-        class Test(object):
+        class Test:
             pass
 
         class Subclass(Test):
             def __init__(self, *args, **kwargs):
                 raise Exception
 
-        loaded = load(Test, {'test_loader': {}})
+        loaded = load(Test, {'lib.test_loader': {}})
 
         self.assertEqual(len(loaded), 0)
 
     @patch('builtins.__import__')
     def test_load_with_subclass_not_in_config(self, mock_import):
-        class Test(object):
+        class Test:
             pass
 
         class Subclass(Test):

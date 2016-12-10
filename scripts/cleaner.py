@@ -149,7 +149,7 @@ if __name__ == "__main__":
     start = time.time()
 
     # get events
-    es = store.get_events(flattened=True)
+    es = store.get_events_by_timerange(flattened=True)
 
     # determine on-disk paths that are referrenced
     logging.info("determining used file paths")

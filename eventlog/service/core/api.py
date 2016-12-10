@@ -131,7 +131,7 @@ class Api(_Api):
 class Argument(_Argument):
     def convert(self, value, op):
         try:
-            return super(Argument, self).convert(value, op)
+            return super().convert(value, op)
         except Exception as e:
             message = "Invalid value for '%s': %s" % (self.name, str(e))
             raise type(e)(message)

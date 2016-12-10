@@ -58,7 +58,7 @@ if __name__ == "__main__":
     only_for = [args['--only-for']] if args['--only-for'] is not None else None
 
     # get events
-    es = store.get_events(flattened=True, feeds=only_for)
+    es = store.get_events_by_timerange(flattened=True, feeds=only_for)
 
     batch = []
 

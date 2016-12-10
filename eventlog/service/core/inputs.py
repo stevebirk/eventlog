@@ -6,6 +6,10 @@ from flask import current_app
 from eventlog.lib.events import DATEFMT
 
 
+DATETIME_FMT = DATEFMT.replace('%z', '')
+DATE_FMT = "%Y-%m-%d"
+
+
 def limit(value):
     max_allowed = current_app.config['PAGE_SIZE_MAX']
     value = int(value)
@@ -26,19 +30,18 @@ def comma_separated(value):
 
 def datetime_format(value):
     try:
-        return datetime.datetime.strptime(value, DATEFMT.replace('%z', ''))
-    except Exception:
+        return datetime.datetime.strptime(value, DATETIME_FMT)
+    except Exception as e:
         raise ValueError(
-            "expected datetime format is '%s'" % (DATEFMT.replace('%z', ''))
+            "expected datetime format is '%s'" % (DATETIME_FMT)
         )
 
 
 def date_format(value):
-    fmt = "%Y-%m-%d"
     try:
-        return datetime.datetime.strptime(value, fmt)
+        return datetime.datetime.strptime(value, DATE_FMT)
     except Exception:
-        raise ValueError("expected date format is '%s'" % (fmt))
+        raise ValueError("expected date format is '%s'" % (DATE_FMT))
 
 
 def tz(value):

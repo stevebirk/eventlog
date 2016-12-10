@@ -1,4 +1,5 @@
 import copy
+import datetime
 
 from flask import current_app, url_for
 from flask.ext.restful import reqparse, abort, Resource
@@ -9,22 +10,43 @@ from eventlog.service.core.api import api, envelope, pagination, Argument
 from eventlog.service.core.auth import is_authorized
 from eventlog.service.core.caching import cache, make_cache_key
 from eventlog.service.core.inputs import (limit, comma_separated, tz,
-                                          datetime_format, date_format)
+                                          datetime_format, date_format,
+                                          DATETIME_FMT, DATE_FMT)
+
+import eventlog.service.core.cursor
+
+from eventlog.lib.store.pagination import InvalidPage
 
 
-def args_to_query_params(args):
+def to_query_params(args, cursor):
+    params = {}
 
-    params = []
+    # process dates and datetime args first
+    if args.on:
+        params["on"] = args.on.strftime(DATE_FMT)
 
-    for name, value in args.items():
+    if args.before:
+        params["before"] = args.before.strftime(DATETIME_FMT)
+
+    if args.after:
+        params["after"] = args.after.strftime(DATETIME_FMT)
+
+    params["cursor"] = eventlog.service.core.cursor.serialize(cursor)
+
+    remaining = [(k, v) for k, v in args.items() if k not in params]
+
+    # convert arguments back into query parameters
+    for name, value in remaining:
         if isinstance(value, list):
-            params.append('%s=%s' % (name, ','.join(value)))
+            params[name] = ','.join(value)
         elif value is not None:
-            params.append('%s=%s' % (name, str(value)))
+            params[name] = str(value)
 
     querystring = ''
-    if len(params):
-        querystring = '?' + '&'.join(params)
+
+    if params:
+        querystring = '?'
+        querystring += '&'.join(["%s=%s" % (k, v) for k, v in params.items()])
 
     return querystring
 
@@ -39,7 +61,7 @@ class Events(Resource):
             help='specify timezone as IANA info key for date values'
         )
 
-        super(Events, self).__init__()
+        super().__init__()
 
     @cache.cached(key_prefix=make_cache_key)
     def get(self, event_id):
@@ -70,12 +92,7 @@ class Events(Resource):
 class EventsList(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser(argument_class=Argument)
-        self.parser.add_argument(
-            'page',
-            type=int,
-            help='page number to retrieve',
-            default=1
-        )
+
         self.parser.add_argument(
             'limit',
             type=limit,
@@ -85,12 +102,12 @@ class EventsList(Resource):
         self.parser.add_argument(
             'feeds',
             type=comma_separated,
-            help='retrieve events by specific feed(s)'
+            help='filter events by specific feed(s)'
         )
         self.parser.add_argument(
             'q',
             type=str,
-            help='retrieve events by search query'
+            help='filter events by search query'
         )
         self.parser.add_argument(
             'embed_related',
@@ -103,38 +120,55 @@ class EventsList(Resource):
         self.parser.add_argument(
             'tz',
             type=tz,
-            help='specify timezone as IANA info key for date values'
+            help='specify timezone as IANA info key for datetime values'
         )
         self.parser.add_argument(
             'on',
             type=date_format,
-            help='retrive events that occurred on date'
+            help='filter events by occurred date'
         )
         self.parser.add_argument(
             'before',
             type=datetime_format,
-            help='retrieve events that occurred prior to date'
+            help='filter events that occurred before datetime'
         )
         self.parser.add_argument(
             'after',
             type=datetime_format,
-            help='retrieve events that occurred after date'
+            help='filter events that occurred after datetime'
+        )
+        self.parser.add_argument(
+            'cursor',
+            type=str,
+            help='pagination cursor'
         )
 
-        super(EventsList, self).__init__()
+        super().__init__()
 
     @cache.cached(key_prefix=make_cache_key)
     def get(self):
         args = self.parser.parse_args()
 
-        is_public = True if not is_authorized() else None
+        if args.cursor:
+            try:
+                args.cursor = eventlog.service.core.cursor.parse(
+                    args.cursor,
+                    args.tz
+                )
+            except ValueError as e:
+                abort(400, message="Invalid value for 'cursor': " + str(e))
 
-        accessible_feeds = store.get_feeds(is_public=is_public)
+        all_feeds = store.get_feeds()
+
+        feeds = all_feeds
+
+        if not is_authorized():
+            feeds = [k for k, f in all_feeds.items() if f.is_public]
 
         embed_related = False if not args.embed_related else True
 
         if args.feeds:
-            invalid_feeds = set(args.feeds) - set(accessible_feeds)
+            invalid_feeds = set(args.feeds) - set(feeds)
 
             if invalid_feeds:
                 abort(
@@ -145,25 +179,25 @@ class EventsList(Resource):
                 )
 
             feeds = args.feeds
-        else:
-            feeds = accessible_feeds
+
+        if args.after and args.before:  # validate timerange
+            if args.after >= args.before:
+                abort(400, message="Invalid timerange, after must be < before")
 
         if args.q:  # fetch by search query
-            # all feeds
-            to_mask = set(store.get_feeds())
+            everything = set(all_feeds)
+            requested = set(feeds)
+            unsearchable = set(
+                [k for k, f in all_feeds.items() if not f.is_searchable]
+            )
 
-            # remove feeds requested
-            to_mask -= set(feeds)
-
-            # add back unsearchable
-            to_mask = to_mask.union(set(store.get_feeds(is_searchable=False)))
+            # mask feeds not requested or unsearchable
+            to_mask = (everything - requested).union(unsearchable)
             to_mask = sorted(to_mask)
 
-            to_filter = set(feeds)
-
-            # remove unsearchable feeds
-            to_filter -= set(store.get_feeds(is_searchable=False))
-            to_filter = list(to_filter)
+            # filter requested feeds that are searchable
+            to_filter = requested - unsearchable
+            to_filter = sorted(to_filter)
 
             # optimization: use the smaller subset
             if len(to_mask) > len(to_filter):
@@ -173,11 +207,19 @@ class EventsList(Resource):
 
             es = store.get_events_by_search(
                 args.q,
+                before=args.before,
+                after=args.after,
                 to_mask=to_mask,
                 to_filter=to_filter,
                 pagesize=args.limit,
                 timezone=args.tz
             )
+
+            # freeze search, so subsequent pages don't change even if new data
+            # is added
+            if es.latest is not None:
+                args.before = es.latest + datetime.timedelta(microseconds=1)
+
         elif args.on:
             es = store.get_events_by_date(
                 args.on,
@@ -186,54 +228,23 @@ class EventsList(Resource):
                 pagesize=args.limit,
                 timezone=args.tz
             )
-        elif args.after and args.before:  # fetch by timerange
-            if args.after >= args.before:
-                abort(
-                    400,
-                    message="Invalid timerange, after must be < before"
-                )
-
+        else:  # fetch
             es = store.get_events_by_timerange(
-                start=args.after,
-                end=args.before,
-                feeds=feeds,
-                pagesize=args.limit,
-                embed_related=embed_related,
-                timezone=args.tz
-            )
-        elif args.after:  # fetch by timerange
-            es = store.get_events_by_timerange(
-                start=args.after,
-                feeds=feeds,
-                pagesize=args.limit,
-                embed_related=embed_related,
-                timezone=args.tz
-            )
-        elif args.before:  # fetch by timerange
-            es = store.get_events_by_timerange(
-                end=args.before,
-                feeds=feeds,
-                pagesize=args.limit,
-                embed_related=embed_related,
-                timezone=args.tz
-            )
-        else:  # fetch standard
-            es = store.get_events(
+                after=args.after,
+                before=args.before,
                 feeds=feeds,
                 pagesize=args.limit,
                 embed_related=embed_related,
                 timezone=args.tz
             )
 
-        # fetch requested page
-        p = es.get_page(args.page)
-
-        if p is None:
+        try:
+            p = es.page(cursor=args.cursor)
+        except InvalidPage:
             abort(
                 400,
                 message=(
-                    "Invalid value for 'page': "
-                    "value range is 0 < page <= %d"
+                    "Invalid value for 'cursor': value range is 0 < page <= %d"
                 ) % (es.num_pages)
             )
 
@@ -248,17 +259,11 @@ class EventsList(Resource):
                 base_uri=current_app.config['STATIC_URL'],
                 related_count_only=related_count_only
             )
-            for e in p.events
+            for e in p
         ]
 
         if p.next is not None:
-            args.page = p.next
-            querystring = args_to_query_params(args)
+            querystring = to_query_params(args, p.next)
             data['pagination']['next'] = url_for(self.endpoint) + querystring
-
-        if p.prev is not None:
-            args.page = p.prev
-            querystring = args_to_query_params(args)
-            data['pagination']['prev'] = url_for(self.endpoint) + querystring
 
         return data

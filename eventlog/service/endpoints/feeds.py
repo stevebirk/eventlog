@@ -22,7 +22,7 @@ class Feeds(Resource):
             default=False
         )
 
-        super(Feeds, self).__init__()
+        super().__init__()
 
     @cache.cached(key_prefix=make_cache_key)
     def get(self, short_name):
@@ -60,7 +60,7 @@ class FeedsList(Resource):
             default=False
         )
 
-        super(FeedsList, self).__init__()
+        super().__init__()
 
     @cache.cached(key_prefix=make_cache_key)
     def get(self):

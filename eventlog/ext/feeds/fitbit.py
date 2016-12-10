@@ -8,7 +8,7 @@ import base64
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
 from eventlog.lib.events import Event
-from eventlog.lib.util import tz_unaware_local_dt_to_utc
+from eventlog.lib.util import local_datetime_to_utc
 
 _LOG = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class Fitbit(Feed):
         self._DEVICE_ID = self.config['device_id']
 
         # convert SIGNUP_DATE to naive UTC datetime
-        self.signup_date = tz_unaware_local_dt_to_utc(
+        self.signup_date = local_datetime_to_utc(
             datetime.datetime.strptime(self._SIGNUP_DATE, "%Y-%m-%d"),
             self.timezone
         ).replace(tzinfo=None)
@@ -168,7 +168,7 @@ class Fitbit(Feed):
             if device['id'] == self._DEVICE_ID:
                 device_found = True
 
-                self.last_sync_time = tz_unaware_local_dt_to_utc(
+                self.last_sync_time = local_datetime_to_utc(
                     datetime.datetime.strptime(
                         device['lastSyncTime'],
                         '%Y-%m-%dT%H:%M:%S.%f'

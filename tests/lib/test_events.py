@@ -5,15 +5,15 @@ import simplejson as json
 
 from eventlog.lib.events import (Event, Fields, DATEFMT,
                                  UnableToRetrieveImageException)
-from eventlog.lib.util import pg_strptime, tz_unaware_utc_dt_to_local
+from eventlog.lib.util import pg_strptime, utc_datetime_to_local
 from eventlog.lib.store.search import _SCHEMA
 
-from util import feeds_create_fake, events_create_fake, events_compare
-from util import events_create_single
+from .util import feeds_create_fake, events_create_fake, events_compare
+from .util import events_create_single
 
 from unittest.mock import patch, Mock
 
-import feed_generator
+from . import feed_generator
 
 
 class TestEvents(unittest.TestCase):
@@ -421,7 +421,7 @@ class TestEvents(unittest.TestCase):
 
         related_naive_utc_dts = [r.occurred for r in e.related]
         local_related_dts = [
-            tz_unaware_utc_dt_to_local(dt, tz) for dt in related_naive_utc_dts
+            utc_datetime_to_local(dt, tz) for dt in related_naive_utc_dts
         ]
 
         e.localize(tz_name)
@@ -429,7 +429,7 @@ class TestEvents(unittest.TestCase):
         aware_local_dt = e.occurred
 
         self.assertEqual(
-            tz_unaware_utc_dt_to_local(naive_utc_dt, tz),
+            utc_datetime_to_local(naive_utc_dt, tz),
             aware_local_dt
         )
 

@@ -61,7 +61,7 @@ class TestCommon(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 405)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         resp_data = json.loads(rv.data.decode('utf-8'))
 
@@ -75,7 +75,7 @@ class TestCommon(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 404)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         resp_data = json.loads(rv.data.decode('utf-8'))
 
@@ -89,7 +89,7 @@ class TestCommon(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 404)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         resp_data = json.loads(rv.data.decode('utf-8'))
 

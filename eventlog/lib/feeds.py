@@ -19,7 +19,7 @@ class MissingFeedIDException(Exception):
     pass
 
 
-class Feed(object, metaclass=abc.ABCMeta):
+class Feed(metaclass=abc.ABCMeta):
 
     # properties
     key_field = Fields.OCCURRED
@@ -48,6 +48,24 @@ class Feed(object, metaclass=abc.ABCMeta):
 
         # local timezone
         self.timezone = pytz.timezone(self.config.get('time_zone', 'UTC'))
+
+    def tuple(self):
+        return (self.id,
+                self.full_name,
+                self.short_name,
+                self.favicon,
+                self.color,
+                self.module,
+                self.overrides,
+                self.flags['is_public'],
+                self.flags['is_updating'],
+                self.flags['is_searchable'])
+
+    def __getattr__(self, key):
+        if key.startswith('is_') and key in self.flags:
+            return self.flags[key]
+
+        raise AttributeError
 
     def dict(self, admin=False, base_uri=None):
         d = {
@@ -300,11 +318,11 @@ class Feed(object, metaclass=abc.ABCMeta):
         events = []
 
         if loadfile is not None:
-            fh = open(loadfile)
-            for line in fh:
-                data = json.loads(line)
-                loaded, _, _ = self.parse(data)
-                events += loaded
+            with open(loadfile) as fh:
+                for line in fh:
+                    data = json.loads(line)
+                    loaded, _, _ = self.parse(data)
+                    events += loaded
 
             events = sorted(events, key=lambda x: x.occurred)
 
@@ -345,12 +363,8 @@ class Feed(object, metaclass=abc.ABCMeta):
         events += sorted(from_remote, key=lambda x: x.occurred)
 
         if dumpfile is not None:
-            fh = open(dumpfile, 'w')
-
-            try:
+            with open(dumpfile, 'w') as fh:
                 for e in events:
                     fh.write('%s\n' % json.dumps(e.raw))
-            finally:
-                fh.close()
 
         return events

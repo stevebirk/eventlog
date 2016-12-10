@@ -17,7 +17,7 @@ class TestToken(unittest.TestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        util.verify_response(rv)
+        util.verify_headers(rv)
 
         resp_data = json.loads(rv.data.decode('utf-8'))
 
