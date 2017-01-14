@@ -74,24 +74,17 @@ class EventSetByQuery(EventSet):
         # reset query limit
         self._eventquery.set_limit(None)
 
-        count = None
+        with self._pool.connect() as cur:
 
-        try:
-            with self._pool.connect() as cur:
+            # only use the basequery to determine count
+            cur.execute(
+                "select count(*) from ({basequery}) t".format(
+                    basequery=self._eventquery.basequery
+                ),
+                self._eventquery.basequery.params
+            )
 
-                cur.execute(
-                    "select count(*) from ({basequery}) t".format(
-                        basequery=self._eventquery.basequery
-                    ),
-                    self._eventquery.basequery.params
-                )
-
-                count = int(cur.fetchone()[0])
-
-        except DataError:
-            count = 0
-
-        return count
+            return int(cur.fetchone()[0])
 
     @property
     def num_pages(self):

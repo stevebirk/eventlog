@@ -673,7 +673,13 @@ class TestEvents(unittest.TestCase):
         )
 
     def test_get_single_invalid_id(self):
-        self._event_set.count = 0
+
+        # should yield nothing
+        def iterable(obj):
+            if False:
+                yield 1
+
+        self._event_set.__iter__ = iterable
 
         rv = self.app.get('/events/1')
 
@@ -686,7 +692,6 @@ class TestEvents(unittest.TestCase):
 
             yield unittest.mock.Mock(feed=self._bar_feed, **event_attrs)
 
-        self._event_set.count = 1
         self._event_set.__iter__ = iterable
 
         rv = self.app.get('/events/1?tz=America/Toronto')

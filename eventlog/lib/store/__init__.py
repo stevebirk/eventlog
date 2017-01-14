@@ -1,5 +1,6 @@
 import logging
 import datetime
+import uuid
 
 from eventlog.lib.events import Fields, InvalidField, MissingEventIDException
 from eventlog.lib.feeds import Feed, MissingFeedIDException
@@ -289,7 +290,22 @@ class Store:
             embed_related=embed_related
         )
 
-        eq.add_clause("{events}.id in %s", (tuple(set(ids)), ))
+        # validate provided IDs as UUIDs
+        validated = []
+
+        for i in ids:
+            try:
+                uuid.UUID(i)
+
+                validated.append(i)
+            except ValueError:
+                pass
+
+        if validated:
+            eq.add_clause("{events}.id in %s", (tuple(set(validated)), ))
+        else:
+            # want an empty result set if no valid IDs were provided
+            eq.add_clause("(\"id\" != \"id\")")
 
         es = EventSetByQuery(self._pool, eq, pagesize, timezone=timezone)
 

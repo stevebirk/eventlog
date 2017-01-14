@@ -73,8 +73,10 @@ class Events(Resource):
 
         accessible_feeds = store.get_feeds(is_public=is_public)
 
-        if es.count == 1:
-            e = list(es)[0]
+        found = list(es)
+
+        if found:
+            e = found[0]
         else:
             e = None
 

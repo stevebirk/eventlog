@@ -78,23 +78,21 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
     def test_get_events_by_ids_single_missing_id(self):
 
-        ids = [
-            'eb2e5989-113b-419b-90ad-6914f555b299',
-        ]
+        ids = ['eb2e5989-113b-419b-90ad-6914f555b299']
 
         es = store.get_events_by_ids(ids)
 
         self.assertEqual(es.count, 0)
+        self.assertEqual(list(es), [])
 
     def test_get_events_by_ids_single_invalid_id(self):
 
-        ids = [
-            '7',
-        ]
+        ids = ['7']
 
         es = store.get_events_by_ids(ids)
 
         self.assertEqual(es.count, 0)
+        self.assertEqual(list(es), [])
 
     def test_get_events_by_latest_single_feed_doesnt_exist(self):
         e = store.get_events_by_latest(feed='oijwef')
@@ -139,7 +137,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         self.assertEqual(es.count, len(self._events))
         self.assertEqual(
             es.num_pages,
-            int(math.ceil(len(self._events)/10.0)) + 1
+            int(math.ceil(len(self._events) / 10.0)) + 1
         )
 
         p = es.page()
@@ -161,7 +159,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         self.assertEqual(es.count, len(self._events))
         self.assertEqual(
             es.num_pages,
-            int(math.ceil(len(self._events)/5.0)) + 1
+            int(math.ceil(len(self._events) / 5.0)) + 1
         )
 
         p = es.page()
@@ -174,7 +172,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         self.assertEqual(es.count, len(self._events))
         self.assertEqual(
             es.num_pages,
-            int(math.ceil(len(self._events)/10.0)) + 1
+            int(math.ceil(len(self._events) / 10.0)) + 1
         )
 
         p = es.page()
@@ -232,7 +230,9 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             e.dict() for e in self._events
             if e.feed['short_name'] in feeds
         ]
+
         self.assertEqual(es.count, len(expected))
+
         expected = expected[:10]
 
         from_store = [e.dict() for e in p]
@@ -255,21 +255,18 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
     def test_get_events_by_ids_multiple(self):
 
-        ids = [
-            e.id for e in self._events
-        ][:3]
+        ids = [e.id for e in self._events][:3]
 
         es = store.get_events_by_ids(ids)
 
         from_store = [e.dict() for e in es]
 
-        expected = [
-            e.dict() for e in self._events
-            if e.id in ids
-        ]
+        expected = [e.dict() for e in self._events if e.id in ids]
 
         for i in range(3):
             self.assertDictEqual(from_store[i], expected[i])
+
+        self.assertEqual(es.count, len(expected))
 
     def test_get_events_by_ids_single(self):
 
@@ -279,6 +276,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         from_store = list(es)[0]
 
+        self.assertEqual(es.count, 1)
         self.assertEqual(from_store.dict(), expected.dict())
 
     def test_get_events_by_ids_single_is_related(self):
@@ -300,6 +298,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         from_store = list(es)[0]
 
+        self.assertEqual(es.count, 1)
         self.assertEqual(from_store.dict(), expected.dict())
 
     def test_get_events_by_latest(self):
@@ -349,10 +348,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         expected = []
 
         for e in self._events:
-            new_time = utc_datetime_to_local(
-                e.occurred,
-                pytz.timezone(tz)
-            )
+            new_time = utc_datetime_to_local(e.occurred, pytz.timezone(tz))
 
             if new_time.date() == d.date():
 
@@ -423,9 +419,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
         feeds = ['testfeed17', 'testfeed18']
 
-        es = store.get_events_by_date(
-            d, feeds=feeds, timezone=tz
-        )
+        es = store.get_events_by_date(d, feeds=feeds, timezone=tz)
 
         self.assertTrue(es.count > 0)
 
@@ -434,12 +428,9 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         expected = []
 
         for e in self._events:
-            new_time = utc_datetime_to_local(
-                e.occurred,
-                pytz.timezone(tz)
-            )
+            new_time = utc_datetime_to_local(e.occurred, pytz.timezone(tz))
 
-            if (new_time.date() == d.date()):
+            if new_time.date() == d.date():
 
                 new_event_dict = e.dict()
                 to_pg_datetime_str(new_event_dict, 'occurred')
