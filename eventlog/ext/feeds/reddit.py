@@ -30,7 +30,7 @@ class Reddit(Feed):
         Feed.__init__(self, config, **kwargs)
 
         self.url = (
-            "http://www.reddit.com/user/%s/liked.json?feed=%s&nocache=%d" % (
+            "https://www.reddit.com/user/%s/liked.json?feed=%s&nocache=%d" % (
                 self.config['username'],
                 self.config['feed_key'],
                 int(time.time())

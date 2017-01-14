@@ -21,6 +21,9 @@ SLICE_WIDTH = 5
 
 _LOG = logging.getLogger(__name__)
 
+# prevent memory issues with very large images
+Image.warnings.simplefilter('error', Image.DecompressionBombWarning)
+
 
 def fetch_url(url):
 
