@@ -3,13 +3,14 @@
 """
 Update event data for configured feeds.
 
-Usage: updater.py [-hjvd]
+Usage: updater.py [-hjvd --added]
 
 -h, --help      Show this screen.
 -j, --dry-run   Enable readonly mode, i.e. db changes and thumbnail
                 files are not saved.
--v, --verbose   Log to stdout instead of file.
+-v, --verbose   Log to stderr instead of file.
 -d, --debug     Enable DEBUG level logging. Implies --verbose.
+    --added     Print number of added events to stdout at script completion.
 """
 
 # monkey patch away!
@@ -98,18 +99,23 @@ def wrapped_update(f, dry=False):
     # wrapper to make logging clearer
     t = threading.current_thread()
     t.name = f.short_name
-    f.update(dry)
+
+    return f.update(dry)
 
 
 def update_feeds(feeds):
 
     greenlets = []
+
     for f in feeds.values():
         g = gevent.spawn(wrapped_update, f, args["--dry-run"])
         greenlets.append(g)
         gevent.sleep(0)
 
-    gevent.joinall(greenlets)
+    finished = gevent.joinall(greenlets)
+
+    if args["--added"]:
+        print(sum([g.value for g in finished if g.value is not None]))
 
     return
 
