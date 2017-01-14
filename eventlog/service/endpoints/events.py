@@ -173,7 +173,7 @@ class EventsList(Resource):
             if invalid_feeds:
                 abort(
                     400,
-                    message="Unrecognized feed(s): %s" % (
+                    message="Invalid value(s) for 'feed': %s" % (
                         ', '.join(invalid_feeds)
                     )
                 )
@@ -182,7 +182,10 @@ class EventsList(Resource):
 
         if args.after and args.before:  # validate timerange
             if args.after >= args.before:
-                abort(400, message="Invalid timerange, after must be < before")
+                abort(
+                    400,
+                    message="Invalid timerange: 'after' must be < 'before'"
+                )
 
         if args.q:  # fetch by search query
             everything = set(all_feeds)

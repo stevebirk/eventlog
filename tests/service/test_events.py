@@ -108,6 +108,11 @@ class TestEvents(unittest.TestCase):
             self.assertIn("error_type", resp_data["meta"])
             self.assertIn("error_message", resp_data["meta"])
 
+        # extra checks around BadRequest response
+        if resp.status_code == 400:
+            self.assertEquals(resp_data["meta"]["error_type"], "BadRequest")
+            self.assertIn("Invalid", resp_data["meta"]["error_message"])
+
         # data always expected
         self.assertIn("data", resp_data)
 

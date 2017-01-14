@@ -6,10 +6,10 @@ import difflib
 from flask import request, current_app
 from flask.signals import got_request_exception
 
-from werkzeug.exceptions import abort, BadRequest, HTTPException
+from werkzeug.exceptions import HTTPException
 
 from flask.ext.restful import Api as _Api
-from flask.ext.restful import abort as _abort
+from flask.ext.restful import abort
 from flask.ext.restful.reqparse import Argument as _Argument
 from flask.ext.restful.utils import http_status_message, cors
 
@@ -30,10 +30,6 @@ error_meta = {
 pagination = {
     "pagination": {}
 }
-
-# WARNING: this fixes an issue where 400 errors are raised as
-#          ClientDisconnected instead of BadRequest
-abort.mapping[BadRequest.code] = BadRequest
 
 
 class Api(_Api):
@@ -129,6 +125,7 @@ class Api(_Api):
 
 
 class Argument(_Argument):
+
     def convert(self, value, op):
         try:
             return super().convert(value, op)
@@ -137,7 +134,7 @@ class Argument(_Argument):
             raise type(e)(message)
 
     def handle_validation_error(self, error, bundle_errors):
-        _abort(400, message=str(error))
+        abort(400, message=str(error))
 
 
 api = Api(catch_all_404s=True, decorators=[cors.crossdomain(origin='*')])
