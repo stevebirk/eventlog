@@ -3,7 +3,7 @@ import datetime
 import copy
 
 import psycopg2
-import simplejson as json
+import json
 
 from flask import Flask
 

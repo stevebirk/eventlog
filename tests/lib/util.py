@@ -2,7 +2,7 @@ import datetime
 import random
 import string
 import uuid
-import simplejson as json
+import json
 
 # commonly used test methods
 

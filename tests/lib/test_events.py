@@ -1,7 +1,7 @@
 import unittest
 import datetime
 import pytz
-import simplejson as json
+import json
 
 from eventlog.lib.events import (Event, Fields, DATEFMT,
                                  UnableToRetrieveImageException)

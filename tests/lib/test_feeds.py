@@ -1,7 +1,7 @@
 import unittest
 import datetime
 import time
-import simplejson as json
+import json
 import re
 import copy
 import tempfile

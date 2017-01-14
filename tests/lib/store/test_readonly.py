@@ -4,7 +4,7 @@ import math
 import copy
 
 import pytz
-import simplejson as json
+import json
 
 from eventlog.lib.events import Event, Fields, InvalidField
 from eventlog.lib.util import utc_datetime_to_local

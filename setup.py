@@ -84,7 +84,6 @@ setup(
         'oauth2',
         'psycogreen',
         'psycopg2',
-        'pytz',
-        'simplejson'
+        'pytz'
     ]
 )
