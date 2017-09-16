@@ -90,7 +90,9 @@ def image_url_to_file(url, rootdir, subdir, fileprefix, dry=False):
             )
             return None
 
-    filesuffix = os.path.splitext(tmpfile)[-1]
+    # use urlparse here to avoid issues with possible query parameters and/or
+    # fragment
+    filesuffix = os.path.splitext(urllib.parse.urlparse(url).path)[-1]
 
     destination = os.path.join(target_dir, fileprefix + filesuffix)
 

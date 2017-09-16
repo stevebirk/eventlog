@@ -3,6 +3,7 @@ import os.path
 import shutil
 import hashlib
 import tempfile
+import urllib.request
 
 from eventlog.lib.scraper import (fetch_url, get_largest_image, crop_image,
                                   image_url_to_file, save_img_to_dir,
@@ -139,13 +140,28 @@ class TestScraper(unittest.TestCase):
         self.assertEqual(cropped.size, (200, 200))
 
     def test_image_url_to_file(self):
-        url = "http://httpbin.org/image/jpeg"
+        url = "http://httpbin.org/image/jpeg?thing=foo.star&bang=1#thing"
 
         res = image_url_to_file(url, self.tempdir, '', 'testimg')
 
         self.assertIsNotNone(res)
 
-        filename = res['path']
+        self.assertEqual('testimg', res['path'])
+
+    def test_image_url_with_extension_to_file(self, ):
+
+        actual = urllib.request.urlretrieve('http://httpbin.org/image/jpeg')
+
+        url = "http://httpbin.org/image/jpeg.suffix?a=foo.star&b=1#thing"
+
+        with patch('urllib.request.urlretrieve') as mock_url_retrieve:
+            mock_url_retrieve.return_value = actual
+
+            res = image_url_to_file(url, self.tempdir, '', 'testimg')
+
+        self.assertIsNotNone(res)
+
+        self.assertEqual('testimg.suffix', res['path'])
 
     @patch('urllib.request.urlretrieve')
     def test_image_url_to_file_bad_retrieve(self, mock_url_retrieve):

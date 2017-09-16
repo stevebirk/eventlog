@@ -40,7 +40,7 @@ class TestArchiver(unittest.TestCase):
         url = "https://www.google.ca/?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA"
         expected = (
             SUB_DIR + "/"
-            "index.html?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA.html"
+            "index.html?gws_rd=cr&ei=bbiWUo-PLM78oATPxYKgCA.tmp.html"
         )
 
         res = eventlog.lib.archiver.archive_url(
