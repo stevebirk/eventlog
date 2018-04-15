@@ -20,9 +20,9 @@ def db_drop_all_data(conn):
 
     try:
         cur = conn.cursor()
-        cur.execute('drop table related_events')
-        cur.execute('drop table events')
-        cur.execute('drop table feeds')
+        cur.execute('drop table if exists related_events')
+        cur.execute('drop table if exists events')
+        cur.execute('drop table if exists feeds')
         conn.commit()
     except Exception:
         conn.rollback()

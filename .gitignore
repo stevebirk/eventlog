@@ -15,3 +15,4 @@ tests/testarchive
 *.egg-info
 .cache
 __pycache__
+.pytest_cache
