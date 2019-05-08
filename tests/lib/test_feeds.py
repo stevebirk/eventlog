@@ -44,7 +44,7 @@ class MockHttp:
         if 'page' not in url:
             page = 1
         else:
-            page = int(re.search('page=(\d+)', url).group(1))
+            page = int(re.search(r'page=(\d+)', url).group(1))
 
         content = {
             'things': [

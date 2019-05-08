@@ -1,6 +1,6 @@
 from flask import request
 
-from flask.ext.cache import Cache
+from flask_caching import Cache
 
 from eventlog.service.core.auth import is_authorized
 

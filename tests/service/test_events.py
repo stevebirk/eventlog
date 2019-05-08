@@ -110,14 +110,14 @@ class TestEvents(unittest.TestCase):
 
         # extra checks around BadRequest response
         if resp.status_code == 400:
-            self.assertEquals(resp_data["meta"]["error_type"], "BadRequest")
+            self.assertEqual(resp_data["meta"]["error_type"], "BadRequest")
             self.assertIn("Invalid", resp_data["meta"]["error_message"])
 
         # data always expected
         self.assertIn("data", resp_data)
 
         if data is not None:
-            self.assertEquals(data, resp_data["data"])
+            self.assertEqual(data, resp_data["data"])
 
         if pagination is not None:
             self.assertIn("pagination", resp_data)
@@ -127,7 +127,7 @@ class TestEvents(unittest.TestCase):
             if expected_next is not None:
                 self.assertIn("next", resp_data["pagination"])
 
-                self.assertEquals(
+                self.assertEqual(
                     urllib.parse.parse_qs(
                         urllib.parse.urlparse(expected_next).query
                     ),

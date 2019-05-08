@@ -76,7 +76,7 @@ class TestPool(unittest.TestCase):
 
                 res = cur.fetchall()[0][0]
 
-                self.assertEquals(res, 1, "bad select result")
+                self.assertEqual(res, 1, "bad select result")
 
         def make_queries():
             e = gevent.event.Event()
@@ -103,7 +103,7 @@ class TestPool(unittest.TestCase):
         # no queries should fail
         make_queries()
 
-        self.assertEquals(mock_pool.getconn.call_count, min_conn + max_conn)
+        self.assertEqual(mock_pool.getconn.call_count, min_conn + max_conn)
 
 
 if __name__ == '__main__':

@@ -196,7 +196,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
         # next page will be first page
         too_far = es.page()
 
-        self.assertEquals(
+        self.assertEqual(
             [e.dict() for e in too_far],
             [e.dict() for e in first_page]
         )
@@ -317,7 +317,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             for feed in self._feeds
         }
 
-        self.assertEquals(events, expected)
+        self.assertEqual(events, expected)
 
     def test_exists_return_true(self):
 
@@ -529,7 +529,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
             p = es.page()
             from_store += [e.dict() for e in p]
 
-        self.assertEquals(from_store, expected)
+        self.assertEqual(from_store, expected)
 
     def test_embeded_related_ordering(self):
         expected = None

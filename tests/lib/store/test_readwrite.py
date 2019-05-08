@@ -90,14 +90,14 @@ class TestStoreModify(TestStoreWithDBBase):
 
         es = store.get_events_by_timerange(before=before)
 
-        self.assertEquals(es.count, len(events))
+        self.assertEqual(es.count, len(events))
 
         last_id = None
 
         from_store = list(es)
 
         for e in from_store:
-            self.assertEquals(e.occurred, timestamp)
+            self.assertEqual(e.occurred, timestamp)
 
             if last_id is None:
                 last_id = e.id
@@ -126,14 +126,14 @@ class TestStoreModify(TestStoreWithDBBase):
 
             from_store += [e.dict() for e in p]
 
-        self.assertEquals(expected, from_store)
+        self.assertEqual(expected, from_store)
 
     def test_get_events_by_timerange_cursor(self):
         event_dicts, events = self._add_events()
 
         es = store.get_events_by_timerange()
 
-        self.assertEquals(es.count, len(events))
+        self.assertEqual(es.count, len(events))
 
         from_store = list(es)
 
@@ -157,7 +157,7 @@ class TestStoreModify(TestStoreWithDBBase):
                 )
                 self.assertTrue(e.id not in omitted)
 
-        self.assertEquals(es.count - 3, count)
+        self.assertEqual(es.count - 3, count)
 
     def test_add_events(self):
 

@@ -1,6 +1,6 @@
 import copy
 
-from flask.ext.restful import Resource
+from flask_restful import Resource
 
 from eventlog.service.core.api import api, envelope
 from eventlog.service.core.auth import generate_auth_token

@@ -148,7 +148,11 @@ class Feed(metaclass=abc.ABCMeta):
                 if retry_headers is not None:
                     headers = retry_headers
 
-                _LOG.warn("retrying with url: %s, headers: %s", url, headers)
+                _LOG.warning(
+                    "retrying with url: %s, headers: %s",
+                    url,
+                    headers
+                )
 
                 continue
 

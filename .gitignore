@@ -16,3 +16,4 @@ tests/testarchive
 .cache
 __pycache__
 .pytest_cache
+index

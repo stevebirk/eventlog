@@ -2,8 +2,8 @@ import copy
 import datetime
 
 from flask import current_app, url_for
-from flask.ext.restful import reqparse, abort, Resource
-from flask.ext.restful.inputs import boolean
+from flask_restful import reqparse, abort, Resource
+from flask_restful.inputs import boolean
 
 from eventlog.service.core.store import store
 from eventlog.service.core.api import api, envelope, pagination, Argument
