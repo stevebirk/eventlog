@@ -70,7 +70,7 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'Flask>=0.12',
+        'Flask>=1.1.1',
         'Flask-Caching==1.6.0',
         'Flask-RESTful==0.3.5',
         'Pillow',
@@ -78,7 +78,7 @@ setup(
         'beautifulsoup4',
         'docopt',
         'gevent>=1.2',
-        'httplib2',
+        'httplib2>=0.14.0',
         'itsdangerous',
         'lxml',
         'oauth2',
