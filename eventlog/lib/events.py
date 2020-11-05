@@ -170,8 +170,15 @@ class Event:
             for child in self.related:
                 child.localize(timezone)
 
-    def add_thumbnail(self, width, height, staticroot, subdir, dry=False):
-
+    def add_thumbnail(
+        self,
+        width,
+        height,
+        staticroot,
+        subdir,
+        exclude_md5s=None,
+        dry=False
+    ):
         if self.thumbnail_url is None:
             _LOG.debug('no image URL provided')
             return
@@ -181,7 +188,13 @@ class Event:
         img = get_thumbnail_from_url(self.thumbnail_url, width, height)
 
         if img is not None:
-            self.thumbnail = save_img_to_dir(img, staticroot, subdir, dry=dry)
+            self.thumbnail = save_img_to_dir(
+                img,
+                staticroot,
+                subdir,
+                exclude_md5s=exclude_md5s,
+                dry=dry
+            )
         else:
             _LOG.info(
                 'unable to find suitable thumbnail image from URL: %s',

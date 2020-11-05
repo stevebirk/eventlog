@@ -37,6 +37,9 @@ STORE = {
     'THUMBNAIL_WIDTH': 200,
     'THUMBNAIL_HEIGHT': 200,
 
+    # Set of thumbnail MD5 values to ignore when saving thumbnails
+    #'THUMBNAIL_MD5_EXCLUDE_LIST': {'081ecc5e6dd6ba0d150fc4bc0e62ec50'},
+
     # local time zone (used by some feeds)
     'TIME_ZONE': 'America/Toronto'
 }

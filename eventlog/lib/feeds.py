@@ -273,6 +273,7 @@ class Feed(metaclass=abc.ABCMeta):
                     self.config['thumbnail_height'],
                     self.config['media_dir'],
                     self.config['thumbnail_subdir'],
+                    exclude_md5s=self.config.get('thumbnail_md5_exclude_list'),
                     dry=dry
                 )
 

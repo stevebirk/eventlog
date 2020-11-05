@@ -239,6 +239,24 @@ class TestScraper(unittest.TestCase):
 
         self.assertIsNone(res)
 
+    def test_save_img_to_dir_md5_exclude(self):
+        test_image_path = os.path.join(
+            os.path.dirname(__file__),
+            '../data/image1.JPG'
+        )
+
+        image = Image.open(test_image_path)
+
+        md5 = hashlib.md5(image.tobytes()).hexdigest()
+
+        res = save_img_to_dir(image, self.tempdir, SUB_DIR, exclude_md5s={md5})
+
+        self.assertIsNone(res)
+
+        filepath = os.path.join(self.tempdir, '', md5[:2], md5 + '.png')
+
+        self.assertFalse(os.path.exists(filepath))
+
     def test_save_img_to_dir(self):
         test_image_path = os.path.join(
             os.path.dirname(__file__),

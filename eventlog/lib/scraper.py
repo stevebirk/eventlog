@@ -318,7 +318,7 @@ def crop_image(img, width, height):
     return img
 
 
-def save_img_to_dir(img, rootdir, subdir, dry=False,
+def save_img_to_dir(img, rootdir, subdir, exclude_md5s=None, dry=False,
                     file_suffix=None, use_original_format=False):
 
     # determine format to save image as
@@ -330,6 +330,14 @@ def save_img_to_dir(img, rootdir, subdir, dry=False,
 
     # generate MD5 hash from image
     md5 = hashlib.md5(img.tobytes()).hexdigest()
+
+    if exclude_md5s is not None and md5 in exclude_md5s:
+        _LOG.warning(
+            "image file with MD5 '%s' not saved due to configured exclusion",
+            md5
+        )
+
+        return None
 
     # create filepath from hash
     filepath = os.path.join(rootdir, subdir, md5[:2])
