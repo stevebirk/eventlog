@@ -25,13 +25,6 @@ class TestEvents(unittest.TestCase):
             for i in range(feed_generator.MAX_NUM)
         ]
 
-    def test_in_fields(self):
-        f = 'foo'
-        link = Fields.LINK
-
-        self.assertFalse(f in Fields)
-        self.assertTrue(link in Fields)
-
     def test_from_dict(self):
         distribution = [(json.dumps(feed), 1) for feed in self._feeds]
 

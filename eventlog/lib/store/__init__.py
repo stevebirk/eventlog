@@ -69,7 +69,7 @@ class Store:
     def exists(self, field, value):
 
         # verify field is valid
-        if field not in Fields:
+        if not isinstance(field, Fields):
             raise InvalidField
 
         query = Query("select {events}.* from events {events}")
