@@ -22,7 +22,7 @@ class Flickr(Feed):
         Feed.__init__(self, config, **kwargs)
 
         baseurl = (
-            "https://secure.flickr.com/services/rest/"
+            "https://api.flickr.com/services/rest/"
             "?method=flickr.people.getPhotos"
         )
 
