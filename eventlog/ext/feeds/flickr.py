@@ -95,13 +95,14 @@ class Flickr(Feed):
         e = Event()
         e.feed = self.dict()
         e.title = raw['title']
-        e.link = "http://www.flickr.com/photos/%s/%s" % (
+        e.link = "https://www.flickr.com/photos/%s/%s" % (
             raw['owner'], raw['id']
         )
         e.occurred = datetime.datetime.utcfromtimestamp(
             float(raw['dateupload'])
         )
-        e.thumbnail_url = e.link
+
+        e.thumbnail_url = raw['url_l']
         e.original_url = raw['url_o']
         e.raw = raw
 
