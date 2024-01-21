@@ -3,7 +3,7 @@ import unittest
 from eventlog.lib.loader import load
 from eventlog.lib.feeds import Feed
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 from .util import feeds_create_fake
 

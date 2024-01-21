@@ -1,6 +1,5 @@
 import unittest
 import unittest.mock
-import json
 
 # NOTE: this mocks out Store, so import needs to before app
 import util
@@ -30,12 +29,20 @@ class TestFeeds(unittest.TestCase):
         app.config['AUTH_TOKEN_EXPIRY'] = 600
         app.config['SECRET_KEY'] = 'abcd'
 
+        # required to get proper 500 errors.
+        app.debug = False
+
     def setUp(self):
         self.app = app.test_client()
 
-        self._feed.reset()
+        self._feed.reset_mock()
 
-        store.reset()
+        store.reset_mock()
+
+    def prepare_auth_header(self):
+        resp = self.app.get('/token')
+
+        return {'Authorization': 'Bearer ' + resp.get_json()['data']['token']}
 
     def test_get_all(self):
         rv = self.app.get('/feeds')
@@ -47,12 +54,10 @@ class TestFeeds(unittest.TestCase):
         store.get_feeds.assert_called_with(is_public=True)
 
     def test_get_all_admin_authorized(self):
-        # get an auth token
-        token_rv = self.app.get('/token')
-
-        token = json.loads(token_rv.data.decode('utf-8'))['data']['token']
-
-        rv = self.app.get('/feeds?admin=true&access_token=' + token)
+        rv = self.app.get(
+            '/feeds?admin=true',
+            headers=self.prepare_auth_header()
+        )
 
         self.assertEqual(rv.status_code, 200)
 
@@ -63,7 +68,10 @@ class TestFeeds(unittest.TestCase):
         self._feed.dict.assert_called_with(admin=True, base_uri='base_uri')
 
     def test_get_all_admin_authorized_bad_token(self):
-        rv = self.app.get('/feeds?admin=true&access_token=1234')
+        rv = self.app.get(
+            '/feeds?admin=true',
+            headers={'Authorization': 'Bearer 1234'}
+        )
 
         self.assertEqual(rv.status_code, 200)
 
@@ -96,12 +104,10 @@ class TestFeeds(unittest.TestCase):
         self._feed.dict.assert_called_with(admin=None, base_uri='base_uri')
 
     def test_get_single_admin_authorized(self):
-        # get an auth token
-        token_rv = self.app.get('/token')
-
-        token = json.loads(token_rv.data.decode('utf-8'))['data']['token']
-
-        rv = self.app.get('/feeds/foo?admin=true&access_token=' + token)
+        rv = self.app.get(
+            '/feeds/foo?admin=true',
+            headers=self.prepare_auth_header()
+        )
 
         self.assertEqual(rv.status_code, 200)
 
@@ -130,6 +136,7 @@ class TestFeeds(unittest.TestCase):
         util.verify_headers(rv)
 
         store.get_feeds.assert_called_with(is_public=True)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -508,14 +508,6 @@ class TestEvents(unittest.TestCase):
         before_datestr = '2014-01-01 12:01:01.00'
         after_datestr = '2014-02-01 12:01:01.00'
 
-        after_dt = datetime.datetime.strptime(
-            after_datestr, DATETIME_FMT
-        )
-
-        before_dt = datetime.datetime.strptime(
-            before_datestr, DATETIME_FMT
-        )
-
         rv = self.app.get(
             '/events?after=' + after_datestr + '&before=' + before_datestr
         )

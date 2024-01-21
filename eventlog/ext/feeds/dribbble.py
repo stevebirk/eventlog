@@ -1,8 +1,7 @@
 import datetime
-import re
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Event
 
 
 class Dribbble(Feed):
@@ -55,7 +54,6 @@ class Dribbble(Feed):
         self._next_page += 1
 
         next_url = None
-        next_headers = None
 
         if num_shots_returned > 0:
             next_url = self.url + ("?page=%d" % (self._next_page))

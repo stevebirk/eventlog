@@ -11,5 +11,6 @@ class TestUtil(unittest.TestCase):
     def test_key_doesnt_exist(self):
         self.assertIsNone(urlize({}, '/foo/', key='foo'))
 
+
 if __name__ == '__main__':
     unittest.main()

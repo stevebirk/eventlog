@@ -5,7 +5,7 @@ SECRET_KEY = "e50faf4ebfbe5c1bb44bf9407dcb3d0ed6ada15c"
 DEBUG = False
 
 # uncomment the below fields to enable Flask-Cache using memcached
-#CACHE_TYPE = 'memcached'
+#CACHE_TYPE = 'MemcachedCache'
 #CACHE_MEMCACHED_SERVERS = ['/tmp/memcached.sock']
 #CACHE_DEFAULT_TIMEOUT = 10 * 60
 

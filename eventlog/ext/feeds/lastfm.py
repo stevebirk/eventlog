@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Event
 
 _LOG = logging.getLogger(__name__)
 
@@ -73,11 +73,3 @@ class Lastfm(Feed):
             url = None
 
         return url
-
-    def get_key_func(self):
-
-        def func(e):
-            datefmt = '%a %b %d %H:%M:%S %Y'
-            return (e.text, e.occurred.strftime(datefmt))
-
-        return func

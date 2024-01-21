@@ -14,7 +14,6 @@ Usage: cleaner.py [-hjvd]
 import os
 import re
 import os.path
-import sys
 import time
 import shutil
 import logging
@@ -39,7 +38,7 @@ def init_logging():
         '%H:%M:%S'
     ))
 
-    l = logging.getLogger()
+    l = logging.getLogger()  # noqa: E741
     l.addHandler(handler)
     l.setLevel(logging.INFO)
 

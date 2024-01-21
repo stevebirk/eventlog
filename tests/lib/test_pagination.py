@@ -21,5 +21,6 @@ class TestPagination(unittest.TestCase):
         self.assertFalse(cursor_3 == cursor_2)
         self.assertFalse(cursor_4 == cursor_1)
 
+
 if __name__ == '__main__':
     unittest.main()

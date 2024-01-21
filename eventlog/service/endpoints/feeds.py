@@ -19,7 +19,8 @@ class Feeds(Resource):
             'admin',
             type=boolean,
             help='response should include admin data (config, etc)',
-            default=False
+            default=False,
+            location='args'
         )
 
         super().__init__()
@@ -57,7 +58,8 @@ class FeedsList(Resource):
             'admin',
             type=boolean,
             help='response should include admin data (config, etc)',
-            default=False
+            default=False,
+            location='args'
         )
 
         super().__init__()

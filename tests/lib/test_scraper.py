@@ -359,11 +359,6 @@ class TestScraper(unittest.TestCase):
 
     @patch('eventlog.lib.scraper.fetch_url')
     def test_url_to_image_not_image(self, mock_fetch_url):
-        test_image_path = os.path.join(
-            os.path.dirname(__file__),
-            '../data/image1.JPG'
-        )
-
         url = 'http://test.local/image.png'
 
         test_content = "{}"
@@ -420,7 +415,7 @@ class TestScraper(unittest.TestCase):
 
         mock_fetch_url.return_value = ("text/html", content)
 
-        res = get_images(url)
+        get_images(url)
 
         mock_get_images_from_html.assert_called_with(content, url)
 
@@ -436,7 +431,7 @@ class TestScraper(unittest.TestCase):
         mock_fetch_url.return_value = ("image/jpeg", content)
         mock_content_to_image_obj.return_value = True
 
-        res = get_images(url)
+        get_images(url)
 
         mock_content_to_image_obj.assert_called_with(content, url)
 
@@ -484,6 +479,7 @@ class TestScraper(unittest.TestCase):
 
         mock_get_largest_image.assert_called_with(url, width, height)
         mock_crop_image.assert_called_with(image, width, height)
+
 
 if __name__ == '__main__':
     unittest.main()

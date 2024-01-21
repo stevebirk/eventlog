@@ -29,7 +29,7 @@ Currently includes built-in support for the following services:
 
 setup(
     name='Eventlog',
-    version='3.0.dev0',
+    version='3.0.dev1',
     author='Steve Birk',
     author_email='stevebirk@gmail.com',
     description='storage and HTTP/JSON retrieval API for web service data',
@@ -40,7 +40,7 @@ setup(
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Internet :: WWW/HTTP :: WSGI',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application'
@@ -70,9 +70,9 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'Flask>=1.1.1',
-        'Flask-Caching==1.6.0',
-        'Flask-RESTful==0.3.5',
+        'Flask==3.0.0',
+        'Flask-Caching>=2.1.0',
+        'Flask-RESTful==0.3.10',
         'Pillow',
         'Whoosh>=2.7.4',
         'beautifulsoup4',

@@ -19,8 +19,9 @@ def verify_auth_token(token):
     s = Serializer(current_app.config['SECRET_KEY'])
 
     max_age = current_app.config['AUTH_TOKEN_EXPIRY']
+
     try:
-        data = s.loads(token, max_age=max_age)
+        s.loads(token, max_age=max_age)
     except SignatureExpired:  # pragma: no cover
         return False  # valid token, but expired
     except BadSignature:
@@ -33,10 +34,20 @@ def verify_auth_token(token):
     return True
 
 
-def is_authorized(param='access_token'):
+def parse_token(s):
+    pieces = s.split('Bearer ')
 
-    token = request.args.get(param)
-    if not token:
+    if len(pieces) != 2:
+        return None
+
+    return pieces[1]
+
+
+def is_authorized():
+
+    token = parse_token(request.headers.get('Authorization', ''))
+
+    if token is None:
         return False
     else:
         return verify_auth_token(token)

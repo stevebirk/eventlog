@@ -10,3 +10,6 @@ test-lib:
 	@(py.test -q --cov eventlog/lib --cov-report term-missing tests/lib/)
 
 test: test-service test-lib
+
+lint:
+	@(flake8 eventlog tests scripts)

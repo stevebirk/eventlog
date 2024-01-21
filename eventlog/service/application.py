@@ -6,9 +6,9 @@ from eventlog.service.core.store import store
 
 from eventlog.service.util import init_config, init_logging
 
-import eventlog.service.endpoints.events
-import eventlog.service.endpoints.feeds
-import eventlog.service.endpoints.token
+import eventlog.service.endpoints.events  # noqa: F401
+import eventlog.service.endpoints.feeds  # noqa: F401
+import eventlog.service.endpoints.token  # noqa: F401
 
 app = Flask(__name__)
 

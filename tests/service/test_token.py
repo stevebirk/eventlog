@@ -24,5 +24,6 @@ class TestToken(unittest.TestCase):
         self.assertIn("data", resp_data)
         self.assertIn("token", resp_data["data"])
 
+
 if __name__ == '__main__':
     unittest.main()

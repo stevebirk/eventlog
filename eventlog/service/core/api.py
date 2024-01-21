@@ -9,7 +9,7 @@ from flask.signals import got_request_exception
 from werkzeug.exceptions import HTTPException
 
 from flask_restful import Api as _Api
-from flask_restful import abort
+from flask_restful import abort, _handle_flask_propagate_exceptions_config
 from flask_restful.reqparse import Argument as _Argument
 from flask_restful.utils import http_status_message, cors
 
@@ -46,16 +46,9 @@ class Api(_Api):
             current_app._get_current_object(), exception=e
         )
 
-        is_http_exception = isinstance(e, HTTPException)
+        _handle_flask_propagate_exceptions_config(current_app, e)
 
-        if not is_http_exception and current_app.propagate_exceptions:
-            exc_type, exc_value, tb = sys.exc_info()
-            if exc_value is e:
-                raise
-            else:  # pragma: no cover
-                raise e
-
-        if is_http_exception:
+        if isinstance(e, HTTPException):
             code = e.code
             default_data = {
                 'message': getattr(e, 'description', http_status_message(code))

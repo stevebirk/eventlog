@@ -67,7 +67,7 @@ class TestArchiver(unittest.TestCase):
 
         url = 'http://test.local/thingy.html'
 
-        res = eventlog.lib.archiver.archive_url(
+        eventlog.lib.archiver.archive_url(
             url, self.tempdir, 'doesntexist'
         )
 

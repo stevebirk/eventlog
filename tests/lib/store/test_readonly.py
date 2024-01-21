@@ -321,7 +321,7 @@ class TestStoreReadOnly(TestStoreWithDBBase):
 
     def test_exists_return_true(self):
 
-        for field in [Fields.TITLE, Fields.TEXT, Fields.LINK]:
+        for field in [Fields.TITLE, Fields.TEXT, Fields.LINK, Fields.OCCURRED]:
             value = None
 
             for e in self._events:

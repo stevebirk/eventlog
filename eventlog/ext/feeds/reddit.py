@@ -1,25 +1,12 @@
-import json
 import datetime
-import httplib2
 import urllib.parse
 import logging
 import time
-import re
 
-from eventlog.lib.feeds import Feed, HTTPRequestFailure
+from eventlog.lib.feeds import Feed
 from eventlog.lib.events import Event, Fields
 
 _LOG = logging.getLogger(__name__)
-
-
-def _get_id(link):
-
-    m = re.search("/comments/([A-Za-z0-9]+)/", link)
-
-    if m is None:
-        m = re.search("/info/([A-Za-z0-9]+)/", link)
-
-    return m.group(1)
 
 
 class Reddit(Feed):

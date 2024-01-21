@@ -9,7 +9,7 @@ from flask import Flask
 
 from eventlog.lib.store import Store
 
-from ..util import db_drop_all_data, db_init_schema, db_drop_all_events
+from ..util import db_drop_all_data, db_init_schema
 from ..util import db_insert_feeds, feeds_create_fake
 
 from .. import feed_generator

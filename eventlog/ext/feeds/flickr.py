@@ -3,7 +3,7 @@ import datetime
 import oauth2 as oauth
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Event
 
 PLACEHOLDER_HEIGHT = '683'
 PLACEHOLDER_WIDTH = '1024'

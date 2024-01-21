@@ -87,7 +87,7 @@ def init_logging():
 
     handler.setFormatter(logging.Formatter(fmt, '%H:%M:%S'))
 
-    l = logging.getLogger()
+    l = logging.getLogger()  # noqa: E741
     l.addHandler(handler)
     l.setLevel(level)
 
@@ -143,6 +143,7 @@ def main():
 
     end = time.time()
     _LOG.info('finished processing (elapsed: %.6fs)', end - start)
+
 
 if __name__ == "__main__":
     main()

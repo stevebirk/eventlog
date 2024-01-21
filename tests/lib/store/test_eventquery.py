@@ -17,5 +17,6 @@ class TestEventQuery(unittest.TestCase):
 
         self.assertIn("where e.is_related", eq.query)
 
+
 if __name__ == '__main__':
     unittest.main()

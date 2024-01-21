@@ -9,8 +9,6 @@ Usage: archiver.py [-hj]
 -j, --dry-run       Enable dry run mode, i.e. no archives saved.
 """
 
-import os
-import sys
 import time
 import logging
 import docopt
@@ -34,9 +32,10 @@ def init_logging():
         '%H:%M:%S'
     ))
 
-    l = logging.getLogger()
+    l = logging.getLogger()  # noqa: E741
     l.addHandler(handler)
     l.setLevel(logging.INFO)
+
 
 if __name__ == "__main__":
     init_logging()

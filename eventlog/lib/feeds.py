@@ -6,7 +6,7 @@ import time
 import httplib2
 
 from .util import urlize
-from .events import Fields, DATEFMT
+from .events import Fields
 
 _LOG = logging.getLogger(__name__)
 
@@ -266,28 +266,9 @@ class Feed(metaclass=abc.ABCMeta):
             # number of new events
             added = len(events)
 
-            # fetch thumbnails
+            # embelish
             for e in events:
-                e.add_thumbnail(
-                    self.config['thumbnail_width'],
-                    self.config['thumbnail_height'],
-                    self.config['media_dir'],
-                    self.config['thumbnail_subdir'],
-                    exclude_md5s=self.config.get('thumbnail_md5_exclude_list'),
-                    dry=dry
-                )
-
-                e.add_original(
-                    self.config['media_dir'],
-                    self.config['original_subdir'],
-                    dry=dry
-                )
-
-                e.add_archive(
-                    self.config['media_dir'],
-                    self.config['archive_subdir'],
-                    dry=dry
-                )
+                self.embelish(e, dry=dry)
 
             # do any grouping
             self.group(events, latest_event)
@@ -307,16 +288,27 @@ class Feed(metaclass=abc.ABCMeta):
 
         return added
 
-    def get_key_func(self):
+    def embelish(self, event, dry=False):
+        event.add_thumbnail(
+            self.config['thumbnail_width'],
+            self.config['thumbnail_height'],
+            self.config['media_dir'],
+            self.config['thumbnail_subdir'],
+            exclude_md5s=self.config.get('thumbnail_md5_exclude_list'),
+            dry=dry
+        )
 
-        if self.key_field is Fields.OCCURRED:
-            def func(e):
-                key_value = self.key_field.get_from(e)
-                return key_value.strftime(DATEFMT)
-        else:
-            func = self.key_field.get_from
+        event.add_original(
+            self.config['media_dir'],
+            self.config['original_subdir'],
+            dry=dry
+        )
 
-        return func
+        event.add_archive(
+            self.config['media_dir'],
+            self.config['archive_subdir'],
+            dry=dry
+        )
 
     def load(self, loadfile=None, dumpfile=None):
 

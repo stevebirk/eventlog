@@ -43,9 +43,9 @@ class TestCommon(unittest.TestCase):
 
         self.app = app.test_client()
 
-        self._feed.reset()
+        self._feed.reset_mock()
 
-        store.reset()
+        store.reset_mock()
 
     def test_load_default_config(self):
         app = unittest.mock.Mock()

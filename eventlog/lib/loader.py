@@ -1,4 +1,3 @@
-import sys
 import logging
 
 _LOG = logging.getLogger(__name__)
@@ -12,7 +11,7 @@ def load(resource, config, **kwargs):
     for name, options in config.items():
         # import module
         try:
-            module = __import__(name)
+            __import__(name)
         except Exception:
             _LOG.exception("unable to load module '%s', skipping.", name)
         else:

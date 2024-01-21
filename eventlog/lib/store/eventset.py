@@ -4,10 +4,8 @@ import datetime
 
 from collections import namedtuple
 
-from psycopg2 import DataError
-
 import whoosh.query
-from whoosh.qparser import QueryParser, MultifieldParser
+from whoosh.qparser import MultifieldParser
 
 from eventlog.lib.events import Event
 from eventlog.lib.util import local_datetime_to_utc, utc_datetime_to_local

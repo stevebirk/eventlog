@@ -37,7 +37,6 @@ class Pool:
 
         conn = None
 
-        cursor = None
         cursor_factory = None
 
         if dict_cursor:
@@ -57,7 +56,7 @@ class Pool:
                 # cause round trip to db to confirm connectivity
                 conn.isolation_level
 
-            except psycopg2.OperationalError as oe:
+            except psycopg2.OperationalError:
 
                 if not retries or conn is None:
                     _LOG.exception('unable to connect to "%s"', self.database)
@@ -82,7 +81,7 @@ class Pool:
             else:
                 conn.rollback()
 
-        except Exception as e:
+        except Exception:
 
             if not conn.closed:
                 conn.rollback()

@@ -1,11 +1,9 @@
 import os.path
 import logging
-import pytz
 import uuid
-import datetime
 import enum
 
-from .scraper import (get_thumbnail_from_url, save_img_to_dir, url_to_image,
+from .scraper import (get_thumbnail_from_url, save_img_to_dir,
                       image_url_to_file)
 from .archiver import archive_url
 from .util import utc_datetime_to_local, pg_strptime, urlize

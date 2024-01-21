@@ -1,14 +1,12 @@
 import os
-import math
 import logging
 
 from threading import RLock
 
-from .pagination import Page
 from .eventset import EventSetBySearch
 
 from whoosh.index import open_dir, exists_in, create_in
-from whoosh.fields import *
+from whoosh.fields import Schema, ID, TEXT, DATETIME
 
 _LOG = logging.getLogger(__name__)
 

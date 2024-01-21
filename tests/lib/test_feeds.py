@@ -11,9 +11,7 @@ import os.path
 import httplib2
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
-from eventlog.lib.events import Event, Fields, DATEFMT
-
-from .util import events_create_single, events_create_fake, events_compare
+from eventlog.lib.events import Event, Fields
 
 from unittest.mock import patch, Mock
 
@@ -425,32 +423,9 @@ class TestFeeds(unittest.TestCase):
 
         self.assertDictEqual(full_dict, full_config)
 
-    def test_get_key_func(self):
-        e_raw = {
-            't': 'title0',
-            'l': 'http://localhost/link0',
-            'time': time.time()
-        }
-
-        e = self._feed.to_event(e_raw)
-
-        # test date keyed feed
-        date_key_func = self._feed.get_key_func()
-
-        self.assertEqual(date_key_func(e), e.occurred.strftime(DATEFMT))
-
-        # test non-date keyed feed
-        self._feed.key_field = Fields.LINK
-
-        non_date_key_func = self._feed.get_key_func()
-
-        self.assertEqual(non_date_key_func(e), 'http://localhost/link0')
-
     def test_update_no_latest_no_media(self):
         self._feed.store = Mock()
-        self._feed.store.get_events_by_latest()
         self._feed.store.get_events_by_latest.return_value = None
-        self._feed.store.add_events()
 
         added = self._feed.update()
 
@@ -476,9 +451,7 @@ class TestFeeds(unittest.TestCase):
         e = self._feed.to_event(e_raw)
 
         self._feed.store = Mock()
-        self._feed.store.get_events_by_latest()
         self._feed.store.get_events_by_latest.return_value = e
-        self._feed.store.add_events()
 
         added = self._feed.update()
 
@@ -496,9 +469,7 @@ class TestFeeds(unittest.TestCase):
 
     def test_update_with_exception(self):
         self._feed.store = Mock()
-        self._feed.store.get_events_by_latest()
         self._feed.store.get_events_by_latest.return_value = None
-        self._feed.store.add_events()
 
         def bad_fetch(*args, **kwargs):
             raise Exception('bad fetch!')
@@ -540,6 +511,7 @@ class TestFeeds(unittest.TestCase):
 
     def test_to_str(self):
         self.assertEqual(str(self._feed), str(self._feed.dict(admin=True)))
+
 
 if __name__ == '__main__':
     unittest.main()

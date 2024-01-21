@@ -1,13 +1,14 @@
 import sys
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Fields
 
 MAX_NUM = 25
 
 
 class FakeFeedModule:
     pass
+
 
 holder = {}
 

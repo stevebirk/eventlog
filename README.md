@@ -188,8 +188,7 @@ configured appropriately as described above.
 Tests
 -----
 
-The `eventlog.lib` and `eventlog.service` modules both currently have tests,
-with 100% code coverage.
+The `eventlog.lib` and `eventlog.service` modules both currently have tests.
 
 The tests require the `pytest` and `pytest-cov` modules to be installed.
 

@@ -1,10 +1,9 @@
 import httplib2
 import json
 import datetime
-import pprint
 
 from eventlog.lib.feeds import Feed, HTTPRequestFailure
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Event
 
 EPIC = 4
 

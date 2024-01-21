@@ -7,7 +7,6 @@ from eventlog.lib.feeds import Feed, MissingFeedIDException
 from eventlog.lib.loader import load
 from eventlog.lib.util import local_datetime_to_utc
 
-from .pagination import ByTimeRangeCursor
 from .eventquery import EventQuery
 from .eventset import EventSetByQuery
 from .search import Index

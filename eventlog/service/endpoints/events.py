@@ -3,7 +3,6 @@ import datetime
 
 from flask import current_app, url_for
 from flask_restful import reqparse, abort, Resource
-from flask_restful.inputs import boolean
 
 from eventlog.service.core.store import store
 from eventlog.service.core.api import api, envelope, pagination, Argument
@@ -58,7 +57,8 @@ class Events(Resource):
         self.parser.add_argument(
             'tz',
             type=tz,
-            help='specify timezone as IANA info key for date values'
+            help='specify timezone as IANA info key for date values',
+            location='args'
         )
 
         super().__init__()
@@ -99,17 +99,20 @@ class EventsList(Resource):
             'limit',
             type=limit,
             help='number of events to retrieve',
-            default=current_app.config['PAGE_SIZE_DEFAULT']
+            default=current_app.config['PAGE_SIZE_DEFAULT'],
+            location='args'
         )
         self.parser.add_argument(
             'feeds',
             type=comma_separated,
-            help='filter events by specific feed(s)'
+            help='filter events by specific feed(s)',
+            location='args'
         )
         self.parser.add_argument(
             'q',
             type=str,
-            help='filter events by search query'
+            help='filter events by search query',
+            location='args'
         )
         self.parser.add_argument(
             'embed_related',
@@ -117,32 +120,38 @@ class EventsList(Resource):
             help=('specify whether to embed related events data '
                   '(ignored for search queries), can specify full '
                   'embed, or just counts (default=full)'),
-            default='full'
+            default='full',
+            location='args'
         )
         self.parser.add_argument(
             'tz',
             type=tz,
-            help='specify timezone as IANA info key for datetime values'
+            help='specify timezone as IANA info key for datetime values',
+            location='args'
         )
         self.parser.add_argument(
             'on',
             type=date_format,
-            help='filter events by occurred date'
+            help='filter events by occurred date',
+            location='args'
         )
         self.parser.add_argument(
             'before',
             type=datetime_format,
-            help='filter events that occurred before datetime'
+            help='filter events that occurred before datetime',
+            location='args'
         )
         self.parser.add_argument(
             'after',
             type=datetime_format,
-            help='filter events that occurred after datetime'
+            help='filter events that occurred after datetime',
+            location='args'
         )
         self.parser.add_argument(
             'cursor',
             type=str,
-            help='pagination cursor'
+            help='pagination cursor',
+            location='args'
         )
 
         super().__init__()

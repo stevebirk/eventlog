@@ -1,5 +1,3 @@
-import pytz
-
 from eventlog.lib.util import local_datetime_to_utc, utc_datetime_to_local
 
 

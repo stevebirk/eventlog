@@ -11,7 +11,7 @@ from eventlog.lib.store.search import _SCHEMA
 from .util import feeds_create_fake, events_create_fake, events_compare
 from .util import events_create_single
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 from . import feed_generator
 
@@ -450,6 +450,7 @@ class TestEvents(unittest.TestCase):
 
         if e.text is not None:
             self.assertTrue('text' in s)
+
 
 if __name__ == '__main__':
     unittest.main()

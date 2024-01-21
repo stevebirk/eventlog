@@ -1,7 +1,7 @@
 import logging
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Fields
 
 _LOG = logging.getLogger(__name__)
 

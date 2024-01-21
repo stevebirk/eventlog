@@ -4,15 +4,15 @@ import unittest.mock
 import gevent
 import gevent.event
 import gevent.monkey
-gevent.monkey.patch_all()  # noqa
+gevent.monkey.patch_all()
 
 # psycopg2 monkey patch!
-import psycogreen.gevent
-psycogreen.gevent.patch_psycopg()  # noqa
+import psycogreen.gevent  # noqa: E402
+psycogreen.gevent.patch_psycopg()
 
-import psycopg2
+import psycopg2  # noqa: E402
 
-from eventlog.lib.store.pool import Pool
+from eventlog.lib.store.pool import Pool  # noqa: E402
 
 
 def patch_pool(p, num_bad_conn=None, num_good_conn=0):

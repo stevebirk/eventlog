@@ -4,7 +4,7 @@ import string
 import uuid
 import json
 
-# commonly used test methods
+import psycopg2
 
 from eventlog.lib.events import DATEFMT
 from eventlog.lib.util import pg_strptime
@@ -262,13 +262,13 @@ def random_string(length):
 def random_dict(base, leaf=False):
     d = {}
 
-    for l in base[:5]:
-        key = l + random_string(random.randint(3, 10))
+    for c in base[:5]:
+        key = c + random_string(random.randint(3, 10))
         key = str(key)
 
-        if l == 'e' and not leaf:
+        if c == 'e' and not leaf:
             d[key] = random_dict(key, leaf=True)
-        elif l == 'j' and not leaf:
+        elif c == 'j' and not leaf:
             d[key] = []
             for i in range(random.randint(1, 5)):
                 d[key].append(random_dict(key, leaf=True))
@@ -318,7 +318,6 @@ def to_pg_datetime_str(data, field):
 if __name__ == "__main__":
     import time
     import feed_generator
-    from eventlog.lib.events import Event
 
     feeds = [
         feeds_create_fake(i, 'feed_generator')

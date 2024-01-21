@@ -31,7 +31,7 @@ def comma_separated(value):
 def datetime_format(value):
     try:
         return datetime.datetime.strptime(value, DATETIME_FMT)
-    except Exception as e:
+    except Exception:
         raise ValueError(
             "expected datetime format is '%s'" % (DATETIME_FMT)
         )

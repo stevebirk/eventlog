@@ -1,10 +1,9 @@
 import datetime
-import logging
 
 import oauth2 as oauth
 
 from eventlog.lib.feeds import Feed
-from eventlog.lib.events import Event, Fields
+from eventlog.lib.events import Event
 
 
 class Twitter(Feed):

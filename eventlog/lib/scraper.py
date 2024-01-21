@@ -1,7 +1,5 @@
-import sys
 import os
 import os.path
-import pprint
 import math
 import logging
 import urllib.parse

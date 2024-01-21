@@ -11,7 +11,7 @@ from eventlog.lib.store import Store
 from eventlog.lib.store.search import open_index, Index
 from eventlog.lib.store.pagination import (InvalidPage, ByTimeRangeCursor,
                                            BySearchCursor)
-from eventlog.lib.events import Event, InvalidField, MissingEventIDException
+from eventlog.lib.events import Event, MissingEventIDException
 from eventlog.lib.feeds import MissingFeedIDException
 
 from ..util import db_drop_all_events
@@ -619,7 +619,7 @@ class TestStoreModify(TestStoreWithDBBase):
         es = store.get_events_by_search("changed", after=after)
 
         # start using results to trigger reading of metadata, first page
-        p = es.page()
+        es.page()
 
         # add new event
         new_time = datetime.datetime(2012, 4, 24, 0, 0, 0, 0)
@@ -786,7 +786,7 @@ class TestStoreModify(TestStoreWithDBBase):
         es = store.get_events_by_search("changed")
 
         with self.assertRaises(InvalidPage):
-            p = es.page(BySearchCursor(es.num_pages + 6))
+            es.page(BySearchCursor(es.num_pages + 6))
 
     def test_reopen_existing_index(self):
         self._add_events()
