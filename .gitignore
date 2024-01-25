@@ -17,3 +17,5 @@ tests/testarchive
 __pycache__
 .pytest_cache
 index
+media
+var

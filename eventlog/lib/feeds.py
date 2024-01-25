@@ -101,6 +101,9 @@ class Feed(metaclass=abc.ABCMeta):
     def to_event(self, raw):  # pragma: no cover
         pass
 
+    def parse_content(self, content):
+        return json.loads(content.decode('utf-8'))
+
     def parse_status(self, resp, content, url, headers):
         if resp.status != 200:
             raise HTTPRequestFailure(
@@ -156,7 +159,7 @@ class Feed(metaclass=abc.ABCMeta):
 
                 continue
 
-            data = json.loads(content.decode('utf-8'))
+            data = self.parse_content(content)
 
             events, url, headers = self.parse(data)
 
