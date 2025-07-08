@@ -8,12 +8,26 @@ import hashlib
 import urllib.request
 import urllib.parse
 import urllib.error
+from importlib.metadata import version
 import httplib2
 
 from bs4 import BeautifulSoup, SoupStrainer
 
 from PIL import Image
 from io import BytesIO
+
+# TODO: I don't love how this is retrieved
+USER_AGENT = f"eventlog/{version("Eventlog")}"
+
+SCRAPER_HEADERS = {
+    "User-Agent": USER_AGENT
+}
+
+# install special opener that sets desired headers
+# TODO: stop using urllib
+SCRAPER_URL_OPENER = urllib.request.build_opener()
+SCRAPER_URL_OPENER.addheaders = [(key, value) for (key, value) in SCRAPER_HEADERS.items()]
+urllib.request.install_opener(SCRAPER_URL_OPENER)
 
 SLICE_WIDTH = 5
 
@@ -27,7 +41,7 @@ def fetch_url(url):
 
     try:
         h = httplib2.Http()
-        resp, content = h.request(url, "GET")
+        resp, content = h.request(url, "GET", headers=SCRAPER_HEADERS)
     except Exception:
         _LOG.exception("unable to fetch url: %s", repr(url))
         return None, None

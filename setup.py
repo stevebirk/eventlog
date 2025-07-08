@@ -29,7 +29,7 @@ Currently includes built-in support for the following services:
 
 setup(
     name='Eventlog',
-    version='3.0.dev2',
+    version='3.0.dev3',
     author='Steve Birk',
     author_email='stevebirk@gmail.com',
     description='storage and HTTP/JSON retrieval API for web service data',
