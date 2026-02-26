@@ -70,7 +70,7 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'Flask==3.0.0',
+        'Flask==3.1.3',
         'Flask-Caching>=2.1.0',
         'Flask-RESTful==0.3.10',
         'Pillow',
